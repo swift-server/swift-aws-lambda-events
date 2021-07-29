@@ -30,13 +30,6 @@ services:
     <<: *common
     command: /bin/bash -cl "swift test --enable-test-discovery -Xswiftc -warnings-as-errors $${SANITIZER_ARG-}"
 
-  test-samples:
-    <<: *common
-    command: >-
-      /bin/bash -clx "
-      swift build --package-path Examples/LambdaFunctions &&
-      swift build --package-path Examples/LocalDebugging/MyLambda"
-
   # util
 
   shell:

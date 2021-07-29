@@ -3,21 +3,13 @@ version: "3"
 services:
 
   runtime-setup:
-    image: swift-aws-lambda:al2-main
+    image: swift-aws-lambda-events:al2-main
     build:
       args:
         base_image: "swiftlang/swift:nightly-main-amazonlinux2"
 
   test:
-    image: swift-aws-lambda:al2-main
-    command: /bin/bash -cl "swift test --enable-test-discovery -Xswiftc -warnings-as-errors $${SANITIZER_ARG-} -Xswiftc -Xfrontend -Xswiftc -enable-experimental-concurrency"
-
-  test-samples:
-    image: swift-aws-lambda:al2-main
-    command: >-
-      /bin/bash -clx "
-      swift build -Xswiftc -Xfrontend -Xswiftc -enable-experimental-concurrency --package-path Examples/LambdaFunctions &&
-      swift build -Xswiftc -Xfrontend -Xswiftc -enable-experimental-concurrency --package-path Examples/LocalDebugging/MyLambda"
+    image: swift-aws-lambda-events:al2-main
 
   shell:
-    image: swift-aws-lambda:al2-main
+    image: swift-aws-lambda-events:al2-main

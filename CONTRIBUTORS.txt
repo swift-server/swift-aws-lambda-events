@@ -18,16 +18,26 @@ needs to be listed here.
 - Bryan Moffatt <bmoffatt@users.noreply.github.com>
 - Christoph Walcher <christoph-wa@gmx.de>
 - Colton Schlosser <cltnschlosser@gmail.com>
+- DwayneCoussement <dwayne.coussement@gmail.com>
+- DwayneCoussement <dwayne.coussement@showpad.com>
 - Eneko Alonso <eneko.alonso@gmail.com>
-- Fabian Fett <fabianfett@mac.com>
+- Fabian Fett <fabianfett@apple.com>
+- Filipp Fediakov <julik103@mail.ru>
 - George Barnett <gbarnett@apple.com>
+- Johannes Bosecker <j.bosecker.dev@icloud.com>
 - Johannes Weiss <johannesweiss@apple.com>
+- Josh <29730338+mr-j-tree@users.noreply.github.com>
+- ML <44809298+mufumade@users.noreply.github.com>
+- Matt Massicotte <85322+mattmassicotte@users.noreply.github.com>
 - Max Desiatov <max@desiatov.com>
 - Norman Maurer <norman_maurer@apple.com>
+- Ralph Küpper <ralph.kuepper@skelpo.com>
 - Ro-M <Ro-M@users.noreply.github.com>
 - Tomer Doron <tomer@apple.com>
 - Zhibin Cai <TonyChol@users.noreply.github.com>
 - pmarrufo <p_marrufo94@hotmail.com>
+- pokryfka <5090827+pokryfka@users.noreply.github.com>
+- pokryfka <pokryfka@gmail.com>
 - tachyonics <simon@tachyonics.io>
 
 **Updating this list**
