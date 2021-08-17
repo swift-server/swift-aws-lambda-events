@@ -19,12 +19,12 @@ let package = Package(
         .package(url: "https://github.com/tomerd/swift-aws-lambda-runtime.git", .branch("remove-events")),
         // this is the dependency on the swift-aws-lambda-events library
         // .package(url: "https://github.com/swift-server/swift-aws-lambda-runtime-events.git", from: "1.0.0")
-        .package(name: "swift-aws-lambda-events", path: "../..")
+        .package(name: "swift-aws-lambda-events", path: "../.."),
     ],
     targets: [
         .target(name: "APIGateway", dependencies: [
             .product(name: "AWSLambdaRuntime", package: "swift-aws-lambda-runtime"),
             .product(name: "AWSLambdaEvents", package: "swift-aws-lambda-events"),
-        ])
+        ]),
     ]
 )
