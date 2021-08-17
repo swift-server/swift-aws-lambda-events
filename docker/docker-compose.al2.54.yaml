@@ -11,5 +11,8 @@ services:
   test:
     image: swift-aws-lambda-events:al2-5.4
 
+  test-samples:
+    image: swift-aws-lambda-events:al2-5.4
+
   shell:
     image: swift-aws-lambda-events:al2-5.4
