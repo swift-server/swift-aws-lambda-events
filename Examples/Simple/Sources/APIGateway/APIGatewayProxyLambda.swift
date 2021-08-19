@@ -18,19 +18,18 @@ import NIO
 
 // MARK: - Run Lambda
 
-Lambda.run(APIGatewayProxyLambda())
-
-// MARK: - Handler, Request and Response
-
 // FIXME: Use proper Event abstractions once added to AWSLambdaRuntime
-struct APIGatewayProxyLambda: EventLoopLambdaHandler {
-    public typealias In = APIGateway.V2.Request
-    public typealias Out = APIGateway.V2.Response
+@main
+struct APIGatewayProxyLambda: AsyncLambdaHandler {
+    typealias In = APIGatewayV2Request
+    typealias Out = APIGatewayV2Response
 
-    public func handle(context: Lambda.Context, event: APIGateway.V2.Request) -> EventLoopFuture<APIGateway.V2.Response> {
+    init(context: Lambda.InitializationContext) async throws {
+        
+    }
+    
+    func handle(event: APIGatewayV2Request, context: Lambda.Context) async throws -> APIGatewayV2Response {
         context.logger.debug("hello, api gateway!")
-        return context.eventLoop.makeSucceededFuture(
-            APIGateway.V2.Response(statusCode: .ok, body: "hello, world!")
-        )
+        return APIGatewayV2Response(statusCode: .ok, body: "hello, world!")
     }
 }
