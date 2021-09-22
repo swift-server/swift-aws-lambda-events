@@ -20,13 +20,13 @@ import NIO
 
 // FIXME: Use proper Event abstractions once added to AWSLambdaRuntime
 @main
-struct APIGatewayProxyLambda: AsyncLambdaHandler {
-    typealias In = APIGatewayV2Request
-    typealias Out = APIGatewayV2Response
+struct APIGatewayProxyLambda: LambdaHandler {
+    typealias Event = APIGatewayV2Request
+    typealias Output = APIGatewayV2Response
 
     init(context: Lambda.InitializationContext) async throws {}
 
-    func handle(event: APIGatewayV2Request, context: Lambda.Context) async throws -> APIGatewayV2Response {
+    func handle(_ event: APIGatewayV2Request, context: Lambda.Context) async throws -> APIGatewayV2Response {
         context.logger.debug("hello, api gateway!")
         return APIGatewayV2Response(statusCode: .ok, body: "hello, world!")
     }
