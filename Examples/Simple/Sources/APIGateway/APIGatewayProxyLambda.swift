@@ -26,7 +26,7 @@ struct APIGatewayProxyLambda: LambdaHandler {
 
     init(context: Lambda.InitializationContext) async throws {}
 
-    func handle(_ request: APIGatewayV2Request, context: Lambda.Context) async throws -> APIGatewayV2Response {
+    func handle(_ request: APIGatewayV2Request, context: LambdaContext) async throws -> APIGatewayV2Response {
         context.logger.debug("hello, api gateway!")
         return APIGatewayV2Response(statusCode: .ok, body: "hello, world!")
     }
