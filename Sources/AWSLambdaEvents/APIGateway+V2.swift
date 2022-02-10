@@ -28,7 +28,7 @@ public struct APIGatewayV2Request: Codable {
         public struct Authorizer: Codable {
             /// JWT contains JWT authorizer information for the request context.
             public struct JWT: Codable {
-                public let claims: [String: String]
+                public let claims: [String: String]?
                 public let scopes: [String]?
             }
 
