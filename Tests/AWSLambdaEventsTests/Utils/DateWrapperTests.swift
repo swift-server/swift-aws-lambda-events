@@ -119,6 +119,19 @@ class DateWrapperTests: XCTestCase {
         XCTAssertEqual(event?.date.description, "2020-06-26 08:04:03 +0000")
     }
 
+    func testRFC5322DateTimeCodingWithoutDayWrapperSuccess() {
+        struct TestEvent: Decodable {
+            @RFC5322DateTimeCoding
+            var date: Date
+        }
+
+        let json = #"{"date":"5 Apr 2012 23:47:37 +0200"}"#
+        var event: TestEvent?
+        XCTAssertNoThrow(event = try JSONDecoder().decode(TestEvent.self, from: json.data(using: .utf8)!))
+
+        XCTAssertEqual(event?.date.description, "2012-04-05 21:47:37 +0000")
+    }
+
     func testRFC5322DateTimeCodingWrapperFailure() {
         struct TestEvent: Decodable {
             @RFC5322DateTimeCoding
@@ -133,7 +146,7 @@ class DateWrapperTests: XCTestCase {
             }
 
             XCTAssertEqual(context.codingPath.map(\.stringValue), ["date"])
-            XCTAssertEqual(context.debugDescription, "Expected date to be in RFC5322 date-time format with fractional seconds, but `\(date)` is not in the correct format")
+            XCTAssertEqual(context.debugDescription, "Expected date to be in RFC5322 date-time format, but `\(date)` is not in the correct format")
             XCTAssertNil(context.underlyingError)
         }
     }

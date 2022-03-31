@@ -91,18 +91,24 @@ public struct RFC5322DateTimeCoding: Decodable {
         if let bracket = string.firstIndex(of: "(") {
             string = String(string[string.startIndex ..< bracket].trimmingCharacters(in: .whitespaces))
         }
-        guard let date = Self.dateFormatter.date(from: string) else {
-            throw DecodingError.dataCorruptedError(in: container, debugDescription:
-                "Expected date to be in RFC5322 date-time format with fractional seconds, but `\(string)` is not in the correct format")
+        for formatter in Self.dateFormatters {
+            if let date = formatter.date(from: string) {
+                self.wrappedValue = date
+                return
+            }
         }
-        self.wrappedValue = date
+        throw DecodingError.dataCorruptedError(in: container, debugDescription:
+            "Expected date to be in RFC5322 date-time format, but `\(string)` is not in the correct format")
     }
 
-    private static let dateFormatter: DateFormatter = Self.createDateFormatter()
-    private static func createDateFormatter() -> DateFormatter {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "EEE, d MMM yyy HH:mm:ss z"
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        return formatter
+    private static let dateFormatters: [DateFormatter] = Self.createDateFormatters()
+    private static func createDateFormatters() -> [DateFormatter] {
+        let formatterWithDay = DateFormatter()
+        formatterWithDay.dateFormat = "EEE, d MMM yyy HH:mm:ss z"
+        formatterWithDay.locale = Locale(identifier: "en_US_POSIX")
+        let formatterWithoutDay = DateFormatter()
+        formatterWithoutDay.dateFormat = "d MMM yyy HH:mm:ss z"
+        formatterWithoutDay.locale = Locale(identifier: "en_US_POSIX")
+        return [formatterWithDay, formatterWithoutDay]
     }
 }
