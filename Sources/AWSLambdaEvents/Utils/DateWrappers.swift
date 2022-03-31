@@ -103,6 +103,8 @@ public struct RFC5322DateTimeCoding: Decodable {
 
     private static let dateFormatters: [DateFormatter] = Self.createDateFormatters()
     private static func createDateFormatters() -> [DateFormatter] {
+        // rfc5322 dates received in SES mails sometimes do not include the day, so need two dateformatters
+        // one with a day and one without
         let formatterWithDay = DateFormatter()
         formatterWithDay.dateFormat = "EEE, d MMM yyy HH:mm:ss z"
         formatterWithDay.locale = Locale(identifier: "en_US_POSIX")
