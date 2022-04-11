@@ -49,7 +49,7 @@ public struct SESEvent: Decodable {
         public let cc: [String]?
         @RFC5322DateTimeCoding public var date: Date
         public let from: [String]
-        public let messageId: String
+        public let messageId: String?
         public let returnPath: String?
         public let subject: String?
         public let to: [String]?
