@@ -17,7 +17,7 @@
 public typealias HTTPHeaders = [String: String]
 public typealias HTTPMultiValueHeaders = [String: [String]]
 
-public struct HTTPMethod: RawRepresentable, Equatable {
+public struct HTTPMethod: RawRepresentable, Equatable, _AWSLambdaEventsSendable {
     public var rawValue: String
 
     public init?(rawValue: String) {
@@ -61,7 +61,7 @@ extension HTTPMethod: Codable {
 
 // MARK: HTTPResponseStatus
 
-public struct HTTPResponseStatus {
+public struct HTTPResponseStatus: _AWSLambdaEventsSendable {
     public let code: UInt
     public let reasonPhrase: String?
 
@@ -158,7 +158,7 @@ extension HTTPResponseStatus: Codable {
 
 extension String {
     internal var isValidHTTPToken: Bool {
-        self.utf8.allSatisfy { (char) -> Bool in
+        self.utf8.allSatisfy { char -> Bool in
             switch char {
             case UInt8(ascii: "a") ... UInt8(ascii: "z"),
                  UInt8(ascii: "A") ... UInt8(ascii: "Z"),

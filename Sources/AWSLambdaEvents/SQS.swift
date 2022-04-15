@@ -14,16 +14,16 @@
 
 // https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html
 
-public struct SQSEvent: Decodable {
+public struct SQSEvent: AWSLambdaEvent {
     public let records: [Message]
 
     enum CodingKeys: String, CodingKey {
         case records = "Records"
     }
 
-    public struct Message {
+    public struct Message: AWSLambdaEvent {
         /// https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_MessageAttributeValue.html
-        public enum Attribute {
+        public enum Attribute: AWSLambdaEvent {
             case string(String)
             case binary([UInt8])
             case number(String)

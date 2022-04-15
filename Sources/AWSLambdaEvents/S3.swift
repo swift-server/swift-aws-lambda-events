@@ -16,8 +16,8 @@ import struct Foundation.Date
 
 // https://docs.aws.amazon.com/lambda/latest/dg/with-s3.html
 
-public struct S3Event: Decodable {
-    public struct Record: Decodable {
+public struct S3Event: AWSLambdaEvent {
+    public struct Record: AWSLambdaEvent {
         public let eventVersion: String
         public let eventSource: String
         public let awsRegion: AWSRegion
@@ -37,15 +37,15 @@ public struct S3Event: Decodable {
         case records = "Records"
     }
 
-    public struct RequestParameters: Codable, Equatable {
+    public struct RequestParameters: AWSLambdaEvent, Equatable {
         public let sourceIPAddress: String
     }
 
-    public struct UserIdentity: Codable, Equatable {
+    public struct UserIdentity: AWSLambdaEvent, Equatable {
         public let principalId: String
     }
 
-    public struct Entity: Codable {
+    public struct Entity: AWSLambdaEvent {
         public let configurationId: String
         public let schemaVersion: String
         public let bucket: Bucket
@@ -59,13 +59,13 @@ public struct S3Event: Decodable {
         }
     }
 
-    public struct Bucket: Codable {
+    public struct Bucket: AWSLambdaEvent {
         public let name: String
         public let ownerIdentity: UserIdentity
         public let arn: String
     }
 
-    public struct Object: Codable {
+    public struct Object: AWSLambdaEvent {
         public let key: String
         /// The object's size in bytes.
         ///

@@ -13,10 +13,10 @@
 //===----------------------------------------------------------------------===//
 
 /// APIGatewayV2Request contains data coming from the new HTTP API Gateway
-public struct APIGatewayV2Request: Codable {
+public struct APIGatewayV2Request: AWSLambdaEvent {
     /// Context contains the information to identify the AWS account and resources invoking the Lambda function.
-    public struct Context: Codable {
-        public struct HTTP: Codable {
+    public struct Context: AWSLambdaEvent {
+        public struct HTTP: AWSLambdaEvent {
             public let method: HTTPMethod
             public let path: String
             public let `protocol`: String
@@ -25,9 +25,9 @@ public struct APIGatewayV2Request: Codable {
         }
 
         /// Authorizer contains authorizer information for the request context.
-        public struct Authorizer: Codable {
+        public struct Authorizer: AWSLambdaEvent {
             /// JWT contains JWT authorizer information for the request context.
-            public struct JWT: Codable {
+            public struct JWT: AWSLambdaEvent {
                 public let claims: [String: String]?
                 public let scopes: [String]?
             }

@@ -16,8 +16,8 @@ import struct Foundation.Date
 
 // https://docs.aws.amazon.com/lambda/latest/dg/with-sns.html
 
-public struct SNSEvent: Decodable {
-    public struct Record: Decodable {
+public struct SNSEvent: AWSLambdaEvent {
+    public struct Record: AWSLambdaEvent {
         public let eventVersion: String
         public let eventSubscriptionArn: String
         public let eventSource: String
@@ -37,8 +37,8 @@ public struct SNSEvent: Decodable {
         case records = "Records"
     }
 
-    public struct Message {
-        public enum Attribute {
+    public struct Message: AWSLambdaEvent {
+        public enum Attribute: AWSLambdaEvent {
             case string(String)
             case binary([UInt8])
         }

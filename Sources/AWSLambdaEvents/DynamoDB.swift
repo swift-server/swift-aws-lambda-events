@@ -12,28 +12,32 @@
 //
 //===----------------------------------------------------------------------===//
 
+#if compiler(>=5.6)
+@preconcurrency import struct Foundation.Date
+#else
 import struct Foundation.Date
+#endif
 
 // https://docs.aws.amazon.com/lambda/latest/dg/with-ddb.html
-public struct DynamoDBEvent: Decodable {
+public struct DynamoDBEvent: AWSLambdaEvent {
     public let records: [EventRecord]
 
     public enum CodingKeys: String, CodingKey {
         case records = "Records"
     }
 
-    public enum KeyType: String, Codable {
+    public enum KeyType: String, AWSLambdaEvent {
         case hash = "HASH"
         case range = "RANGE"
     }
 
-    public enum OperationType: String, Codable {
+    public enum OperationType: String, AWSLambdaEvent {
         case insert = "INSERT"
         case modify = "MODIFY"
         case remove = "REMOVE"
     }
 
-    public enum SharedIteratorType: String, Codable {
+    public enum SharedIteratorType: String, AWSLambdaEvent {
         case trimHorizon = "TRIM_HORIZON"
         case latest = "LATEST"
         case atSequenceNumber = "AT_SEQUENCE_NUMBER"
@@ -47,7 +51,7 @@ public struct DynamoDBEvent: Decodable {
         case disabled = "DISABLED"
     }
 
-    public enum StreamViewType: String, Codable {
+    public enum StreamViewType: String, AWSLambdaEvent {
         /// the entire item, as it appeared after it was modified.
         case newImage = "NEW_IMAGE"
         /// the entire item, as it appeared before it was modified.
@@ -58,7 +62,7 @@ public struct DynamoDBEvent: Decodable {
         case keysOnly = "KEYS_ONLY"
     }
 
-    public struct EventRecord: Decodable {
+    public struct EventRecord: AWSLambdaEvent {
         /// The region in which the GetRecords request was received.
         public let awsRegion: AWSRegion
 
@@ -113,7 +117,7 @@ public struct DynamoDBEvent: Decodable {
         }
     }
 
-    public struct StreamRecord {
+    public struct StreamRecord: AWSLambdaEvent {
         /// The approximate date and time when the stream record was created, in UNIX
         /// epoch time (http://www.epochconverter.com/) format.
         public let approximateCreationDateTime: Date?
@@ -138,7 +142,7 @@ public struct DynamoDBEvent: Decodable {
         public let streamViewType: StreamViewType
     }
 
-    public struct UserIdentity: Codable {
+    public struct UserIdentity: AWSLambdaEvent {
         public let type: String
         public let principalId: String
     }
@@ -187,7 +191,7 @@ extension DynamoDBEvent.StreamRecord: Decodable {
 // MARK: - AttributeValue -
 
 extension DynamoDBEvent {
-    public enum AttributeValue {
+    public enum AttributeValue: AWSLambdaEvent {
         case boolean(Bool)
         case binary([UInt8])
         case binarySet([[UInt8]])

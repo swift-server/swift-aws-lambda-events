@@ -16,7 +16,7 @@
 //   $ aws ssm get-parameters-by-path --path /aws/service/global-infrastructure/services/lambda/regions --output json
 
 /// Enumeration of the AWS Regions.
-public struct AWSRegion: RawRepresentable, Equatable {
+public struct AWSRegion: RawRepresentable, Equatable, _AWSLambdaEventsSendable {
     public typealias RawValue = String
 
     public let rawValue: String

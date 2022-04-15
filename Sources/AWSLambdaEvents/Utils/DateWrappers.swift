@@ -12,13 +12,17 @@
 //
 //===----------------------------------------------------------------------===//
 
+#if compiler(>=5.6)
+@preconcurrency import struct Foundation.Date
+#else
 import struct Foundation.Date
+#endif
 import class Foundation.DateFormatter
 import struct Foundation.Locale
 import struct Foundation.TimeZone
 
 @propertyWrapper
-public struct ISO8601Coding: Decodable {
+public struct ISO8601Coding: AWSLambdaEvent {
     public let wrappedValue: Date
 
     public init(wrappedValue: Date) {
@@ -47,7 +51,7 @@ public struct ISO8601Coding: Decodable {
 }
 
 @propertyWrapper
-public struct ISO8601WithFractionalSecondsCoding: Decodable {
+public struct ISO8601WithFractionalSecondsCoding: AWSLambdaEvent {
     public let wrappedValue: Date
 
     public init(wrappedValue: Date) {
@@ -76,7 +80,7 @@ public struct ISO8601WithFractionalSecondsCoding: Decodable {
 }
 
 @propertyWrapper
-public struct RFC5322DateTimeCoding: Decodable {
+public struct RFC5322DateTimeCoding: AWSLambdaEvent {
     public let wrappedValue: Date
 
     public init(wrappedValue: Date) {

@@ -12,12 +12,16 @@
 //
 //===----------------------------------------------------------------------===//
 
+#if compiler(>=5.6)
+@preconcurrency import struct Foundation.Date
+#else
 import struct Foundation.Date
+#endif
 
 /// EventBridge has the same events/notification types as CloudWatch
 typealias EventBridgeEvent = CloudwatchEvent
 
-public protocol CloudwatchDetail: Decodable {
+public protocol CloudwatchDetail: AWSLambdaEvent {
     static var name: String { get }
 }
 
@@ -33,7 +37,7 @@ extension CloudwatchDetail {
 /// https://docs.aws.amazon.com/lambda/latest/dg/services-cloudwatchevents.html
 /// https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/EventTypes.html
 /// https://docs.aws.amazon.com/eventbridge/latest/userguide/event-types.html
-public struct CloudwatchEvent<Detail: CloudwatchDetail>: Decodable {
+public struct CloudwatchEvent<Detail: CloudwatchDetail>: AWSLambdaEvent {
     public let id: String
     public let source: String
     public let accountId: String
@@ -89,7 +93,7 @@ public enum CloudwatchDetails {
         public struct InstanceStateChangeNotification: CloudwatchDetail {
             public static let name = "EC2 Instance State-change Notification"
 
-            public enum State: String, Codable {
+            public enum State: String, AWSLambdaEvent {
                 case running
                 case shuttingDown = "shutting-down"
                 case stopped
@@ -109,7 +113,7 @@ public enum CloudwatchDetails {
         public struct SpotInstanceInterruptionNotice: CloudwatchDetail {
             public static let name = "EC2 Spot Instance Interruption Warning"
 
-            public enum Action: String, Codable {
+            public enum Action: String, AWSLambdaEvent {
                 case hibernate
                 case stop
                 case terminate

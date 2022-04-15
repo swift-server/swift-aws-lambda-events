@@ -18,9 +18,9 @@ import class Foundation.JSONEncoder
 // https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
 
 /// APIGatewayRequest contains data coming from the API Gateway
-public struct APIGatewayRequest: Codable {
-    public struct Context: Codable {
-        public struct Identity: Codable {
+public struct APIGatewayRequest: AWSLambdaEvent {
+    public struct Context: AWSLambdaEvent {
+        public struct Identity: AWSLambdaEvent {
             public let cognitoIdentityPoolId: String?
 
             public let apiKey: String?

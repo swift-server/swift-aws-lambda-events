@@ -16,9 +16,9 @@ import class Foundation.JSONEncoder
 
 // https://github.com/aws/aws-lambda-go/blob/master/events/alb.go
 /// ALBTargetGroupRequest contains data originating from the ALB Lambda target group integration
-public struct ALBTargetGroupRequest: Codable {
+public struct ALBTargetGroupRequest: AWSLambdaEvent {
     /// ALBTargetGroupRequestContext contains the information to identify the load balancer invoking the lambda
-    public struct Context: Codable {
+    public struct Context: AWSLambdaEvent {
         public let elb: ELBContext
     }
 
@@ -44,12 +44,12 @@ public struct ALBTargetGroupRequest: Codable {
     public let body: String?
 
     /// ELBContext contains the information to identify the ARN invoking the lambda
-    public struct ELBContext: Codable {
+    public struct ELBContext: AWSLambdaEvent {
         public let targetGroupArn: String
     }
 }
 
-public struct ALBTargetGroupResponse: Codable {
+public struct ALBTargetGroupResponse: AWSLambdaEvent {
     public var statusCode: HTTPResponseStatus
     public var statusDescription: String?
     public var headers: HTTPHeaders?

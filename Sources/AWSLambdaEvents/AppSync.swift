@@ -13,10 +13,10 @@
 //===----------------------------------------------------------------------===//
 
 // https://docs.aws.amazon.com/appsync/latest/devguide/resolver-context-reference.html
-public struct AppSyncEvent: Decodable {
+public struct AppSyncEvent: AWSLambdaEvent {
     public let arguments: [String: ArgumentValue]
 
-    public enum ArgumentValue: Codable {
+    public enum ArgumentValue: AWSLambdaEvent {
         case string(String)
         case dictionary([String: String])
 
@@ -46,7 +46,7 @@ public struct AppSyncEvent: Decodable {
     }
 
     public let request: Request
-    public struct Request: Decodable {
+    public struct Request: AWSLambdaEvent {
         let headers: HTTPHeaders
     }
 
@@ -54,7 +54,7 @@ public struct AppSyncEvent: Decodable {
     public let stash: [String: String]?
 
     public let info: Info
-    public struct Info: Codable {
+    public struct Info: AWSLambdaEvent {
         public var selectionSetList: [String]
         public var selectionSetGraphQL: String
         public var parentTypeName: String
@@ -63,11 +63,11 @@ public struct AppSyncEvent: Decodable {
     }
 
     public let identity: Identity?
-    public enum Identity: Codable {
+    public enum Identity: AWSLambdaEvent {
         case iam(IAMIdentity)
         case cognitoUserPools(CognitoUserPoolIdentity)
 
-        public struct IAMIdentity: Codable {
+        public struct IAMIdentity: AWSLambdaEvent {
             public let accountId: String
             public let cognitoIdentityPoolId: String
             public let cognitoIdentityId: String
@@ -78,7 +78,7 @@ public struct AppSyncEvent: Decodable {
             public let cognitoIdentityAuthProvider: String
         }
 
-        public struct CognitoUserPoolIdentity: Codable {
+        public struct CognitoUserPoolIdentity: AWSLambdaEvent {
             public let defaultAuthStrategy: String
             public let issuer: String
             public let sourceIp: [String]
@@ -129,16 +129,6 @@ public struct AppSyncEvent: Decodable {
                 Unexpected Identity argument.
                 Expected a IAM Identity or a Cognito User Pool Identity.
                 """)
-            }
-        }
-
-        public func encode(to encoder: Encoder) throws {
-            var container = encoder.singleValueContainer()
-            switch self {
-            case .iam(let iamIdentity):
-                try container.encode(iamIdentity)
-            case .cognitoUserPools(let cognitoUserPool):
-                try container.encode(cognitoUserPool)
             }
         }
     }
