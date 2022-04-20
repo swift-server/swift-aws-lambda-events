@@ -2,7 +2,7 @@
 //
 // This source file is part of the SwiftAWSLambdaRuntime open source project
 //
-// Copyright (c) 2017-2020 Apple Inc. and the SwiftAWSLambdaRuntime project authors
+// Copyright (c) 2017-2022 Apple Inc. and the SwiftAWSLambdaRuntime project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE.txt for license information
@@ -106,3 +106,12 @@ public struct APIGatewayV2Response: Codable {
         self.cookies = cookies
     }
 }
+
+#if swift(>=5.6)
+extension APIGatewayV2Request: Sendable {}
+extension APIGatewayV2Request.Context: Sendable {}
+extension APIGatewayV2Request.Context.HTTP: Sendable {}
+extension APIGatewayV2Request.Context.Authorizer: Sendable {}
+extension APIGatewayV2Request.Context.Authorizer.JWT: Sendable {}
+extension APIGatewayV2Response: Sendable {}
+#endif

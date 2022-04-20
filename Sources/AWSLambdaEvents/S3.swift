@@ -2,7 +2,7 @@
 //
 // This source file is part of the SwiftAWSLambdaRuntime open source project
 //
-// Copyright (c) 2017-2020 Apple Inc. and the SwiftAWSLambdaRuntime project authors
+// Copyright (c) 2017-2022 Apple Inc. and the SwiftAWSLambdaRuntime project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE.txt for license information
@@ -77,3 +77,13 @@ public struct S3Event: Decodable {
         public let sequencer: String
     }
 }
+
+#if swift(>=5.6)
+extension S3Event: Sendable {}
+extension S3Event.Bucket: Sendable {}
+extension S3Event.Entity: Sendable {}
+extension S3Event.Object: Sendable {}
+extension S3Event.Record: Sendable {}
+extension S3Event.RequestParameters: Sendable {}
+extension S3Event.UserIdentity: Sendable {}
+#endif

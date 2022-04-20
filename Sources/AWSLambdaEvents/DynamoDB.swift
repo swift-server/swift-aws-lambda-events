@@ -2,7 +2,7 @@
 //
 // This source file is part of the SwiftAWSLambdaRuntime open source project
 //
-// Copyright (c) 2017-2020 Apple Inc. and the SwiftAWSLambdaRuntime project authors
+// Copyright (c) 2017-2022 Apple Inc. and the SwiftAWSLambdaRuntime project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE.txt for license information
@@ -12,7 +12,11 @@
 //
 //===----------------------------------------------------------------------===//
 
+#if swift(>=5.6)
+@preconcurrency import struct Foundation.Date
+#else
 import struct Foundation.Date
+#endif
 
 // https://docs.aws.amazon.com/lambda/latest/dg/with-ddb.html
 public struct DynamoDBEvent: Decodable {
@@ -930,3 +934,13 @@ extension DynamoDBEvent.AttributeValue {
         }
     }
 }
+
+#if swift(>=5.6)
+extension DynamoDBEvent: Sendable {}
+extension DynamoDBEvent.EventRecord: Sendable {}
+extension DynamoDBEvent.StreamRecord: Sendable {}
+extension DynamoDBEvent.UserIdentity: Sendable {}
+extension DynamoDBEvent.OperationType: Sendable {}
+extension DynamoDBEvent.AttributeValue: Sendable {}
+extension DynamoDBEvent.StreamViewType: Sendable {}
+#endif

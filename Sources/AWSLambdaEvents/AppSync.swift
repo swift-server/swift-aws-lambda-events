@@ -2,7 +2,7 @@
 //
 // This source file is part of the SwiftAWSLambdaRuntime open source project
 //
-// Copyright (c) 2017-2020 Apple Inc. and the SwiftAWSLambdaRuntime project authors
+// Copyright (c) 2017-2022 Apple Inc. and the SwiftAWSLambdaRuntime project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE.txt for license information
@@ -163,3 +163,15 @@ public enum AppSyncResponse<ResultType: Encodable>: Encodable {
 }
 
 public typealias AppSyncJSONResponse = AppSyncResponse<String>
+
+#if swift(>=5.6)
+extension AppSyncEvent: Sendable {}
+extension AppSyncEvent.ArgumentValue: Sendable {}
+extension AppSyncEvent.Request: Sendable {}
+extension AppSyncEvent.Info: Sendable {}
+extension AppSyncEvent.Identity: Sendable {}
+extension AppSyncEvent.Identity.CognitoUserPoolIdentity: Sendable {}
+extension AppSyncEvent.Identity.IAMIdentity: Sendable {}
+extension AppSyncResponse: Sendable where ResultType: Sendable {}
+
+#endif
