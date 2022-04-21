@@ -173,5 +173,4 @@ extension AppSyncEvent.Identity: Sendable {}
 extension AppSyncEvent.Identity.CognitoUserPoolIdentity: Sendable {}
 extension AppSyncEvent.Identity.IAMIdentity: Sendable {}
 extension AppSyncResponse: Sendable where ResultType: Sendable {}
-
 #endif
