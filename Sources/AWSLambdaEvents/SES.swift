@@ -2,7 +2,7 @@
 //
 // This source file is part of the SwiftAWSLambdaRuntime open source project
 //
-// Copyright (c) 2017-2020 Apple Inc. and the SwiftAWSLambdaRuntime project authors
+// Copyright (c) 2017-2022 Apple Inc. and the SwiftAWSLambdaRuntime project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE.txt for license information
@@ -96,3 +96,17 @@ public struct SESEvent: Decodable {
         case processingFailed = "PROCESSING_FAILED"
     }
 }
+
+#if swift(>=5.6)
+extension SESEvent: Sendable {}
+extension SESEvent.Record: Sendable {}
+extension SESEvent.Message: Sendable {}
+extension SESEvent.Mail: Sendable {}
+extension SESEvent.Receipt: Sendable {}
+extension SESEvent.CommonHeaders: Sendable {}
+extension SESEvent.Action: Sendable {}
+extension SESEvent.Header: Sendable {}
+extension SESEvent.DMARCPolicy: Sendable {}
+extension SESEvent.Verdict: Sendable {}
+extension SESEvent.Status: Sendable {}
+#endif

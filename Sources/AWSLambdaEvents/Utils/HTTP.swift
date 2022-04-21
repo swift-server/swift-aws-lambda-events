@@ -158,7 +158,7 @@ extension HTTPResponseStatus: Codable {
 
 extension String {
     internal var isValidHTTPToken: Bool {
-        self.utf8.allSatisfy { (char) -> Bool in
+        self.utf8.allSatisfy { char -> Bool in
             switch char {
             case UInt8(ascii: "a") ... UInt8(ascii: "z"),
                  UInt8(ascii: "A") ... UInt8(ascii: "Z"),
@@ -185,3 +185,8 @@ extension String {
         }
     }
 }
+
+#if swift(>=5.6)
+extension HTTPMethod: Sendable {}
+extension HTTPResponseStatus: Sendable {}
+#endif

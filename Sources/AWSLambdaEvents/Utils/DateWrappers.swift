@@ -12,7 +12,11 @@
 //
 //===----------------------------------------------------------------------===//
 
+#if swift(>=5.6)
+@preconcurrency import struct Foundation.Date
+#else
 import struct Foundation.Date
+#endif
 import class Foundation.DateFormatter
 import struct Foundation.Locale
 import struct Foundation.TimeZone
@@ -114,3 +118,9 @@ public struct RFC5322DateTimeCoding: Decodable {
         return [formatterWithDay, formatterWithoutDay]
     }
 }
+
+#if swift(>=5.6)
+extension ISO8601Coding: Sendable {}
+extension ISO8601WithFractionalSecondsCoding: Sendable {}
+extension RFC5322DateTimeCoding: Sendable {}
+#endif

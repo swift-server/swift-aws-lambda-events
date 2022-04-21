@@ -2,7 +2,7 @@
 //
 // This source file is part of the SwiftAWSLambdaRuntime open source project
 //
-// Copyright (c) 2017-2020 Apple Inc. and the SwiftAWSLambdaRuntime project authors
+// Copyright (c) 2017-2022 Apple Inc. and the SwiftAWSLambdaRuntime project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE.txt for license information
@@ -12,7 +12,11 @@
 //
 //===----------------------------------------------------------------------===//
 
+#if swift(>=5.6)
+@preconcurrency import struct Foundation.Date
+#else
 import struct Foundation.Date
+#endif
 
 /// EventBridge has the same events/notification types as CloudWatch
 typealias EventBridgeEvent = CloudwatchEvent
@@ -130,3 +134,9 @@ public enum CloudwatchDetails {
         let type: Any
     }
 }
+
+#if swift(>=5.6)
+extension CloudwatchEvent: Sendable where Detail: Sendable {}
+extension CloudwatchDetails.EC2: Sendable {}
+extension CloudwatchDetails.Scheduled: Sendable {}
+#endif

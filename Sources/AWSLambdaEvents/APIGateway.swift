@@ -2,7 +2,7 @@
 //
 // This source file is part of the SwiftAWSLambdaRuntime open source project
 //
-// Copyright (c) 2017-2020 Apple Inc. and the SwiftAWSLambdaRuntime project authors
+// Copyright (c) 2017-2022 Apple Inc. and the SwiftAWSLambdaRuntime project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE.txt for license information
@@ -87,3 +87,10 @@ public struct APIGatewayResponse: Codable {
         self.isBase64Encoded = isBase64Encoded
     }
 }
+
+#if swift(>=5.6)
+extension APIGatewayRequest: Sendable {}
+extension APIGatewayRequest.Context: Sendable {}
+extension APIGatewayRequest.Context.Identity: Sendable {}
+extension APIGatewayResponse: Sendable {}
+#endif

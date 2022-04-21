@@ -2,7 +2,7 @@
 //
 // This source file is part of the SwiftAWSLambdaRuntime open source project
 //
-// Copyright (c) 2017-2020 Apple Inc. and the SwiftAWSLambdaRuntime project authors
+// Copyright (c) 2017-2022 Apple Inc. and the SwiftAWSLambdaRuntime project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE.txt for license information
@@ -90,3 +90,7 @@ extension AWSRegion: Codable {
         try container.encode(self.rawValue)
     }
 }
+
+#if swift(>=5.6)
+extension AWSRegion: Sendable {}
+#endif
