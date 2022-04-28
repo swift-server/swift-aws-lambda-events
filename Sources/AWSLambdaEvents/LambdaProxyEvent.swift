@@ -14,14 +14,6 @@
 
 public struct LambdaProxyEvent: Codable {
     public struct RequestContext: Codable {
-        public struct HTTP: Codable {
-            public let httpMethod: HTTPMethod
-            public let path: String
-            public let `protocol`: String
-            public let sourceIp: String
-            public let userAgent: String
-        }
-
         /// Authorizer contains authorizer information for the request context.
         public struct Authorizer: Codable {
             public let claims: [String: String]?
@@ -42,9 +34,27 @@ public struct LambdaProxyEvent: Codable {
         public let path: String?
         
         /// The request time in format: 23/Apr/2020:11:08:18 +0000
-        public let time: String?
         public let requestTime: String?
         public let requestTimeEpoch: UInt64
+        
+        enum CodingKeys: String, CodingKey {
+            case accountID = "accountId"
+            case apiID = "apiId"
+            case domainName
+            case domainPrefix
+            case stage
+            
+            case httpMethod
+            case authorizer
+            
+            case requestID = "requestId"
+            
+            case resourcePath
+            case path
+            
+            case requestTime
+            case requestTimeEpoch
+        }
     }
 
     public let resource: String
@@ -61,28 +71,10 @@ public struct LambdaProxyEvent: Codable {
 
     public let body: String?
     public let isBase64Encoded: Bool
-
-    enum CodingKeys: String, CodingKey {
-        case resource
-        case path
-        case httpMethod
-
-        case cookies
-        case headers
-        case queryStringParameters
-        case pathParameters
-
-        case requestContext
-        case stageVariables
-
-        case body
-        case isBase64Encoded
-    }
 }
 
 #if swift(>=5.6)
 extension LambdaProxyEvent: Sendable {}
 extension LambdaProxyEvent.RequestContext: Sendable {}
-extension LambdaProxyEvent.RequestContext.HTTP: Sendable {}
 extension LambdaProxyEvent.RequestContext.Authorizer: Sendable {}
 #endif
