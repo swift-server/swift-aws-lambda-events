@@ -28,7 +28,7 @@ public struct LambdaProxyEvent: Codable {
             public let scopes: [String]?
         }
 
-        public let accountId: String
+        public let accountID: String
         public let apiID: String
         public let domainName: String
         public let domainPrefix: String
