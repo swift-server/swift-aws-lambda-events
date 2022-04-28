@@ -57,7 +57,7 @@ public struct LambdaProxyEvent: Codable {
     public let queryStringParameters: [String: String]?
     public let pathParameters: [String: String]?
 
-    public let context: Context
+    public let requestContext: RequestContext
 
     public let body: String?
     public let isBase64Encoded: Bool
