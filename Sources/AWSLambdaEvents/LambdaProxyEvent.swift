@@ -29,7 +29,7 @@ public struct LambdaProxyEvent: Codable {
         }
 
         public let accountId: String
-        public let apiId: String
+        public let apiID: String
         public let domainName: String
         public let domainPrefix: String
         public let stage: String
