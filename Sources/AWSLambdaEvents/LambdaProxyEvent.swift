@@ -33,7 +33,7 @@ public struct LambdaProxyEvent: Codable {
         public let domainName: String
         public let domainPrefix: String
         public let stage: String
-        public let requestId: String
+        public let requestID: String
         
         public let httpMethod: HTTPMethod
         public let authorizer: Authorizer?
