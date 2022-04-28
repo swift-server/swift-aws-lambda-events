@@ -82,7 +82,7 @@ public struct LambdaProxyEvent: Codable {
 
 #if swift(>=5.6)
 extension LambdaProxyEvent: Sendable {}
-extension LambdaProxyEvent.Context: Sendable {}
-extension LambdaProxyEvent.Context.HTTP: Sendable {}
-extension LambdaProxyEvent.Context.Authorizer: Sendable {}
+extension LambdaProxyEvent.RequestContext: Sendable {}
+extension LambdaProxyEvent.RequestContext.HTTP: Sendable {}
+extension LambdaProxyEvent.RequestContext.Authorizer: Sendable {}
 #endif
