@@ -2,7 +2,7 @@
 //
 // This source file is part of the SwiftAWSLambdaRuntime open source project
 //
-// Copyright (c) 2022 Apple Inc. and the SwiftAWSLambdaRuntime project authors
+// Copyright (c) 2017-2022 Apple Inc. and the SwiftAWSLambdaRuntime project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE.txt for license information
@@ -12,8 +12,9 @@
 //
 //===----------------------------------------------------------------------===//
 
-public struct LambdaProxyEvent: Codable {
-    public struct RequestContext: Codable {
+/// LambdaGatewayProxyEvent contains data coming from the new HTTP API Gateway Proxy
+public struct LambdaGatewayProxyEvent: Decodable {
+    public struct RequestContext: Decodable {
         /// Authorizer contains authorizer information for the request context.
         public struct Authorizer: Codable {
             public let claims: [String: String]?
@@ -26,32 +27,32 @@ public struct LambdaProxyEvent: Codable {
         public let domainPrefix: String
         public let stage: String
         public let requestID: String
-        
+
         public let httpMethod: HTTPMethod
         public let authorizer: Authorizer?
 
         public let resourcePath: String?
         public let path: String?
-        
+
         /// The request time in format: 23/Apr/2020:11:08:18 +0000
         public let requestTime: String?
         public let requestTimeEpoch: UInt64
-        
+
         enum CodingKeys: String, CodingKey {
             case accountID = "accountId"
             case apiID = "apiId"
             case domainName
             case domainPrefix
             case stage
-            
+
             case httpMethod
             case authorizer
-            
+
             case requestID = "requestId"
-            
+
             case resourcePath
             case path
-            
+
             case requestTime
             case requestTimeEpoch
         }
@@ -61,7 +62,7 @@ public struct LambdaProxyEvent: Codable {
     public let path: String
     public let httpMethod: String
     public let stageVariables: [String: String]?
-    
+
     public let cookies: [String]?
     public let headers: HTTPHeaders
     public let queryStringParameters: [String: String]?
@@ -74,7 +75,7 @@ public struct LambdaProxyEvent: Codable {
 }
 
 #if swift(>=5.6)
-extension LambdaProxyEvent: Sendable {}
-extension LambdaProxyEvent.RequestContext: Sendable {}
-extension LambdaProxyEvent.RequestContext.Authorizer: Sendable {}
+extension LambdaGatewayProxyEvent: Sendable {}
+extension LambdaGatewayProxyEvent.RequestContext: Sendable {}
+extension LambdaGatewayProxyEvent.RequestContext.Authorizer: Sendable {}
 #endif

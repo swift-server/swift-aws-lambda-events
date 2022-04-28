@@ -15,7 +15,7 @@
 @testable import AWSLambdaEvents
 import XCTest
 
-class LambdaProxyEventTests: XCTestCase {
+class LambdaGatewayProxyEventTests: XCTestCase {
     static let exampleLambdaProxyEvent = """
     {
         "resource": "/hello",
@@ -115,17 +115,16 @@ class LambdaProxyEventTests: XCTestCase {
     // MARK: - Request -
 
     // MARK: Decoding
-    
+
     func testRequestDecodingExampleProxyRequest() {
-        let data = LambdaProxyEventTests.exampleLambdaProxyEvent.data(using: .utf8)!
-        var req: LambdaProxyEvent?
-        XCTAssertNoThrow(req = try JSONDecoder().decode(LambdaProxyEvent.self, from: data))
-        
+        let data = LambdaGatewayProxyEventTests.exampleLambdaProxyEvent.data(using: .utf8)!
+        var req: LambdaGatewayProxyEvent?
+        XCTAssertNoThrow(req = try JSONDecoder().decode(LambdaGatewayProxyEvent.self, from: data))
+
         XCTAssertEqual(req?.path, "/hello")
         XCTAssertEqual(req?.requestContext.httpMethod, .GET)
         XCTAssertEqual(req?.queryStringParameters?.count, 1)
         XCTAssertEqual(req?.headers.count, 8)
         XCTAssertNotNil(req?.body)
     }
-
 }
