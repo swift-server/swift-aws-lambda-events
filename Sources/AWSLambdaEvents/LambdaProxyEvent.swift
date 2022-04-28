@@ -72,7 +72,7 @@ public struct LambdaProxyEvent: Codable {
         case queryStringParameters
         case pathParameters
 
-        case context = "requestContext"
+        case requestContext
         case stageVariables
 
         case body
