@@ -13,7 +13,7 @@
 //===----------------------------------------------------------------------===//
 
 public struct LambdaProxyEvent: Codable {
-    public struct Context: Codable {
+    public struct RequestContext: Codable {
         public struct HTTP: Codable {
             public let httpMethod: HTTPMethod
             public let path: String
