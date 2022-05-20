@@ -32,8 +32,7 @@ class CloudFormationTests: XCTestCase {
           "RequestId": "cdc73f9d-aea9-11e3-9d5a-835b769c0d9c",
           "StackId": "arn:aws:cloudformation:us-east-1:123456789:stack/TestStack",
           "ResponseURL": "http://localhost:7000/response/test",
-          "LogicalResourceId": "TestLogicalResource",
-          "ResourceProperties": {}
+          "LogicalResourceId": "TestLogicalResource"
         }
         """
   }
@@ -100,7 +99,7 @@ class CloudFormationTests: XCTestCase {
     XCTAssertEqual(event.responseURL, "http://localhost:7000/response/test")
     XCTAssertEqual(event.logicalResourceId, "TestLogicalResource")
     XCTAssertNil(event.physicalResourceId)
-    XCTAssertNotNil(event.resourceProperties)
+    XCTAssertNil(event.resourceProperties)
     XCTAssertNil(event.oldResourceProperties)
   }
   
