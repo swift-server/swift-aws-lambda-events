@@ -29,7 +29,7 @@ public enum CloudFormation {
     let physicalResourceId: String?
     let logicalResourceId: String
     let stackId: String
-    let resourceProperties: R
+    let resourceProperties: R?
     let oldResourceProperties: O?
 
     enum CodingKeys : String, CodingKey {
@@ -52,7 +52,7 @@ public enum CloudFormation {
       self.logicalResourceId = try container.decode(String.self, forKey: .logicalResourceId)
       self.stackId = try container.decode(String.self, forKey: .stackId)
       self.physicalResourceId = try container.decodeIfPresent(String.self, forKey: .physicalResourceId)
-      self.resourceProperties = try container.decode(R.self, forKey: .resourceProperties)
+      self.resourceProperties = try container.decodeIfPresent(R.self, forKey: .resourceProperties)
       self.oldResourceProperties = try container.decodeIfPresent(O.self, forKey: .oldResourceProperties)
     }
   }
