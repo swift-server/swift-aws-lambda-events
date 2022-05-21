@@ -80,7 +80,7 @@ class CloudFormationTests: XCTestCase {
   }
   
   static func eventBodyResponse() -> String {
-    "{\"StackId\":\"arn:aws:cloudformation:us-east-1:123456789:stack\\/TestStack\",\"Reason\":\"See the details in CloudWatch Log Stream\",\"NoEcho\":false,\"Status\":\"SUCCESS\",\"LogicalResourceId\":\"TestLogicalResource\",\"RequestId\":\"cdc73f9d-aea9-11e3-9d5a-835b769c0d9c\",\"Data\":{\"property2\":\"\",\"property3\":[\"1\",\"2\",\"3\"],\"property1\":\"value1\"},\"PhysicalResourceId\":\"TestPhysicalResource\"}"
+    "{\"Data\":{\"property1\":\"value1\",\"property2\":\"\",\"property3\":[\"1\",\"2\",\"3\"]},\"LogicalResourceId\":\"TestLogicalResource\",\"NoEcho\":false,\"PhysicalResourceId\":\"TestPhysicalResource\",\"Reason\":\"See the details in CloudWatch Log Stream\",\"RequestId\":\"cdc73f9d-aea9-11e3-9d5a-835b769c0d9c\",\"StackId\":\"arn:aws:cloudformation:us-east-1:123456789:stack\\/TestStack\",\"Status\":\"SUCCESS\"}"
   }
   
   func testDecodeRequestRequiredFieldsFromJSON() {
@@ -92,7 +92,7 @@ class CloudFormationTests: XCTestCase {
     guard let event = event else {
       return XCTFail("Expected to have an event")
     }
-    
+
     XCTAssertEqual(event.requestId, "cdc73f9d-aea9-11e3-9d5a-835b769c0d9c")
     XCTAssertEqual(event.requestType, CloudFormation.Request.RequestType.create)
     XCTAssertEqual(event.stackId, "arn:aws:cloudformation:us-east-1:123456789:stack/TestStack")
@@ -168,13 +168,18 @@ class CloudFormationTests: XCTestCase {
         property4: nil
       )
     )
-    
+
+    let encoder = JSONEncoder()
+    encoder.outputFormatting = [.sortedKeys]
+
     var data: Data?
-    XCTAssertNoThrow(data = try JSONEncoder().encode(resp))
+    XCTAssertNoThrow(data = try encoder.encode(resp))
     
     var stringData: String?
     XCTAssertNoThrow(stringData = String(data: try XCTUnwrap(data), encoding: .utf8))
-    
+
+    print(stringData ?? "")
+
     XCTAssertEqual(CloudFormationTests.eventBodyResponse(), stringData)
   }
 }
