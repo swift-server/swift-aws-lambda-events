@@ -23,14 +23,14 @@ public enum CloudFormation {
             case delete = "Delete"
         }
 
-        let requestType: RequestType
-        let requestId: String
-        let responseURL: String
-        let physicalResourceId: String?
-        let logicalResourceId: String
-        let stackId: String
-        let resourceProperties: R?
-        let oldResourceProperties: O?
+        public let requestType: RequestType
+        public let requestId: String
+        public let responseURL: String
+        public let physicalResourceId: String?
+        public let logicalResourceId: String
+        public let stackId: String
+        public let resourceProperties: R?
+        public let oldResourceProperties: O?
 
         enum CodingKeys: String, CodingKey {
             case requestType = "RequestType"
@@ -65,14 +65,14 @@ public enum CloudFormation {
             case failed = "FAILED"
         }
 
-        let status: StatusType
-        let requestId: String
-        let logicalResourceId: String
-        let stackId: String
-        let physicalResourceId: String?
-        let reason: String?
-        let noEcho: Bool?
-        let data: D?
+        public let status: StatusType
+        public let requestId: String
+        public let logicalResourceId: String
+        public let stackId: String
+        public let physicalResourceId: String?
+        public let reason: String?
+        public let noEcho: Bool?
+        public let data: D?
 
         enum CodingKeys: String, CodingKey {
             case status = "Status"
