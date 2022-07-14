@@ -65,7 +65,7 @@ public struct FunctionURLRequest: Codable {
     public let routeKey: String
     public let rawPath: String
     public let rawQueryString: String
-    public let cookies: [String]
+    public let cookies: [String]?
     public let headers: HTTPHeaders
     public let queryStringParameters: [String: String]?
 
