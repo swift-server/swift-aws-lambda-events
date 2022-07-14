@@ -47,7 +47,7 @@ public struct FunctionURLRequest: Codable {
         public let accountId: String
         public let apiId: String
         public let authentication: String?
-        public let authorizer: Authorizer
+        public let authorizer: Authorizer?
         public let domainName: String
         public let domainPrefix: String
         public let http: HTTP
