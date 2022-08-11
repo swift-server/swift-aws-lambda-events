@@ -1,4 +1,4 @@
-// swift-tools-version:5.6
+// swift-tools-version:5.4
 
 import PackageDescription
 
@@ -7,9 +7,7 @@ let package = Package(
     products: [
         .library(name: "AWSLambdaEvents", targets: ["AWSLambdaEvents"]),
     ],
-    dependencies: [
-        .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"),
-    ],
+    dependencies: [],
     targets: [
         .target(name: "AWSLambdaEvents", dependencies: []),
         .testTarget(name: "AWSLambdaEventsTests", dependencies: ["AWSLambdaEvents"]),

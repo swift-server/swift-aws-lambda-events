@@ -52,13 +52,13 @@ public struct DynamoDBEvent: Decodable {
     }
 
     public enum StreamViewType: String, Codable {
-        /// the entire item, as it appeared after it was modified.
+        /// The entire item, as it appeared after it was modified.
         case newImage = "NEW_IMAGE"
-        /// the entire item, as it appeared before it was modified.
+        /// The entire item, as it appeared before it was modified.
         case oldImage = "OLD_IMAGE"
-        /// both the new and the old item images of the item.
+        /// Both the new and the old item images of the item.
         case newAndOldImages = "NEW_AND_OLD_IMAGES"
-        /// only the key attributes of the modified item.
+        /// Only the key attributes of the modified item.
         case keysOnly = "KEYS_ONLY"
     }
 
@@ -75,32 +75,32 @@ public struct DynamoDBEvent: Decodable {
         public let eventId: String
 
         /// The type of data modification that was performed on the DynamoDB table:
-        ///  * INSERT - a new item was added to the table.
-        ///  * MODIFY - one or more of an existing item's attributes were modified.
-        ///  * REMOVE - the item was deleted from the table
+        ///  * `INSERT` - a new item was added to the table.
+        ///  * `MODIFY` - one or more of an existing item's attributes were modified.
+        ///  * `REMOVE` - the item was deleted from the table.
         public let eventName: OperationType
 
         /// The AWS service from which the stream record originated. For DynamoDB Streams,
-        /// this is aws:dynamodb.
+        /// this is `aws:dynamodb`.
         public let eventSource: String
 
         /// The version number of the stream record format. This number is updated whenever
         /// the structure of Record is modified.
         ///
-        /// Client applications must not assume that eventVersion will remain at a particular
-        /// value, as this number is subject to change at any time. In general, eventVersion
+        /// Client applications must not assume that `eventVersion` will remain at a particular
+        /// value, as this number is subject to change at any time. In general, `eventVersion`
         /// will only increase as the low-level DynamoDB Streams API evolves.
         public let eventVersion: String
 
-        /// The event source ARN of DynamoDB
+        /// The event source ARN of DynamoDB.
         public let eventSourceArn: String
 
         /// Items that are deleted by the Time to Live process after expiration have
         /// the following fields:
-        ///  * Records[].userIdentity.type
+        ///  * `Records[].userIdentity.type`
         ///
         /// "Service"
-        ///  * Records[].userIdentity.principalId
+        ///  * `Records[].userIdentity.principalId`
         ///
         /// "dynamodb.amazonaws.com"
         public let userIdentity: UserIdentity?
