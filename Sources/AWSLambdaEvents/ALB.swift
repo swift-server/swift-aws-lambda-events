@@ -15,9 +15,9 @@
 import class Foundation.JSONEncoder
 
 // https://github.com/aws/aws-lambda-go/blob/master/events/alb.go
-/// ALBTargetGroupRequest contains data originating from the ALB Lambda target group integration
+/// `ALBTargetGroupRequest` contains data originating from the ALB Lambda target group integration.
 public struct ALBTargetGroupRequest: Codable {
-    /// ALBTargetGroupRequestContext contains the information to identify the load balancer invoking the lambda
+    /// `Context` contains information to identify the load balancer invoking the lambda.
     public struct Context: Codable {
         public let elb: ELBContext
     }
@@ -26,14 +26,14 @@ public struct ALBTargetGroupRequest: Codable {
     public let path: String
     public let queryStringParameters: [String: String]
 
-    /// Depending on your configuration of your target group either `headers` or `multiValueHeaders`
+    /// Depending on your configuration of your target group either ``headers`` or ``multiValueHeaders``
     /// are set.
     ///
     /// For more information visit:
     /// https://docs.aws.amazon.com/elasticloadbalancing/latest/application/lambda-functions.html#multi-value-headers
     public let headers: HTTPHeaders?
 
-    /// Depending on your configuration of your target group either `headers` or `multiValueHeaders`
+    /// Depending on your configuration of your target group either ``headers`` or ``multiValueHeaders``
     /// are set.
     ///
     /// For more information visit:
@@ -43,7 +43,7 @@ public struct ALBTargetGroupRequest: Codable {
     public let isBase64Encoded: Bool
     public let body: String?
 
-    /// ELBContext contains the information to identify the ARN invoking the lambda
+    /// `ELBContext` contains information to identify the ARN invoking the lambda.
     public struct ELBContext: Codable {
         public let targetGroupArn: String
     }
