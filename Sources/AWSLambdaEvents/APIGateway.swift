@@ -35,6 +35,11 @@ public struct APIGatewayRequest: Codable {
             public let accountId: String?
         }
 
+        public struct Authorizer: Codable {
+            public let claims: [String: String]
+            public let scopes: [String]?
+        }
+
         public let resourceId: String
         public let apiId: String
         public let resourcePath: String
@@ -44,6 +49,7 @@ public struct APIGatewayRequest: Codable {
         public let stage: String
 
         public let identity: Identity
+        public let authorizer: Authorizer?
         public let extendedRequestId: String?
         public let path: String
     }
