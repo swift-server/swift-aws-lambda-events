@@ -37,6 +37,7 @@ public struct APIGatewayRequest: Codable {
 
         public let resourceId: String
         public let apiId: String
+        public let domainName: String?
         public let resourcePath: String
         public let httpMethod: String
         public let requestId: String
