@@ -37,7 +37,7 @@ public struct FunctionURLRequest: Codable {
         }
 
         public struct HTTP: Codable {
-            public let method: String
+            public let method: HTTPMethod
             public let path: String
             public let `protocol`: String
             public let sourceIp: String
