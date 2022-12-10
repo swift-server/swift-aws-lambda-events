@@ -54,7 +54,7 @@ public struct SNSEvent: Decodable {
         public var timestamp: Date
         public let signingCertURL: String
         public let message: String
-        public let unsubscribeUrl: String
+        public let unsubscribeURL: String
         public let subject: String?
     }
 }
@@ -68,9 +68,9 @@ extension SNSEvent.Message: Decodable {
         case messageAttributes = "MessageAttributes"
         case signatureVersion = "SignatureVersion"
         case timestamp = "Timestamp"
-        case signingCertURL = "SigningCertUrl"
+        case signingCertURL = "SigningCertURL"
         case message = "Message"
-        case unsubscribeUrl = "UnsubscribeUrl"
+        case unsubscribeURL = "UnsubscribeURL"
         case subject = "Subject"
     }
 }
