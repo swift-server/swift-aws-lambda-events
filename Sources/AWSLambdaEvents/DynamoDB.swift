@@ -12,11 +12,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-#if swift(>=5.6)
-@preconcurrency import struct Foundation.Date
-#else
 import struct Foundation.Date
-#endif
 
 // https://docs.aws.amazon.com/lambda/latest/dg/with-ddb.html
 public struct DynamoDBEvent: Decodable {

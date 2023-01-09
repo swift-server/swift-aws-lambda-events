@@ -12,11 +12,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-#if swift(>=5.6)
-@preconcurrency import struct Foundation.Date
-#else
 import struct Foundation.Date
-#endif
 
 /// EventBridge has the same events/notification types as CloudWatch
 typealias EventBridgeEvent = CloudwatchEvent

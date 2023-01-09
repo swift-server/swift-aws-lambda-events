@@ -12,11 +12,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-#if swift(>=5.6)
-@preconcurrency import struct Foundation.Date
-#else
 import struct Foundation.Date
-#endif
 import class Foundation.DateFormatter
 import struct Foundation.Locale
 import struct Foundation.TimeZone
