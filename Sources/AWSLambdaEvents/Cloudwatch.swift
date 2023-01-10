@@ -12,7 +12,11 @@
 //
 //===----------------------------------------------------------------------===//
 
+#if canImport(Darwin)
 import struct Foundation.Date
+#else
+@preconcurrency import struct Foundation.Date
+#endif
 
 /// EventBridge has the same events/notification types as CloudWatch
 typealias EventBridgeEvent = CloudwatchEvent

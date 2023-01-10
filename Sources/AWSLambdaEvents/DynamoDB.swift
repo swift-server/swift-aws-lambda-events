@@ -12,7 +12,11 @@
 //
 //===----------------------------------------------------------------------===//
 
+#if canImport(Darwin)
 import struct Foundation.Date
+#else
+@preconcurrency import struct Foundation.Date
+#endif
 
 // https://docs.aws.amazon.com/lambda/latest/dg/with-ddb.html
 public struct DynamoDBEvent: Decodable {
