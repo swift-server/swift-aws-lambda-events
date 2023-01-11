@@ -12,10 +12,10 @@
 //
 //===----------------------------------------------------------------------===//
 
-#if swift(>=5.6)
-@preconcurrency import struct Foundation.Date
-#else
+#if canImport(Darwin)
 import struct Foundation.Date
+#else
+@preconcurrency import struct Foundation.Date
 #endif
 import class Foundation.DateFormatter
 import struct Foundation.Locale
