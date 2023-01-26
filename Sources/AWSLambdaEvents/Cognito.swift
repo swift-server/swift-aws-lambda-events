@@ -92,7 +92,7 @@ extension CognitoEvent: Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
-        let params = commonParameters
+        let params = self.commonParameters
 
         try container.encode(params.version, forKey: .version)
         try container.encode(params.triggerSource, forKey: .triggerSource)
@@ -130,7 +130,6 @@ public enum CognitoEventResponse {
         }
     }
 }
-
 
 extension CognitoEventResponse: Codable {
     public enum CodingKeys: String, CodingKey {
@@ -170,7 +169,7 @@ extension CognitoEventResponse: Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
-        let params = commonParameters
+        let params = self.commonParameters
 
         try container.encode(params.version, forKey: .version)
         try container.encode(params.triggerSource, forKey: .triggerSource)

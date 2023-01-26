@@ -18,31 +18,31 @@ import XCTest
 final class CognitoTests: XCTestCase {
     func testPreSignUpRequest() throws {
         let json = """
-{
- "version": "1",
- "triggerSource": "PreSignUp_SignUp",
- "region": "us-east-1",
- "userPoolId": "abc",
- "userName": "blob",
- "callerContext": {
-  "awsSdkVersion": "1",
-  "clientId": "abc",
- },
- "request": {
-  "userAttributes": {
-   "string": "string"
-  },
-  "validationData": {
-   "string": "string"
-   },
-  "clientMetadata": {
-   "string": "string"
-   }
- },
+        {
+         "version": "1",
+         "triggerSource": "PreSignUp_SignUp",
+         "region": "us-east-1",
+         "userPoolId": "abc",
+         "userName": "blob",
+         "callerContext": {
+          "awsSdkVersion": "1",
+          "clientId": "abc",
+         },
+         "request": {
+          "userAttributes": {
+           "string": "string"
+          },
+          "validationData": {
+           "string": "string"
+           },
+          "clientMetadata": {
+           "string": "string"
+           }
+         },
 
- "response": {}
-}
-"""
+         "response": {}
+        }
+        """
         let event = try JSONDecoder().decode(CognitoEvent.self, from: json.data(using: .utf8)!)
 
         guard case .preSignUpSignUp(let params, let request) = event else {
@@ -88,5 +88,4 @@ final class CognitoTests: XCTestCase {
         XCTAssertEqual(decodedRequest, request)
         XCTAssertEqual(decodedResponse, signUpResponse)
     }
-
 }
