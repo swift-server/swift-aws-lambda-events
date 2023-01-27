@@ -18,6 +18,7 @@ AWS Lambda functions can be invoked directly from the AWS Lambda console UI, AWS
 * [SNS Events](https://docs.aws.amazon.com/lambda/latest/dg/with-sns.html)
 * [SQS Events](https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html)
 * [CloudWatch Events](https://docs.aws.amazon.com/lambda/latest/dg/services-cloudwatchevents.html)
+* [Cognito Lambda Triggers](https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-identity-pools-working-with-aws-lambda-triggers.html)
 
 **Note**: Each one of the integration points mentioned above includes a set of `Codable` structs that mirror AWS' data model for these APIs.
 
@@ -38,3 +39,4 @@ Swift AWS Lambda Events is a supporting library for the [Swift AWS Lambda Runtim
 - ``SESEvent``
 - ``SNSEvent``
 - ``SQSEvent``
+- ``CognitoEvent``
