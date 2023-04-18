@@ -22,7 +22,7 @@ AWS Lambda functions can be invoked directly from the AWS Lambda console UI, AWS
 
 ## Getting started
 
-If you have never used AWS Lambda or Docker before, check out this [getting started guide](https://fabianfett.de/getting-started-with-swift-aws-lambda-runtime) which helps you with every step from zero to a running Lambda.
+If you have never used AWS Lambda or Docker before, check out this [getting started guide](https://fabianfett.dev/getting-started-with-swift-aws-lambda-runtime) which helps you with every step from zero to a running Lambda.
 
 Swift AWS Lambda Events is a supporting library for the [Swift AWS Lambda Runtime](http://github.com/swift-server/swift-aws-lambda-runtime) library, where you can find further documentation and examples.
 
