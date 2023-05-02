@@ -35,6 +35,17 @@ public struct APIGatewayRequest: Codable {
             public let accountId: String?
         }
 
+        /// `Authorizer` contains authorizer information for the request context.
+        public struct Authorizer: Codable, Sendable {
+          /// `JWT` contains JWT authorizer information for the request context.
+            public struct JWT: Codable, Sendable {
+                public let claims: [String: String]?
+                public let scopes: [String]?
+            }
+
+            public let jwt: JWT
+        }
+
         public let resourceId: String
         public let apiId: String
         public let domainName: String?
@@ -45,6 +56,7 @@ public struct APIGatewayRequest: Codable {
         public let stage: String
 
         public let identity: Identity
+        public let authorizer: Authorizer?
         public let extendedRequestId: String?
         public let path: String
     }
