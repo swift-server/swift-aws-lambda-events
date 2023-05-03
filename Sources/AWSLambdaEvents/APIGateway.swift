@@ -36,7 +36,7 @@ public struct APIGatewayRequest: Codable {
         }
 
         public struct Authorizer: Codable {
-          public let claims: [String: String]?
+            public let claims: [String: String]?
         }
 
         public let resourceId: String
