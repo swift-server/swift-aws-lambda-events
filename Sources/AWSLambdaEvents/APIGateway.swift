@@ -35,10 +35,9 @@ public struct APIGatewayRequest: Codable {
             public let accountId: String?
         }
 
-        /// `Authorizer` contains authorizer information for the request context.
-			public struct Authorizer: Codable, Sendable {
-					public let claims: [String: String]?
-				}
+        public struct Authorizer: Codable {
+          public let claims: [String: String]?
+        }
 
         public let resourceId: String
         public let apiId: String
@@ -99,5 +98,6 @@ public struct APIGatewayResponse: Codable {
 extension APIGatewayRequest: Sendable {}
 extension APIGatewayRequest.Context: Sendable {}
 extension APIGatewayRequest.Context.Identity: Sendable {}
+extension APIGatewayRequest.Context.Authorizer: Sendable {}
 extension APIGatewayResponse: Sendable {}
 #endif
