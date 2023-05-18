@@ -68,9 +68,9 @@ extension SNSEvent.Message: Decodable {
         case messageAttributes = "MessageAttributes"
         case signatureVersion = "SignatureVersion"
         case timestamp = "Timestamp"
-        case signingCertURL = "SigningCertURL"
+        case signingCertURL = "SigningCertUrl"
         case message = "Message"
-        case unsubscribeURL = "UnsubscribeURL"
+        case unsubscribeURL = "UnsubscribeUrl"
         case subject = "Subject"
     }
 }
