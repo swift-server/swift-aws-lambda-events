@@ -38,7 +38,7 @@ extension String {
     }
 }
 
-extension Sequence where Self.Element == UInt8 {
+extension String.UTF8View {
     /// Compares the collection of `UInt8`s to a case insensitive collection.
     ///
     /// This collection could be get from applying the `UTF8View`
