@@ -46,7 +46,7 @@ extension String.UTF8View {
     ///
     /// - Parameter bytes: The string constant in the form of a collection of `UInt8`
     /// - Returns: Whether the collection contains **EXACTLY** this array or no, but by ignoring case.
-    internal func compareCaseInsensitiveASCIIBytes(to: String.UTF8View ) -> Bool {
+    internal func compareCaseInsensitiveASCIIBytes(to: String.UTF8View) -> Bool {
         // fast path: we can get the underlying bytes of both
         let maybeMaybeResult = self.withContiguousStorageIfAvailable { lhsBuffer -> Bool? in
             to.withContiguousStorageIfAvailable { rhsBuffer in
