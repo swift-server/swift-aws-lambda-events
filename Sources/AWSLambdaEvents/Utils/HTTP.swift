@@ -34,7 +34,7 @@ extension HTTPHeaders {
 
 extension String {
     internal func isEqualCaseInsensitiveASCIIBytes(to: String) -> Bool {
-        return self.utf8.compareCaseInsensitiveASCIIBytes(to: to.utf8)
+        self.utf8.compareCaseInsensitiveASCIIBytes(to: to.utf8)
     }
 }
 
@@ -46,8 +46,7 @@ extension String.UTF8View {
     ///
     /// - Parameter bytes: The string constant in the form of a collection of `UInt8`
     /// - Returns: Whether the collection contains **EXACTLY** this array or no, but by ignoring case.
-    internal func compareCaseInsensitiveASCIIBytes<T: Sequence>(to: T) -> Bool
-    where T.Element == UInt8 {
+    internal func compareCaseInsensitiveASCIIBytes(to: String.UTF8View ) -> Bool {
         // fast path: we can get the underlying bytes of both
         let maybeMaybeResult = self.withContiguousStorageIfAvailable { lhsBuffer -> Bool? in
             to.withContiguousStorageIfAvailable { rhsBuffer in
@@ -57,7 +56,7 @@ extension String.UTF8View {
 
                 for idx in 0 ..< lhsBuffer.count {
                     // let's hope this gets vectorised ;)
-                    if lhsBuffer[idx] & 0xdf != rhsBuffer[idx] & 0xdf {
+                    if lhsBuffer[idx] & 0xDF != rhsBuffer[idx] & 0xDF {
                         return false
                     }
                 }
@@ -68,7 +67,7 @@ extension String.UTF8View {
         if let maybeResult = maybeMaybeResult, let result = maybeResult {
             return result
         } else {
-            return self.elementsEqual(to, by: {return ($0 & 0xdf) == ($1 & 0xdf)})
+            return self.elementsEqual(to, by: { ($0 & 0xDF) == ($1 & 0xDF) })
         }
     }
 }

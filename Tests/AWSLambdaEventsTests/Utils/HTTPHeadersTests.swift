@@ -20,7 +20,7 @@ class HTTPHeadersTests: XCTestCase {
         let headers: HTTPHeaders = [
             ":method": "GET",
             "foo": "bar",
-            "custom-key": "value-1,value-2"
+            "custom-key": "value-1,value-2",
         ]
 
         XCTAssertEqual(headers.first(name: ":method"), "GET")
