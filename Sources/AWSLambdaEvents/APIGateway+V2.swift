@@ -31,6 +31,7 @@ public struct APIGatewayV2Request: Codable {
                 public let claims: [String: String]?
                 public let scopes: [String]?
             }
+
             public let jwt: JWT?
 
             /// `IAM` contains AWS IAM authorizer information for the request context.
@@ -43,6 +44,7 @@ public struct APIGatewayV2Request: Codable {
                 public let userArn: String?
                 public let userId: String?
             }
+
             public let iam: IAM?
         }
 
