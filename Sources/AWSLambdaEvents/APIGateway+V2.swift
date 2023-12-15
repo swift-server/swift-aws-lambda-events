@@ -34,12 +34,17 @@ public struct APIGatewayV2Request: Codable {
 
             public let jwt: JWT?
 
-            /// `IAM` contains AWS IAM authorizer information for the request context.
-            public struct IAM: Codable, Sendable {
+            // `IAM` contains AWS IAM authorizer information for the request context.
+            public struct IAM: Codable {
+                public struct CognitoIdentity: Codable {
+                    public let amr: [String]?
+                    public let identityId: String?
+                    public let identityPoolId: String?
+                }
                 public let accessKey: String?
                 public let accountId: String?
                 public let callerId: String?
-                public let cognitoIdentity: String?
+                public let cognitoIdentity: CognitoIdentity?
                 public let principalOrgId: String?
                 public let userArn: String?
                 public let userId: String?
@@ -126,5 +131,7 @@ extension APIGatewayV2Request.Context: Sendable {}
 extension APIGatewayV2Request.Context.HTTP: Sendable {}
 extension APIGatewayV2Request.Context.Authorizer: Sendable {}
 extension APIGatewayV2Request.Context.Authorizer.JWT: Sendable {}
+extension APIGatewayV2Request.Context.Authorizer.IAM: Sendable {}
+extension APIGatewayV2Request.Context.Authorizer.IAM.CognitoIdentity: Sendable {}
 extension APIGatewayV2Response: Sendable {}
 #endif
