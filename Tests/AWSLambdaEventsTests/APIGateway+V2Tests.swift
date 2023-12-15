@@ -86,6 +86,8 @@ class APIGatewayV2Tests: XCTestCase {
         XCTAssertEqual(req?.queryStringParameters?.count, 1)
         XCTAssertEqual(req?.rawQueryString, "foo=bar")
         XCTAssertEqual(req?.headers.count, 8)
+        XCTAssertEqual(req?.context.authorizer?.jwt?.claims?["aud"], "customers")
+
         XCTAssertNil(req?.body)
     }
 }
