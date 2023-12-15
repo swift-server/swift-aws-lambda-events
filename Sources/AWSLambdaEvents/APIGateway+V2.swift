@@ -41,6 +41,7 @@ public struct APIGatewayV2Request: Codable {
                     public let identityId: String?
                     public let identityPoolId: String?
                 }
+
                 public let accessKey: String?
                 public let accountId: String?
                 public let callerId: String?

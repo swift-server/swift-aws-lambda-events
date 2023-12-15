@@ -127,6 +127,7 @@ class APIGatewayV2IAMTests: XCTestCase {
         "isBase64Encoded": false
     }
     """
+
     // MARK: - Request -
 
     // MARK: Decoding
@@ -141,6 +142,7 @@ class APIGatewayV2IAMTests: XCTestCase {
         XCTAssertEqual(req?.context.authorizer?.iam?.accountId, "012345678912")
         XCTAssertNil(req?.body)
     }
+
     func testRequestDecodingGetRequestWithIAMWithCognito() {
         let data = APIGatewayV2IAMTests.getEventWithIAMAndCognito.data(using: .utf8)!
         var req: APIGatewayV2Request?
