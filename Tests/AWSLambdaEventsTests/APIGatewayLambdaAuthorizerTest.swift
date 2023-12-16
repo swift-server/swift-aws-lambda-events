@@ -63,6 +63,49 @@ class APIGatewayLambdaAuthorizerTests: XCTestCase {
     }
     """
 
+    static let lambdaAuthorizerRequest = """
+    {
+        "version": "2.0",
+        "type": "REQUEST",
+        "routeArn": "arn:aws:execute-api:eu-north-1:000000000000:0000000000/dev/GET/applications",
+        "identitySource": [
+            "abc.xyz.123"
+        ],
+        "routeKey": "GET /applications",
+        "rawPath": "/dev/applications",
+        "rawQueryString": "",
+        "headers": {
+            "accept": "*/*",
+            "authorization": "abc.xyz.123",
+            "content-length": "0",
+            "host": "0000000000.execute-api.eu-north-1.amazonaws.com",
+            "user-agent": "curl/8.1.2",
+            "x-amzn-trace-id": "Root=1-00000000-000000000000000000000000",
+            "x-forwarded-for": "0.0.0.0",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https"
+        },
+        "requestContext": {
+            "accountId": "000000000000",
+            "apiId": "0000000000",
+            "domainName": "0000000000.execute-api.eu-north-1.amazonaws.com",
+            "domainPrefix": "0000000000",
+            "http": {
+                "method": "GET",
+                "path": "/dev/applications",
+                "protocol": "HTTP/1.1",
+                "sourceIp": "0.0.0.0",
+                "userAgent": "curl/8.1.2"
+            },
+            "requestId": "QHACgr8sig0MELg=",
+            "routeKey": "GET /applications",
+            "stage": "dev",
+            "time": "15/Dec/2023:20:35:03 +0000",
+            "timeEpoch": 1702672503230
+        }
+    }
+    """
+
     static let lambdaAuthorizerResponse = """
     {
       "isAuthorized": true,
@@ -71,7 +114,7 @@ class APIGatewayLambdaAuthorizerTests: XCTestCase {
       }
     }
     """
-    
+
     // MARK: - Request -
 
     // MARK: Decoding
@@ -88,13 +131,34 @@ class APIGatewayLambdaAuthorizerTests: XCTestCase {
         XCTAssertNil(req?.body)
     }
 
-    func testDecodingLambdaAuthorizerResponse() {
-        let data = APIGatewayLambdaAuthorizerTests.lambdaAuthorizerResponse.data(using: .utf8)!
-        var response: APIGatewayLambdaAuthorizerResponse?
-        XCTAssertNoThrow(response = try JSONDecoder().decode(APIGatewayLambdaAuthorizerResponse.self, from: data))
+    func testLambdaAuthorizerRequestRequestDecoding() {
+        let data = APIGatewayLambdaAuthorizerTests.lambdaAuthorizerRequest.data(using: .utf8)!
+        var req: APIGatewayLambdaAuthorizerRequest?
+        XCTAssertNoThrow(req = try JSONDecoder().decode(APIGatewayLambdaAuthorizerRequest.self, from: data))
 
-        XCTAssertEqual(response?.isAuthorized, true)
-        XCTAssertEqual(response?.context?.count, 1)
-        XCTAssertEqual(response?.context?["exampleKey"], "exampleValue")
+        XCTAssertEqual(req?.rawPath, "/dev/applications")
+        XCTAssertEqual(req?.version, "2.0")
+    }
+
+    // MARK: Encoding
+
+    func testDecodingLambdaAuthorizerResponse() {
+        var resp = APIGatewayLambdaAuthorizerResponse(
+            isAuthorized: true,
+            context: ["abc1": "xyz1", "abc2": "xyz2"]
+        )
+
+        var data: Data?
+        XCTAssertNoThrow(data = try JSONEncoder().encode(resp))
+
+        var stringData: String?
+        XCTAssertNoThrow(stringData = String(data: try XCTUnwrap(data), encoding: .utf8))
+
+        data = stringData?.data(using: .utf8)
+        XCTAssertNoThrow(resp = try JSONDecoder().decode(APIGatewayLambdaAuthorizerResponse.self, from: XCTUnwrap(data)))
+
+        XCTAssertEqual(resp.isAuthorized, true)
+        XCTAssertEqual(resp.context?.count, 2)
+        XCTAssertEqual(resp.context?["abc1"], "xyz1")
     }
 }
