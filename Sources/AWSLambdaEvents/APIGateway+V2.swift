@@ -12,6 +12,9 @@
 //
 //===----------------------------------------------------------------------===//
 
+/// `LambdaAuthorizerContext` contains authorizer informations passed to a Lambda function authorizer
+public typealias LambdaAuthorizerContext = [String:String]
+
 /// `APIGatewayV2Request` contains data coming from the new HTTP API Gateway.
 public struct APIGatewayV2Request: Codable {
     /// `Context` contains information to identify the AWS account and resources invoking the Lambda function.
@@ -52,6 +55,8 @@ public struct APIGatewayV2Request: Codable {
             }
 
             public let iam: IAM?
+            
+            public let lambda: LambdaAuthorizerContext?
         }
 
         public let accountId: String
@@ -126,6 +131,11 @@ public struct APIGatewayV2Response: Codable {
     }
 }
 
+public struct APIGatewayLambdaAuthorizerResponse: Decodable {
+    public let isAuthorized: Bool
+    public let context: LambdaAuthorizerContext?
+}
+
 #if swift(>=5.6)
 extension APIGatewayV2Request: Sendable {}
 extension APIGatewayV2Request.Context: Sendable {}
@@ -134,5 +144,7 @@ extension APIGatewayV2Request.Context.Authorizer: Sendable {}
 extension APIGatewayV2Request.Context.Authorizer.JWT: Sendable {}
 extension APIGatewayV2Request.Context.Authorizer.IAM: Sendable {}
 extension APIGatewayV2Request.Context.Authorizer.IAM.CognitoIdentity: Sendable {}
+extension LambdaAuthorizerContext: Sendable {}
 extension APIGatewayV2Response: Sendable {}
+extension APIGatewayLambdaAuthorizerResponse: Sendable {}
 #endif
