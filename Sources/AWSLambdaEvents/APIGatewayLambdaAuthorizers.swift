@@ -15,15 +15,16 @@
 /// `LambdaAuthorizerContext` contains authorizer informations passed to a Lambda function authorizer
 public typealias LambdaAuthorizerContext = [String: String]
 
+/// `APIGatewayLambdaAuthorizerRequest` contains the payload sent to a Lambda Authorizer function
 public struct APIGatewayLambdaAuthorizerRequest: Codable {
-    let version: String
-    let type: String
-    let routeArn: String?
-    let identitySource: [String]
-    let routeKey: String
-    let rawPath: String
-    let rawQueryString: String
-    let headers: [String: String]
+    public let version: String
+    public let type: String
+    public let routeArn: String?
+    public let identitySource: [String]
+    public let routeKey: String
+    public let rawPath: String
+    public let rawQueryString: String
+    public let headers: [String: String]
 
     /// `Context` contains information to identify the AWS account and resources invoking the Lambda function.
     public struct Context: Codable {
@@ -52,9 +53,60 @@ public struct APIGatewayLambdaAuthorizerRequest: Codable {
     let requestContext: Context?
 }
 
-public struct APIGatewayLambdaAuthorizerResponse: Codable {
+/// `APIGatewayLambdaAuthorizerSimpleResponse` contains a simple response (yes/no) returned by a Lambda authorizer function
+public struct APIGatewayLambdaAuthorizerSimpleResponse: Codable {
     public let isAuthorized: Bool
     public let context: LambdaAuthorizerContext?
+
+    public init(isAuthorized: Bool,
+                context: LambdaAuthorizerContext?) {
+        self.isAuthorized = isAuthorized
+        self.context = context
+    }
+}
+
+/// `APIGatewayLambdaAuthorizerPolicyResponse` contains a Policy response (inc. an IAM policy document) returned by a Lambda authorizer function
+public struct APIGatewayLambdaAuthorizerPolicyResponse: Codable {
+    public let principalId: String
+
+    /// `PolicyDocument` contains an IAM policy document
+    public struct PolicyDocument: Codable {
+        public let version: String
+
+        public struct Statement: Codable {
+            public enum Effect: String, Codable {
+                case allow = "Allow"
+                case deny = "Deny"
+            }
+
+            public let action: String
+            public let effect: Effect
+            public let resource: String
+
+            public init(action: String, effect: Effect, resource: String) {
+                self.action = action
+                self.effect = effect
+                self.resource = resource
+            }
+        }
+
+        public let statement: [Statement]
+
+        public init(version: String = "2012-10-17", statement: [Statement]) {
+            self.version = version
+            self.statement = statement
+        }
+    }
+
+    public let policyDocument: PolicyDocument
+
+    public let context: LambdaAuthorizerContext?
+
+    public init(principalId: String, policyDocument: PolicyDocument, context: LambdaAuthorizerContext?) {
+        self.principalId = principalId
+        self.policyDocument = policyDocument
+        self.context = context
+    }
 }
 
 #if swift(>=5.6)
@@ -62,5 +114,9 @@ extension LambdaAuthorizerContext: Sendable {}
 extension APIGatewayLambdaAuthorizerRequest: Sendable {}
 extension APIGatewayLambdaAuthorizerRequest.Context: Sendable {}
 extension APIGatewayLambdaAuthorizerRequest.Context.HTTP: Sendable {}
-extension APIGatewayLambdaAuthorizerResponse: Sendable {}
+extension APIGatewayLambdaAuthorizerSimpleResponse: Sendable {}
+extension APIGatewayLambdaAuthorizerPolicyResponse: Sendable {}
+extension APIGatewayLambdaAuthorizerPolicyResponse.PolicyDocument: Sendable {}
+extension APIGatewayLambdaAuthorizerPolicyResponse.PolicyDocument.Statement: Sendable {}
+extension APIGatewayLambdaAuthorizerPolicyResponse.PolicyDocument.Statement.Effect: Sendable {}
 #endif
