@@ -88,6 +88,7 @@ public struct APIGatewayLambdaAuthorizerPolicyResponse: Codable {
                 self.effect = effect
                 self.resource = resource
             }
+
             public enum CodingKeys: String, CodingKey {
                 case action = "Action"
                 case effect = "Effect"
@@ -101,7 +102,7 @@ public struct APIGatewayLambdaAuthorizerPolicyResponse: Codable {
             self.version = version
             self.statement = statement
         }
-        
+
         public enum CodingKeys: String, CodingKey {
             case version = "Version"
             case statement = "Statement"
