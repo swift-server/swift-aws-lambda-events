@@ -52,6 +52,8 @@ public struct APIGatewayV2Request: Codable {
             }
 
             public let iam: IAM?
+
+            public let lambda: LambdaAuthorizerContext?
         }
 
         public let accountId: String
