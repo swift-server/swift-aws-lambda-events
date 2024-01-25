@@ -19,7 +19,7 @@ import struct Foundation.Date
 #endif
 
 /// EventBridge has the same events/notification types as CloudWatch
-typealias EventBridgeEvent = CloudwatchEvent
+public typealias EventBridgeEvent = CloudwatchEvent
 
 public protocol CloudwatchDetail: Decodable {
     static var name: String { get }
