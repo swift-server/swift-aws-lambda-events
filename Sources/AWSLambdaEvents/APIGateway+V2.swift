@@ -56,6 +56,23 @@ public struct APIGatewayV2Request: Codable {
             public let lambda: LambdaAuthorizerContext?
         }
 
+        public struct Authentication: Codable {
+            public struct ClientCert: Codable {
+                public struct Validity: Codable {
+                    public let notBefore: String
+                    public let notAfter: String
+                }
+
+                public let clientCertPem: String
+                public let subjectDN: String
+                public let issuerDN: String
+                public let serialNumber: String
+                public let validity: Validity
+            }
+
+            public let clientCert: ClientCert?
+        }
+
         public let accountId: String
         public let apiId: String
         public let domainName: String
@@ -65,6 +82,7 @@ public struct APIGatewayV2Request: Codable {
 
         public let http: HTTP
         public let authorizer: Authorizer?
+        public let authentication: Authentication?
 
         /// The request time in format: 23/Apr/2020:11:08:18 +0000
         public let time: String
@@ -136,5 +154,8 @@ extension APIGatewayV2Request.Context.Authorizer: Sendable {}
 extension APIGatewayV2Request.Context.Authorizer.JWT: Sendable {}
 extension APIGatewayV2Request.Context.Authorizer.IAM: Sendable {}
 extension APIGatewayV2Request.Context.Authorizer.IAM.CognitoIdentity: Sendable {}
+extension APIGatewayV2Request.Context.Authentication: Sendable {}
+extension APIGatewayV2Request.Context.Authentication.ClientCert: Sendable {}
+extension APIGatewayV2Request.Context.Authentication.ClientCert.Validity: Sendable {}
 extension APIGatewayV2Response: Sendable {}
 #endif
