@@ -12,6 +12,8 @@
 //
 //===----------------------------------------------------------------------===//
 
+import HTTPTypes
+
 import class Foundation.JSONEncoder
 
 // https://github.com/aws/aws-lambda-go/blob/master/events/alb.go
@@ -22,7 +24,7 @@ public struct ALBTargetGroupRequest: Codable {
         public let elb: ELBContext
     }
 
-    public let httpMethod: HTTPMethod
+    public let httpMethod: HTTPRequest.Method
     public let path: String
     public let queryStringParameters: [String: String]
 
@@ -50,7 +52,7 @@ public struct ALBTargetGroupRequest: Codable {
 }
 
 public struct ALBTargetGroupResponse: Codable {
-    public var statusCode: HTTPResponseStatus
+    public var statusCode: HTTPResponse.Status
     public var statusDescription: String?
     public var headers: HTTPHeaders?
     public var multiValueHeaders: HTTPMultiValueHeaders?
@@ -58,7 +60,7 @@ public struct ALBTargetGroupResponse: Codable {
     public var isBase64Encoded: Bool
 
     public init(
-        statusCode: HTTPResponseStatus,
+        statusCode: HTTPResponse.Status,
         statusDescription: String? = nil,
         headers: HTTPHeaders? = nil,
         multiValueHeaders: HTTPMultiValueHeaders? = nil,

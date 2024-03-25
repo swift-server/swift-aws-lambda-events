@@ -11,6 +11,7 @@
 // SPDX-License-Identifier: Apache-2.0
 //
 //===----------------------------------------------------------------------===//
+import HTTPTypes
 
 import class Foundation.JSONEncoder
 
@@ -37,7 +38,7 @@ public struct FunctionURLRequest: Codable {
         }
 
         public struct HTTP: Codable {
-            public let method: HTTPMethod
+            public let method: HTTPRequest.Method
             public let path: String
             public let `protocol`: String
             public let sourceIp: String
@@ -81,14 +82,14 @@ public struct FunctionURLRequest: Codable {
 // MARK: - Response -
 
 public struct FunctionURLResponse: Codable {
-    public var statusCode: HTTPResponseStatus
+    public var statusCode: HTTPResponse.Status
     public var headers: HTTPHeaders?
     public var body: String?
     public let cookies: [String]?
     public var isBase64Encoded: Bool?
 
     public init(
-        statusCode: HTTPResponseStatus,
+        statusCode: HTTPResponse.Status,
         headers: HTTPHeaders? = nil,
         body: String? = nil,
         cookies: [String]? = nil,

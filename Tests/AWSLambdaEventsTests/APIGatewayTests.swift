@@ -43,7 +43,7 @@ class APIGatewayTests: XCTestCase {
         XCTAssertNoThrow(req = try JSONDecoder().decode(APIGatewayRequest.self, from: data))
 
         XCTAssertEqual(req?.path, "/test")
-        XCTAssertEqual(req?.httpMethod, .GET)
+        XCTAssertEqual(req?.httpMethod, .get)
     }
 
     func testRequestDecodingExampleGetRequestWithoutDomainName() {
@@ -52,7 +52,7 @@ class APIGatewayTests: XCTestCase {
         XCTAssertNoThrow(req = try JSONDecoder().decode(APIGatewayRequest.self, from: data))
 
         XCTAssertEqual(req?.path, "/test")
-        XCTAssertEqual(req?.httpMethod, .GET)
+        XCTAssertEqual(req?.httpMethod, .get)
         XCTAssertNil(req?.requestContext.domainName)
     }
 
@@ -62,7 +62,7 @@ class APIGatewayTests: XCTestCase {
         XCTAssertNoThrow(req = try JSONDecoder().decode(APIGatewayRequest.self, from: data))
 
         XCTAssertEqual(req?.path, "/test")
-        XCTAssertEqual(req?.httpMethod, .GET)
+        XCTAssertEqual(req?.httpMethod, .get)
         XCTAssertEqual(req?.requestContext.authorizer?.claims?["scope"], "aws.cognito.signin.user.admin phone openid profile email")
         XCTAssertEqual(req?.requestContext.authorizer?.claims?["username"], "richwolf")
     }
@@ -73,7 +73,7 @@ class APIGatewayTests: XCTestCase {
         XCTAssertNoThrow(req = try JSONDecoder().decode(APIGatewayRequest.self, from: data))
 
         XCTAssertEqual(req?.path, "/todos")
-        XCTAssertEqual(req?.httpMethod, .POST)
+        XCTAssertEqual(req?.httpMethod, .post)
     }
 
     // MARK: - Response -
@@ -81,7 +81,7 @@ class APIGatewayTests: XCTestCase {
     // MARK: Encoding
 
     struct JSONResponse: Codable {
-        let statusCode: UInt
+        let statusCode: Int
         let headers: [String: String]?
         let body: String?
         let isBase64Encoded: Bool?

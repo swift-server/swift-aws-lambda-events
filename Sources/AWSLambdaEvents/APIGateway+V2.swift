@@ -12,12 +12,14 @@
 //
 //===----------------------------------------------------------------------===//
 
+import HTTPTypes
+
 /// `APIGatewayV2Request` contains data coming from the new HTTP API Gateway.
 public struct APIGatewayV2Request: Codable {
     /// `Context` contains information to identify the AWS account and resources invoking the Lambda function.
     public struct Context: Codable {
         public struct HTTP: Codable {
-            public let method: HTTPMethod
+            public let method: HTTPRequest.Method
             public let path: String
             public let `protocol`: String
             public let sourceIp: String
@@ -125,14 +127,14 @@ public struct APIGatewayV2Request: Codable {
 }
 
 public struct APIGatewayV2Response: Codable {
-    public var statusCode: HTTPResponseStatus
+    public var statusCode: HTTPResponse.Status
     public var headers: HTTPHeaders?
     public var body: String?
     public var isBase64Encoded: Bool?
     public var cookies: [String]?
 
     public init(
-        statusCode: HTTPResponseStatus,
+        statusCode: HTTPResponse.Status,
         headers: HTTPHeaders? = nil,
         body: String? = nil,
         isBase64Encoded: Bool? = nil,

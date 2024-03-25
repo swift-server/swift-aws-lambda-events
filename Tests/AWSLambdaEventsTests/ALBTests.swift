@@ -51,7 +51,7 @@ class ALBTests: XCTestCase {
 
             let event = try decoder.decode(ALBTargetGroupRequest.self, from: data)
 
-            XCTAssertEqual(event.httpMethod, .GET)
+            XCTAssertEqual(event.httpMethod, .get)
             XCTAssertEqual(event.body, "")
             XCTAssertEqual(event.isBase64Encoded, false)
             XCTAssertEqual(event.headers?.count, 11)

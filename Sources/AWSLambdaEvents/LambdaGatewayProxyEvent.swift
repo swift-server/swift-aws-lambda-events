@@ -12,6 +12,8 @@
 //
 //===----------------------------------------------------------------------===//
 
+import HTTPTypes
+
 /// LambdaGatewayProxyEvent contains data coming from the new HTTP API Gateway Proxy
 public struct LambdaGatewayProxyEvent: Decodable {
     public struct RequestContext: Decodable {
@@ -28,7 +30,7 @@ public struct LambdaGatewayProxyEvent: Decodable {
         public let stage: String
         public let requestID: String
 
-        public let httpMethod: HTTPMethod
+        public let httpMethod: HTTPRequest.Method
         public let authorizer: Authorizer?
 
         public let resourcePath: String?

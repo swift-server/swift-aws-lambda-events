@@ -154,7 +154,7 @@ class APIGatewayV2Tests: XCTestCase {
         XCTAssertNoThrow(req = try JSONDecoder().decode(APIGatewayV2Request.self, from: data))
 
         XCTAssertEqual(req?.rawPath, "/hello")
-        XCTAssertEqual(req?.context.http.method, .GET)
+        XCTAssertEqual(req?.context.http.method, .get)
         XCTAssertEqual(req?.queryStringParameters?.count, 1)
         XCTAssertEqual(req?.rawQueryString, "foo=bar")
         XCTAssertEqual(req?.headers.count, 8)
