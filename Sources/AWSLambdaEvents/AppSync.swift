@@ -12,6 +12,8 @@
 //
 //===----------------------------------------------------------------------===//
 
+import HTTPTypes
+
 // https://docs.aws.amazon.com/appsync/latest/devguide/resolver-context-reference.html
 public struct AppSyncEvent: Decodable {
     public let arguments: [String: ArgumentValue]

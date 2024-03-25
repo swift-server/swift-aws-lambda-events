@@ -12,6 +12,8 @@
 //
 //===----------------------------------------------------------------------===//
 
+import HTTPTypes
+
 /// `LambdaAuthorizerContext` contains authorizer informations passed to a Lambda function authorizer
 public typealias LambdaAuthorizerContext = [String: String]
 
@@ -29,7 +31,7 @@ public struct APIGatewayLambdaAuthorizerRequest: Codable {
     /// `Context` contains information to identify the AWS account and resources invoking the Lambda function.
     public struct Context: Codable {
         public struct HTTP: Codable {
-            public let method: HTTPMethod
+            public let method: HTTPRequest.Method
             public let path: String
             public let `protocol`: String
             public let sourceIp: String

@@ -129,7 +129,7 @@ class FunctionURLTests: XCTestCase {
         XCTAssertNoThrow(req = try JSONDecoder().decode(FunctionURLRequest.self, from: data))
 
         XCTAssertEqual(req?.rawPath, "/my/path")
-        XCTAssertEqual(req?.requestContext.http.method, .POST)
+        XCTAssertEqual(req?.requestContext.http.method, .post)
         XCTAssertEqual(req?.queryStringParameters?.count, 2)
         XCTAssertEqual(req?.rawQueryString, "parameter1=value1&parameter1=value2&parameter2=value")
         XCTAssertEqual(req?.headers.count, 2)
@@ -142,7 +142,7 @@ class FunctionURLTests: XCTestCase {
         XCTAssertNoThrow(req = try JSONDecoder().decode(FunctionURLRequest.self, from: data))
 
         XCTAssertEqual(req?.rawPath, "/")
-        XCTAssertEqual(req?.requestContext.http.method, .GET)
+        XCTAssertEqual(req?.requestContext.http.method, .get)
         XCTAssertEqual(req?.queryStringParameters?.count, 1)
         XCTAssertEqual(req?.rawQueryString, "test=2")
         XCTAssertEqual(req?.headers.count, 10)

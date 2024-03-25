@@ -122,7 +122,7 @@ class LambdaGatewayProxyEventTests: XCTestCase {
         XCTAssertNoThrow(req = try JSONDecoder().decode(LambdaGatewayProxyEvent.self, from: data))
 
         XCTAssertEqual(req?.path, "/hello")
-        XCTAssertEqual(req?.requestContext.httpMethod, .GET)
+        XCTAssertEqual(req?.requestContext.httpMethod, .get)
         XCTAssertEqual(req?.queryStringParameters?.count, 1)
         XCTAssertEqual(req?.headers.count, 8)
         XCTAssertNotNil(req?.body)

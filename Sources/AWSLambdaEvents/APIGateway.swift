@@ -12,6 +12,8 @@
 //
 //===----------------------------------------------------------------------===//
 
+import HTTPTypes
+
 import class Foundation.JSONEncoder
 
 // https://docs.aws.amazon.com/lambda/latest/dg/services-apigateway.html
@@ -56,7 +58,7 @@ public struct APIGatewayRequest: Codable {
 
     public let resource: String
     public let path: String
-    public let httpMethod: HTTPMethod
+    public let httpMethod: HTTPRequest.Method
 
     public let queryStringParameters: [String: String]?
     public let multiValueQueryStringParameters: [String: [String]]?
@@ -73,14 +75,14 @@ public struct APIGatewayRequest: Codable {
 // MARK: - Response -
 
 public struct APIGatewayResponse: Codable {
-    public var statusCode: HTTPResponseStatus
+    public var statusCode: HTTPResponse.Status
     public var headers: HTTPHeaders?
     public var multiValueHeaders: HTTPMultiValueHeaders?
     public var body: String?
     public var isBase64Encoded: Bool?
 
     public init(
-        statusCode: HTTPResponseStatus,
+        statusCode: HTTPResponse.Status,
         headers: HTTPHeaders? = nil,
         multiValueHeaders: HTTPMultiValueHeaders? = nil,
         body: String? = nil,
