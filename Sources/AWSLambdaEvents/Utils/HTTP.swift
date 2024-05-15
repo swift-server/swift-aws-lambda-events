@@ -86,7 +86,6 @@ extension HTTPResponse.Status: Codable {
     }
 }
 
-
 extension HTTPRequest.Method: Codable {
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
