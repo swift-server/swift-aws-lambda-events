@@ -1,4 +1,4 @@
-// swift-tools-version:5.5
+// swift-tools-version:5.7
 
 import PackageDescription
 
@@ -13,10 +13,11 @@ let package = Package(
     ],
     dependencies: [
         // this is the dependency on the swift-aws-lambda-runtime library
-        .package(url: "https://github.com/swift-server/swift-aws-lambda-runtime.git", .branch("main")),
+        .package(url: "https://github.com/swift-server/swift-aws-lambda-runtime.git", from: "1.0.0-alpha.2"),
         // this is the dependency on the swift-aws-lambda-events library
         // in real-world projects this would say
         // .package(url: "https://github.com/swift-server/swift-aws-lambda-runtime-events.git", from: "1.0.0")
+        // but here, we're using the local version
         .package(name: "swift-aws-lambda-events", path: "../.."),
     ],
     targets: [
