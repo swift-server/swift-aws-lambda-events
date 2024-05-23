@@ -1,4 +1,4 @@
-// swift-tools-version:5.10
+// swift-tools-version:5.8
 
 import PackageDescription
 
@@ -15,6 +15,7 @@ let package = Package(
         .target(name: "AWSLambdaEvents",
                 dependencies: [.product(name: "HTTPTypes", package: "swift-http-types")]),
         .testTarget(name: "AWSLambdaEventsTests",
-                    dependencies: ["AWSLambdaEvents"]),
+                    dependencies: ["AWSLambdaEvents"],
+                    swiftSettings: [.enableExperimentalFeature("StrictConcurrency")]),
     ]
 )
