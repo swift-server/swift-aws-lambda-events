@@ -37,6 +37,7 @@ extension CloudwatchDetail {
 /// https://docs.aws.amazon.com/lambda/latest/dg/services-cloudwatchevents.html
 /// https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/EventTypes.html
 /// https://docs.aws.amazon.com/eventbridge/latest/userguide/event-types.html
+/// https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-events-structure.html
 public struct CloudwatchEvent<Detail: CloudwatchDetail>: Decodable {
     public let id: String
     public let source: String
@@ -131,7 +132,7 @@ public enum CloudwatchDetails {
 
     struct TypeMismatch: Error {
         let name: String
-        let type: Any
+        let type: any Sendable
     }
 }
 
