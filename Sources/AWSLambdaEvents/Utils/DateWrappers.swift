@@ -32,16 +32,14 @@ public struct ISO8601Coding: Decodable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         let dateString = try container.decode(String.self)
-        guard let date = Self.dateFormatter.date(from: dateString) else {
+        guard let date = Self.dateFormatter().date(from: dateString) else {
             throw DecodingError.dataCorruptedError(in: container, debugDescription:
                 "Expected date to be in ISO8601 date format, but `\(dateString)` is not in the correct format")
         }
         self.wrappedValue = date
     }
 
-    private static let dateFormatter: DateFormatter = Self.createDateFormatter()
-
-    private static func createDateFormatter() -> DateFormatter {
+    private static func dateFormatter() -> DateFormatter {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.timeZone = TimeZone(secondsFromGMT: 0)
@@ -61,16 +59,14 @@ public struct ISO8601WithFractionalSecondsCoding: Decodable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         let dateString = try container.decode(String.self)
-        guard let date = Self.dateFormatter.date(from: dateString) else {
+        guard let date = Self.dateFormatter().date(from: dateString) else {
             throw DecodingError.dataCorruptedError(in: container, debugDescription:
                 "Expected date to be in ISO8601 date format with fractional seconds, but `\(dateString)` is not in the correct format")
         }
         self.wrappedValue = date
     }
 
-    private static let dateFormatter: DateFormatter = Self.createDateFormatter()
-
-    private static func createDateFormatter() -> DateFormatter {
+    private static func dateFormatter() -> DateFormatter {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.timeZone = TimeZone(secondsFromGMT: 0)
@@ -95,7 +91,7 @@ public struct RFC5322DateTimeCoding: Decodable {
         if let bracket = string.firstIndex(of: "(") {
             string = String(string[string.startIndex ..< bracket].trimmingCharacters(in: .whitespaces))
         }
-        for formatter in Self.dateFormatters {
+        for formatter in Self.dateFormatters() {
             if let date = formatter.date(from: string) {
                 self.wrappedValue = date
                 return
@@ -105,8 +101,7 @@ public struct RFC5322DateTimeCoding: Decodable {
             "Expected date to be in RFC5322 date-time format, but `\(string)` is not in the correct format")
     }
 
-    private static let dateFormatters: [DateFormatter] = Self.createDateFormatters()
-    private static func createDateFormatters() -> [DateFormatter] {
+    private static func dateFormatters() -> [DateFormatter] {
         // rfc5322 dates received in SES mails sometimes do not include the day, so need two dateformatters
         // one with a day and one without
         let formatterWithDay = DateFormatter()
