@@ -1,4 +1,4 @@
-// swift-tools-version:5.7
+// swift-tools-version:5.8
 
 import PackageDescription
 
@@ -12,7 +12,9 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-http-types.git", from: "1.0.0"),
     ],
     targets: [
-        .target(name: "AWSLambdaEvents", dependencies: [.product(name: "HTTPTypes", package: "swift-http-types")]),
-        .testTarget(name: "AWSLambdaEventsTests", dependencies: ["AWSLambdaEvents"]),
+        .target(name: "AWSLambdaEvents",
+                dependencies: [.product(name: "HTTPTypes", package: "swift-http-types")]),
+        .testTarget(name: "AWSLambdaEventsTests",
+                    dependencies: ["AWSLambdaEvents"]),
     ]
 )
