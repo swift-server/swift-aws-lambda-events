@@ -14,9 +14,9 @@ let package = Package(
     targets: [
         .target(name: "AWSLambdaEvents",
                 dependencies: [.product(name: "HTTPTypes", package: "swift-http-types")],
-                swiftSettings: [.enableExperimentalFeature("StrictConcurrency")]),
+                swiftSettings: [.enableExperimentalFeature("StrictConcurrency=complete")]),
         .testTarget(name: "AWSLambdaEventsTests",
                     dependencies: ["AWSLambdaEvents"],
-                    swiftSettings: [.enableExperimentalFeature("StrictConcurrency")]),
+                    swiftSettings: [.enableExperimentalFeature("StrictConcurrency=complete")]),
     ]
 )
