@@ -39,13 +39,13 @@ public struct ISO8601Coding: Decodable {
         self.wrappedValue = date
     }
 
-    private static let formatter = DateFormatter()
     private static var dateFormatter: DateFormatter {
+        let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.timeZone = TimeZone(secondsFromGMT: 0)
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
         return formatter
-    }
+    }    
 }
 
 @propertyWrapper
@@ -66,13 +66,13 @@ public struct ISO8601WithFractionalSecondsCoding: Decodable {
         self.wrappedValue = date
     }
 
-    private static let formatter = DateFormatter()
     private static var dateFormatter: DateFormatter {
+        let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.timeZone = TimeZone(secondsFromGMT: 0)
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"
         return formatter
-    }
+    }    
 }
 
 @propertyWrapper
@@ -91,7 +91,7 @@ public struct RFC5322DateTimeCoding: Decodable {
         if let bracket = string.firstIndex(of: "(") {
             string = String(string[string.startIndex ..< bracket].trimmingCharacters(in: .whitespaces))
         }
-        for formatter in Self.dateFormatters() {
+        for formatter in Self.dateFormatters {
             if let date = formatter.date(from: string) {
                 self.wrappedValue = date
                 return
@@ -101,7 +101,7 @@ public struct RFC5322DateTimeCoding: Decodable {
             "Expected date to be in RFC5322 date-time format, but `\(string)` is not in the correct format")
     }
 
-    private static func dateFormatters() -> [DateFormatter] {
+    private static var dateFormatters: [DateFormatter] {
         // rfc5322 dates received in SES mails sometimes do not include the day, so need two dateformatters
         // one with a day and one without
         let formatterWithDay = DateFormatter()
@@ -111,7 +111,7 @@ public struct RFC5322DateTimeCoding: Decodable {
         formatterWithoutDay.dateFormat = "d MMM yyy HH:mm:ss z"
         formatterWithoutDay.locale = Locale(identifier: "en_US_POSIX")
         return [formatterWithDay, formatterWithoutDay]
-    }
+    }    
 }
 
 #if swift(>=5.6)
