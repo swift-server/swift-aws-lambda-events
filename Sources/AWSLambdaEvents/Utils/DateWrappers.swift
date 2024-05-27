@@ -32,15 +32,15 @@ public struct ISO8601Coding: Decodable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         let dateString = try container.decode(String.self)
-        guard let date = Self.dateFormatter().date(from: dateString) else {
+        guard let date = Self.dateFormatter.date(from: dateString) else {
             throw DecodingError.dataCorruptedError(in: container, debugDescription:
                 "Expected date to be in ISO8601 date format, but `\(dateString)` is not in the correct format")
         }
         self.wrappedValue = date
     }
 
-    private static func dateFormatter() -> DateFormatter {
-        let formatter = DateFormatter()
+    private static let formatter = DateFormatter()
+    private static var dateFormatter: DateFormatter {
         formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.timeZone = TimeZone(secondsFromGMT: 0)
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
@@ -59,18 +59,18 @@ public struct ISO8601WithFractionalSecondsCoding: Decodable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         let dateString = try container.decode(String.self)
-        guard let date = Self.dateFormatter().date(from: dateString) else {
+        guard let date = Self.dateFormatter.date(from: dateString) else {
             throw DecodingError.dataCorruptedError(in: container, debugDescription:
                 "Expected date to be in ISO8601 date format with fractional seconds, but `\(dateString)` is not in the correct format")
         }
         self.wrappedValue = date
     }
 
-    private static func dateFormatter() -> DateFormatter {
-        let formatter = DateFormatter()
+    private static let formatter = DateFormatter()
+    private static var dateFormatter: DateFormatter {
         formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.timeZone = TimeZone(secondsFromGMT: 0)
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
         return formatter
     }
 }
