@@ -45,7 +45,7 @@ public struct ISO8601Coding: Decodable {
         formatter.timeZone = TimeZone(secondsFromGMT: 0)
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
         return formatter
-    }    
+    }
 }
 
 @propertyWrapper
@@ -72,7 +72,7 @@ public struct ISO8601WithFractionalSecondsCoding: Decodable {
         formatter.timeZone = TimeZone(secondsFromGMT: 0)
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"
         return formatter
-    }    
+    }
 }
 
 @propertyWrapper
@@ -111,7 +111,7 @@ public struct RFC5322DateTimeCoding: Decodable {
         formatterWithoutDay.dateFormat = "d MMM yyy HH:mm:ss z"
         formatterWithoutDay.locale = Locale(identifier: "en_US_POSIX")
         return [formatterWithDay, formatterWithoutDay]
-    }    
+    }
 }
 
 #if swift(>=5.6)
