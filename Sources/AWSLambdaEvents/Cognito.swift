@@ -108,7 +108,7 @@ extension CognitoEvent: Codable {
     }
 }
 
-public enum CognitoEventResponse: Sendable{
+public enum CognitoEventResponse: Sendable {
     case preSignUpSignUp(CognitoEvent.Parameters, CognitoEvent.PreSignUp, PreSignUp)
 
     public struct PreSignUp: Codable, Hashable, Sendable {
