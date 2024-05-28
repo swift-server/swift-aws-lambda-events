@@ -146,7 +146,7 @@ public struct AppSyncEvent: Decodable, Sendable {
     }
 }
 
-public enum AppSyncResponse<ResultType: Encodable & Sendable>: Encodable, Sendable {
+public enum AppSyncResponse<ResultType: Encodable>: Encodable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         switch self {
@@ -165,3 +165,4 @@ public enum AppSyncResponse<ResultType: Encodable & Sendable>: Encodable, Sendab
 }
 
 public typealias AppSyncJSONResponse = AppSyncResponse<String>
+extension AppSyncResponse: Sendable where ResultType: Sendable {}
