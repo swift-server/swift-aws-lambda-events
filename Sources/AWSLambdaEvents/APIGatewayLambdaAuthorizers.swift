@@ -86,11 +86,13 @@ public struct APIGatewayLambdaAuthorizerPolicyResponse: Codable {
             public let resource: [String]
 
             public init(action: String, effect: Effect, resource: String) {
-                self.action = [action]
-                self.effect = effect
-                self.resource = [resource]
+                self.init(
+                    action: [action],
+                    effect: effect,
+                    resource: [resource]
+                )
             }
-            
+
             public init(action: [String], effect: Effect, resource: [String]) {
                 self.action = action
                 self.effect = effect
