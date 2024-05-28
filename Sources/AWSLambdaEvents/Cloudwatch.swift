@@ -63,7 +63,7 @@ public struct CloudwatchEvent<Detail: CloudwatchDetail>: Decodable {
         self.id = try container.decode(String.self, forKey: .id)
         self.source = try container.decode(String.self, forKey: .source)
         self.accountId = try container.decode(String.self, forKey: .accountId)
-        self.time = (try container.decode(ISO8601Coding.self, forKey: .time)).wrappedValue
+        self.time = try (container.decode(ISO8601Coding.self, forKey: .time)).wrappedValue
         self.region = try container.decode(AWSRegion.self, forKey: .region)
         self.resources = try container.decode([String].self, forKey: .resources)
 
