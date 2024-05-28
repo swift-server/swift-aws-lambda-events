@@ -13,8 +13,10 @@ let package = Package(
     ],
     targets: [
         .target(name: "AWSLambdaEvents",
-                dependencies: [.product(name: "HTTPTypes", package: "swift-http-types")]),
+                dependencies: [.product(name: "HTTPTypes", package: "swift-http-types")],
+                swiftSettings: [.enableExperimentalFeature("StrictConcurrency=complete")]),
         .testTarget(name: "AWSLambdaEventsTests",
-                    dependencies: ["AWSLambdaEvents"]),
+                    dependencies: ["AWSLambdaEvents"],
+                    swiftSettings: [.enableExperimentalFeature("StrictConcurrency=complete")]),
     ]
 )

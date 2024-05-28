@@ -39,9 +39,7 @@ public struct ISO8601Coding: Decodable {
         self.wrappedValue = date
     }
 
-    private static let dateFormatter: DateFormatter = Self.createDateFormatter()
-
-    private static func createDateFormatter() -> DateFormatter {
+    private static var dateFormatter: DateFormatter {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.timeZone = TimeZone(secondsFromGMT: 0)
@@ -68,9 +66,7 @@ public struct ISO8601WithFractionalSecondsCoding: Decodable {
         self.wrappedValue = date
     }
 
-    private static let dateFormatter: DateFormatter = Self.createDateFormatter()
-
-    private static func createDateFormatter() -> DateFormatter {
+    private static var dateFormatter: DateFormatter {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.timeZone = TimeZone(secondsFromGMT: 0)
@@ -105,8 +101,7 @@ public struct RFC5322DateTimeCoding: Decodable {
             "Expected date to be in RFC5322 date-time format, but `\(string)` is not in the correct format")
     }
 
-    private static let dateFormatters: [DateFormatter] = Self.createDateFormatters()
-    private static func createDateFormatters() -> [DateFormatter] {
+    private static var dateFormatters: [DateFormatter] {
         // rfc5322 dates received in SES mails sometimes do not include the day, so need two dateformatters
         // one with a day and one without
         let formatterWithDay = DateFormatter()
