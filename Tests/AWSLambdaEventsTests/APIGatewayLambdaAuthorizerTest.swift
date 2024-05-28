@@ -201,7 +201,39 @@ class APIGatewayLambdaAuthorizerTests: XCTestCase {
 
         XCTAssertEqual(resp.principalId, "John Appleseed")
         XCTAssertEqual(resp.policyDocument.statement.count, 1)
-        XCTAssertEqual(resp.policyDocument.statement[0].action, "s3:getObject")
+        XCTAssertEqual(resp.policyDocument.statement[0].action, ["s3:getObject"])
+        XCTAssertEqual(resp.context?.count, 2)
+        XCTAssertEqual(resp.context?["abc1"], "xyz1")
+    }
+    
+    func testDecodingLambdaAuthorizerPolicyResponseWithMultipleResources() {
+        let statement = APIGatewayLambdaAuthorizerPolicyResponse.PolicyDocument.Statement(action: ["execute-api:Invoke"],
+                                                                                          effect: .allow,
+                                                                                          resource: [
+                                                                                            "arn:aws:execute-api:*:*:*/*/GET/v1/user/0123",
+                                                                                            "arn:aws:execute-api:*:*:*/*/POST/v1/user",
+                                                                                          ])
+        let policy = APIGatewayLambdaAuthorizerPolicyResponse.PolicyDocument(statement: [statement])
+        var resp = APIGatewayLambdaAuthorizerPolicyResponse(principalId: "John Appleseed",
+                                                            policyDocument: policy,
+                                                            context: ["abc1": "xyz1", "abc2": "xyz2"])
+
+        var data: Data?
+        XCTAssertNoThrow(data = try JSONEncoder().encode(resp))
+
+        var stringData: String?
+        XCTAssertNoThrow(stringData = String(data: try XCTUnwrap(data), encoding: .utf8))
+
+        data = stringData?.data(using: .utf8)
+        XCTAssertNoThrow(resp = try JSONDecoder().decode(APIGatewayLambdaAuthorizerPolicyResponse.self, from: XCTUnwrap(data)))
+
+        XCTAssertEqual(resp.principalId, "John Appleseed")
+        XCTAssertEqual(resp.policyDocument.statement.count, 1)
+        XCTAssertEqual(resp.policyDocument.statement[0].action, ["execute-api:Invoke"])
+        XCTAssertEqual(resp.policyDocument.statement[0].resource, [
+            "arn:aws:execute-api:*:*:*/*/GET/v1/user/0123",
+            "arn:aws:execute-api:*:*:*/*/POST/v1/user",
+            ])
         XCTAssertEqual(resp.context?.count, 2)
         XCTAssertEqual(resp.context?["abc1"], "xyz1")
     }
