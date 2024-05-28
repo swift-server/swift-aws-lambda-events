@@ -21,7 +21,7 @@ import struct Foundation.Date
 /// EventBridge has the same events/notification types as CloudWatch
 public typealias EventBridgeEvent = CloudwatchEvent
 
-public protocol CloudwatchDetail: Decodable {
+public protocol CloudwatchDetail: Decodable, Sendable {
     static var name: String { get }
 }
 
@@ -38,7 +38,7 @@ extension CloudwatchDetail {
 /// https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/EventTypes.html
 /// https://docs.aws.amazon.com/eventbridge/latest/userguide/event-types.html
 /// https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-events-structure.html
-public struct CloudwatchEvent<Detail: CloudwatchDetail>: Decodable {
+public struct CloudwatchEvent<Detail: CloudwatchDetail>: Decodable, Sendable {
     public let id: String
     public let source: String
     public let accountId: String
@@ -90,11 +90,11 @@ public enum CloudwatchDetails {
         public static let name = "Scheduled Event"
     }
 
-    public enum EC2 {
+    public enum EC2: Sendable {
         public struct InstanceStateChangeNotification: CloudwatchDetail {
             public static let name = "EC2 Instance State-change Notification"
 
-            public enum State: String, Codable {
+            public enum State: String, Codable, Sendable {
                 case running
                 case shuttingDown = "shutting-down"
                 case stopped
@@ -114,7 +114,7 @@ public enum CloudwatchDetails {
         public struct SpotInstanceInterruptionNotice: CloudwatchDetail {
             public static let name = "EC2 Spot Instance Interruption Warning"
 
-            public enum Action: String, Codable {
+            public enum Action: String, Codable, Sendable {
                 case hibernate
                 case stop
                 case terminate
@@ -132,12 +132,6 @@ public enum CloudwatchDetails {
 
     struct TypeMismatch: Error {
         let name: String
-        let type: any Sendable
+        let type: any CloudwatchDetail.Type
     }
 }
-
-#if swift(>=5.6)
-extension CloudwatchEvent: Sendable where Detail: Sendable {}
-extension CloudwatchDetails.EC2: Sendable {}
-extension CloudwatchDetails.Scheduled: Sendable {}
-#endif
