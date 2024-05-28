@@ -19,39 +19,39 @@ import struct Foundation.Date
 #endif
 
 // https://docs.aws.amazon.com/lambda/latest/dg/with-ddb.html
-public struct DynamoDBEvent: Decodable {
+public struct DynamoDBEvent: Decodable, Sendable {
     public let records: [EventRecord]
 
-    public enum CodingKeys: String, CodingKey {
+    public enum CodingKeys: String, CodingKey, Sendable {
         case records = "Records"
     }
 
-    public enum KeyType: String, Codable {
+    public enum KeyType: String, Codable, Sendable {
         case hash = "HASH"
         case range = "RANGE"
     }
 
-    public enum OperationType: String, Codable {
+    public enum OperationType: String, Codable, Sendable {
         case insert = "INSERT"
         case modify = "MODIFY"
         case remove = "REMOVE"
     }
 
-    public enum SharedIteratorType: String, Codable {
+    public enum SharedIteratorType: String, Codable, Sendable {
         case trimHorizon = "TRIM_HORIZON"
         case latest = "LATEST"
         case atSequenceNumber = "AT_SEQUENCE_NUMBER"
         case afterSequenceNumber = "AFTER_SEQUENCE_NUMBER"
     }
 
-    public enum StreamStatus: String, Codable {
+    public enum StreamStatus: String, Codable, Sendable {
         case enabling = "ENABLING"
         case enabled = "ENABLED"
         case disabling = "DISABLING"
         case disabled = "DISABLED"
     }
 
-    public enum StreamViewType: String, Codable {
+    public enum StreamViewType: String, Codable, Sendable {
         /// The entire item, as it appeared after it was modified.
         case newImage = "NEW_IMAGE"
         /// The entire item, as it appeared before it was modified.
@@ -62,7 +62,7 @@ public struct DynamoDBEvent: Decodable {
         case keysOnly = "KEYS_ONLY"
     }
 
-    public struct EventRecord: Decodable {
+    public struct EventRecord: Decodable, Sendable {
         /// The region in which the GetRecords request was received.
         public let awsRegion: AWSRegion
 
@@ -117,7 +117,7 @@ public struct DynamoDBEvent: Decodable {
         }
     }
 
-    public struct StreamRecord {
+    public struct StreamRecord: Sendable {
         /// The approximate date and time when the stream record was created, in UNIX
         /// epoch time (http://www.epochconverter.com/) format.
         public let approximateCreationDateTime: Date?
@@ -142,7 +142,7 @@ public struct DynamoDBEvent: Decodable {
         public let streamViewType: StreamViewType
     }
 
-    public struct UserIdentity: Codable {
+    public struct UserIdentity: Codable, Sendable {
         public let type: String
         public let principalId: String
     }
@@ -191,7 +191,7 @@ extension DynamoDBEvent.StreamRecord: Decodable {
 // MARK: - AttributeValue -
 
 extension DynamoDBEvent {
-    public enum AttributeValue {
+    public enum AttributeValue: Sendable {
         case boolean(Bool)
         case binary([UInt8])
         case binarySet([[UInt8]])
@@ -381,7 +381,7 @@ extension DynamoDBEvent {
         }
     }
 
-    struct ArrayKey: CodingKey, Equatable {
+    struct ArrayKey: CodingKey, Equatable, Sendable {
         init(index: Int) {
             self.intValue = index
         }
@@ -934,13 +934,3 @@ extension DynamoDBEvent.AttributeValue {
         }
     }
 }
-
-#if swift(>=5.6)
-extension DynamoDBEvent: Sendable {}
-extension DynamoDBEvent.EventRecord: Sendable {}
-extension DynamoDBEvent.StreamRecord: Sendable {}
-extension DynamoDBEvent.UserIdentity: Sendable {}
-extension DynamoDBEvent.OperationType: Sendable {}
-extension DynamoDBEvent.AttributeValue: Sendable {}
-extension DynamoDBEvent.StreamViewType: Sendable {}
-#endif

@@ -22,7 +22,7 @@ import struct Foundation.Locale
 import struct Foundation.TimeZone
 
 @propertyWrapper
-public struct ISO8601Coding: Decodable {
+public struct ISO8601Coding: Decodable, Sendable {
     public let wrappedValue: Date
 
     public init(wrappedValue: Date) {
@@ -49,7 +49,7 @@ public struct ISO8601Coding: Decodable {
 }
 
 @propertyWrapper
-public struct ISO8601WithFractionalSecondsCoding: Decodable {
+public struct ISO8601WithFractionalSecondsCoding: Decodable, Sendable {
     public let wrappedValue: Date
 
     public init(wrappedValue: Date) {
@@ -76,7 +76,7 @@ public struct ISO8601WithFractionalSecondsCoding: Decodable {
 }
 
 @propertyWrapper
-public struct RFC5322DateTimeCoding: Decodable {
+public struct RFC5322DateTimeCoding: Decodable, Sendable {
     public let wrappedValue: Date
 
     public init(wrappedValue: Date) {
@@ -113,9 +113,3 @@ public struct RFC5322DateTimeCoding: Decodable {
         return [formatterWithDay, formatterWithoutDay]
     }
 }
-
-#if swift(>=5.6)
-extension ISO8601Coding: Sendable {}
-extension ISO8601WithFractionalSecondsCoding: Sendable {}
-extension RFC5322DateTimeCoding: Sendable {}
-#endif

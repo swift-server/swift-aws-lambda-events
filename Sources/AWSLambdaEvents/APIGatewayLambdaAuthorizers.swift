@@ -18,7 +18,7 @@ import HTTPTypes
 public typealias LambdaAuthorizerContext = [String: String]
 
 /// `APIGatewayLambdaAuthorizerRequest` contains the payload sent to a Lambda Authorizer function
-public struct APIGatewayLambdaAuthorizerRequest: Codable {
+public struct APIGatewayLambdaAuthorizerRequest: Codable, Sendable {
     public let version: String
     public let type: String
     public let routeArn: String?
@@ -29,8 +29,8 @@ public struct APIGatewayLambdaAuthorizerRequest: Codable {
     public let headers: [String: String]
 
     /// `Context` contains information to identify the AWS account and resources invoking the Lambda function.
-    public struct Context: Codable {
-        public struct HTTP: Codable {
+    public struct Context: Codable, Sendable {
+        public struct HTTP: Codable, Sendable {
             public let method: HTTPRequest.Method
             public let path: String
             public let `protocol`: String
@@ -56,7 +56,7 @@ public struct APIGatewayLambdaAuthorizerRequest: Codable {
 }
 
 /// `APIGatewayLambdaAuthorizerSimpleResponse` contains a simple response (yes/no) returned by a Lambda authorizer function
-public struct APIGatewayLambdaAuthorizerSimpleResponse: Codable {
+public struct APIGatewayLambdaAuthorizerSimpleResponse: Codable, Sendable {
     public let isAuthorized: Bool
     public let context: LambdaAuthorizerContext?
 
@@ -68,15 +68,15 @@ public struct APIGatewayLambdaAuthorizerSimpleResponse: Codable {
 }
 
 /// `APIGatewayLambdaAuthorizerPolicyResponse` contains a Policy response (inc. an IAM policy document) returned by a Lambda authorizer function
-public struct APIGatewayLambdaAuthorizerPolicyResponse: Codable {
+public struct APIGatewayLambdaAuthorizerPolicyResponse: Codable, Sendable {
     public let principalId: String
 
     /// `PolicyDocument` contains an IAM policy document
-    public struct PolicyDocument: Codable {
+    public struct PolicyDocument: Codable, Sendable {
         public let version: String
 
-        public struct Statement: Codable {
-            public enum Effect: String, Codable {
+        public struct Statement: Codable, Sendable {
+            public enum Effect: String, Codable, Sendable {
                 case allow = "Allow"
                 case deny = "Deny"
             }
@@ -121,15 +121,3 @@ public struct APIGatewayLambdaAuthorizerPolicyResponse: Codable {
         self.context = context
     }
 }
-
-#if swift(>=5.6)
-extension LambdaAuthorizerContext: Sendable {}
-extension APIGatewayLambdaAuthorizerRequest: Sendable {}
-extension APIGatewayLambdaAuthorizerRequest.Context: Sendable {}
-extension APIGatewayLambdaAuthorizerRequest.Context.HTTP: Sendable {}
-extension APIGatewayLambdaAuthorizerSimpleResponse: Sendable {}
-extension APIGatewayLambdaAuthorizerPolicyResponse: Sendable {}
-extension APIGatewayLambdaAuthorizerPolicyResponse.PolicyDocument: Sendable {}
-extension APIGatewayLambdaAuthorizerPolicyResponse.PolicyDocument.Statement: Sendable {}
-extension APIGatewayLambdaAuthorizerPolicyResponse.PolicyDocument.Statement.Effect: Sendable {}
-#endif

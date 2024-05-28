@@ -18,10 +18,10 @@ import class Foundation.JSONEncoder
 // https://docs.aws.amazon.com/lambda/latest/dg/urls-invocation.html
 
 /// FunctionURLRequest contains data coming from a bare Lambda Function URL
-public struct FunctionURLRequest: Codable {
-    public struct Context: Codable {
-        public struct Authorizer: Codable {
-            public struct IAMAuthorizer: Codable {
+public struct FunctionURLRequest: Codable, Sendable {
+    public struct Context: Codable, Sendable {
+        public struct Authorizer: Codable, Sendable {
+            public struct IAMAuthorizer: Codable, Sendable {
                 public let accessKey: String
 
                 public let accountId: String
@@ -37,7 +37,7 @@ public struct FunctionURLRequest: Codable {
             public let iam: IAMAuthorizer?
         }
 
-        public struct HTTP: Codable {
+        public struct HTTP: Codable, Sendable {
             public let method: HTTPRequest.Method
             public let path: String
             public let `protocol`: String
@@ -81,7 +81,7 @@ public struct FunctionURLRequest: Codable {
 
 // MARK: - Response -
 
-public struct FunctionURLResponse: Codable {
+public struct FunctionURLResponse: Codable, Sendable {
     public var statusCode: HTTPResponse.Status
     public var headers: HTTPHeaders?
     public var body: String?
@@ -102,12 +102,3 @@ public struct FunctionURLResponse: Codable {
         self.isBase64Encoded = isBase64Encoded
     }
 }
-
-#if swift(>=5.6)
-extension FunctionURLRequest: Sendable {}
-extension FunctionURLRequest.Context: Sendable {}
-extension FunctionURLRequest.Context.Authorizer: Sendable {}
-extension FunctionURLRequest.Context.Authorizer.IAMAuthorizer: Sendable {}
-extension FunctionURLRequest.Context.HTTP: Sendable {}
-extension FunctionURLResponse: Sendable {}
-#endif
