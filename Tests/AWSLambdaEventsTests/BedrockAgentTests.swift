@@ -13,8 +13,8 @@
 //===----------------------------------------------------------------------===//
 
 @testable import AWSLambdaEvents
-import XCTest
 import HTTPTypes
+import XCTest
 
 class BedrockAgentTests: XCTestCase {
     static let eventBody =
@@ -63,7 +63,7 @@ class BedrockAgentTests: XCTestCase {
         XCTAssertNoThrow(event = try JSONDecoder().decode(BedrockAgentRequest.self, from: data))
 
         XCTAssertEqual(event?.messageVersion, "1.0")
-        
+
         XCTAssertEqual(event?.agent?.alias, "AGENT_ID")
         XCTAssertEqual(event?.agent?.name, "StockQuoteAgent")
         XCTAssertEqual(event?.agent?.version, "DRAFT")
