@@ -20,9 +20,9 @@ import class Foundation.JSONEncoder
 // https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
 
 /// `APIGatewayRequest` contains data coming from the API Gateway.
-public struct APIGatewayRequest: Codable {
-    public struct Context: Codable {
-        public struct Identity: Codable {
+public struct APIGatewayRequest: Codable, Sendable {
+    public struct Context: Codable, Sendable {
+        public struct Identity: Codable, Sendable {
             public let cognitoIdentityPoolId: String?
 
             public let apiKey: String?
@@ -37,7 +37,7 @@ public struct APIGatewayRequest: Codable {
             public let accountId: String?
         }
 
-        public struct Authorizer: Codable {
+        public struct Authorizer: Codable, Sendable {
             public let claims: [String: String]?
         }
 
@@ -74,7 +74,7 @@ public struct APIGatewayRequest: Codable {
 
 // MARK: - Response -
 
-public struct APIGatewayResponse: Codable {
+public struct APIGatewayResponse: Codable, Sendable {
     public var statusCode: HTTPResponse.Status
     public var headers: HTTPHeaders?
     public var multiValueHeaders: HTTPMultiValueHeaders?
@@ -95,11 +95,3 @@ public struct APIGatewayResponse: Codable {
         self.isBase64Encoded = isBase64Encoded
     }
 }
-
-#if swift(>=5.6)
-extension APIGatewayRequest: Sendable {}
-extension APIGatewayRequest.Context: Sendable {}
-extension APIGatewayRequest.Context.Identity: Sendable {}
-extension APIGatewayRequest.Context.Authorizer: Sendable {}
-extension APIGatewayResponse: Sendable {}
-#endif

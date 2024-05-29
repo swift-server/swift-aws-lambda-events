@@ -12,18 +12,18 @@
 //
 //===----------------------------------------------------------------------===//
 
-enum CognitoEventError: Error {
+enum CognitoEventError: Error, Sendable {
     case unimplementedEvent(String)
 }
 
 /// https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-identity-pools-working-with-aws-lambda-triggers.html
-public enum CognitoEvent: Equatable {
-    public struct CallerContext: Codable, Hashable {
+public enum CognitoEvent: Equatable, Sendable {
+    public struct CallerContext: Codable, Hashable, Sendable {
         let awsSdkVersion: String
         let clientId: String
     }
 
-    public struct Parameters: Codable, Equatable {
+    public struct Parameters: Codable, Equatable, Sendable {
         let version: String
         let triggerSource: String
         let region: AWSRegion
@@ -34,7 +34,7 @@ public enum CognitoEvent: Equatable {
 
     case preSignUpSignUp(Parameters, PreSignUp)
 
-    public struct PreSignUp: Codable, Hashable {
+    public struct PreSignUp: Codable, Hashable, Sendable {
         /// One or more name-value pairs representing user attributes. The attribute names are the keys.
         public let userAttributes: [String: String]
         /// One or more name-value pairs containing the validation data in the request to register a user.
@@ -108,10 +108,10 @@ extension CognitoEvent: Codable {
     }
 }
 
-public enum CognitoEventResponse {
+public enum CognitoEventResponse: Sendable {
     case preSignUpSignUp(CognitoEvent.Parameters, CognitoEvent.PreSignUp, PreSignUp)
 
-    public struct PreSignUp: Codable, Hashable {
+    public struct PreSignUp: Codable, Hashable, Sendable {
         public let autoConfirmUser: Bool
         public let autoVerifyPhone: Bool
         public let autoVerifyEmail: Bool
