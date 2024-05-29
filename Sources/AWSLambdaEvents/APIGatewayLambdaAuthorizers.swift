@@ -92,7 +92,7 @@ public struct APIGatewayLambdaAuthorizerPolicyResponse: Codable, Sendable {
                     resource: [resource]
                 )
             }
-            
+
             public init(action: [String], effect: Effect, resource: [String]) {
                 self.action = action
                 self.effect = effect

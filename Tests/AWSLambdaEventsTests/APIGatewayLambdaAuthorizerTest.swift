@@ -171,7 +171,7 @@ class APIGatewayLambdaAuthorizerTests: XCTestCase {
         XCTAssertNoThrow(data = try JSONEncoder().encode(resp))
 
         var stringData: String?
-        XCTAssertNoThrow(stringData = String(data: try XCTUnwrap(data), encoding: .utf8))
+        XCTAssertNoThrow(stringData = try String(data: XCTUnwrap(data), encoding: .utf8))
 
         data = stringData?.data(using: .utf8)
         XCTAssertNoThrow(resp = try JSONDecoder().decode(APIGatewayLambdaAuthorizerSimpleResponse.self, from: XCTUnwrap(data)))
@@ -194,7 +194,7 @@ class APIGatewayLambdaAuthorizerTests: XCTestCase {
         XCTAssertNoThrow(data = try JSONEncoder().encode(resp))
 
         var stringData: String?
-        XCTAssertNoThrow(stringData = String(data: try XCTUnwrap(data), encoding: .utf8))
+        XCTAssertNoThrow(stringData = try String(data: XCTUnwrap(data), encoding: .utf8))
 
         data = stringData?.data(using: .utf8)
         XCTAssertNoThrow(resp = try JSONDecoder().decode(APIGatewayLambdaAuthorizerPolicyResponse.self, from: XCTUnwrap(data)))
@@ -205,13 +205,13 @@ class APIGatewayLambdaAuthorizerTests: XCTestCase {
         XCTAssertEqual(resp.context?.count, 2)
         XCTAssertEqual(resp.context?["abc1"], "xyz1")
     }
-    
+
     func testDecodingLambdaAuthorizerPolicyResponseWithMultipleResources() {
         let statement = APIGatewayLambdaAuthorizerPolicyResponse.PolicyDocument.Statement(action: ["execute-api:Invoke"],
                                                                                           effect: .allow,
                                                                                           resource: [
-                                                                                            "arn:aws:execute-api:*:*:*/*/GET/v1/user/0123",
-                                                                                            "arn:aws:execute-api:*:*:*/*/POST/v1/user",
+                                                                                              "arn:aws:execute-api:*:*:*/*/GET/v1/user/0123",
+                                                                                              "arn:aws:execute-api:*:*:*/*/POST/v1/user",
                                                                                           ])
         let policy = APIGatewayLambdaAuthorizerPolicyResponse.PolicyDocument(statement: [statement])
         var resp = APIGatewayLambdaAuthorizerPolicyResponse(principalId: "John Appleseed",
@@ -222,7 +222,7 @@ class APIGatewayLambdaAuthorizerTests: XCTestCase {
         XCTAssertNoThrow(data = try JSONEncoder().encode(resp))
 
         var stringData: String?
-        XCTAssertNoThrow(stringData = String(data: try XCTUnwrap(data), encoding: .utf8))
+        XCTAssertNoThrow(stringData = try String(data: XCTUnwrap(data), encoding: .utf8))
 
         data = stringData?.data(using: .utf8)
         XCTAssertNoThrow(resp = try JSONDecoder().decode(APIGatewayLambdaAuthorizerPolicyResponse.self, from: XCTUnwrap(data)))
@@ -233,7 +233,7 @@ class APIGatewayLambdaAuthorizerTests: XCTestCase {
         XCTAssertEqual(resp.policyDocument.statement[0].resource, [
             "arn:aws:execute-api:*:*:*/*/GET/v1/user/0123",
             "arn:aws:execute-api:*:*:*/*/POST/v1/user",
-            ])
+        ])
         XCTAssertEqual(resp.context?.count, 2)
         XCTAssertEqual(resp.context?["abc1"], "xyz1")
     }
