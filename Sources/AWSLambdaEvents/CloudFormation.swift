@@ -13,11 +13,11 @@
 //===----------------------------------------------------------------------===//
 
 // CloudFormation custom resource.
-public enum CloudFormation {
+public enum CloudFormation: Sendable {
     // Request represents the request body of AWS::CloudFormation::CustomResource.
     // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/crpg-ref-requests.html
     public struct Request<R: Decodable, O: Decodable>: Decodable {
-        public enum RequestType: String, Decodable {
+        public enum RequestType: String, Decodable, Sendable {
             case create = "Create"
             case update = "Update"
             case delete = "Delete"
@@ -60,7 +60,7 @@ public enum CloudFormation {
     // Response represents the response body of AWS::CloudFormation::CustomResource.
     // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/crpg-ref-responses.html
     public struct Response<D: Encodable>: Encodable {
-        public enum StatusType: String, Encodable {
+        public enum StatusType: String, Encodable, Sendable {
             case success = "SUCCESS"
             case failed = "FAILED"
         }
@@ -119,3 +119,6 @@ public enum CloudFormation {
         }
     }
 }
+
+extension CloudFormation.Request: Sendable where R: Sendable, O: Sendable {}
+extension CloudFormation.Response: Sendable where D: Sendable {}
