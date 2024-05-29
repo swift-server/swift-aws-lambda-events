@@ -81,11 +81,19 @@ public struct APIGatewayLambdaAuthorizerPolicyResponse: Codable, Sendable {
                 case deny = "Deny"
             }
 
-            public let action: String
+            public let action: [String]
             public let effect: Effect
-            public let resource: String
+            public let resource: [String]
 
             public init(action: String, effect: Effect, resource: String) {
+                self.init(
+                    action: [action],
+                    effect: effect,
+                    resource: [resource]
+                )
+            }
+
+            public init(action: [String], effect: Effect, resource: [String]) {
                 self.action = action
                 self.effect = effect
                 self.resource = resource
