@@ -178,7 +178,7 @@ class CloudFormationTests: XCTestCase {
         XCTAssertNoThrow(data = try encoder.encode(resp))
 
         var stringData: String?
-        XCTAssertNoThrow(stringData = try String(data: XCTUnwrap(data), encoding: .utf8))
+        XCTAssertNoThrow(stringData = String(data: try XCTUnwrap(data), encoding: .utf8))
 
         print(stringData ?? "")
 

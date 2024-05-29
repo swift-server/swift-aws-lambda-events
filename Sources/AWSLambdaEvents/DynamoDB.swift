@@ -234,7 +234,7 @@ extension DynamoDBEvent.AttributeValue: Decodable {
         switch key {
         case .binary:
             let encoded = try container.decode(String.self, forKey: .binary)
-            self = try .binary(encoded.base64decoded())
+            self = .binary(try encoded.base64decoded())
 
         case .bool:
             let value = try container.decode(Bool.self, forKey: .bool)
@@ -324,7 +324,7 @@ extension DynamoDBEvent {
         }
     }
 
-    @usableFromInline struct _DecoderImpl: Swift.Decoder {
+    @usableFromInline internal struct _DecoderImpl: Swift.Decoder {
         @usableFromInline let codingPath: [CodingKey]
         @usableFromInline let userInfo: [CodingUserInfoKey: Any]
 
