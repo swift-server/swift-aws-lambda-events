@@ -217,7 +217,9 @@ extension CognitoEvent: Codable {
 
 public enum CognitoEventResponse: Sendable {
     // Used for when there are no parameters expected in the response
-    public struct EmptyResponse: Codable, Equatable, Sendable {}
+    public struct EmptyResponse: Codable, Equatable, Sendable {
+        public init() {}
+    }
 
     case preSignUpSignUp(CognitoEvent.Parameters, CognitoEvent.PreSignUp, PreSignUp)
 
@@ -240,6 +242,12 @@ public enum CognitoEventResponse: Sendable {
     case customMessage(CognitoEvent.Parameters, CognitoEvent.CustomMessage, CustomMessage)
 
     public struct CustomMessage: Codable, Equatable, Sendable {
+        public init(smsMessage: String? = nil, emailMessage: String? = nil, emailSubject: String? = nil) {
+            self.smsMessage = smsMessage
+            self.emailMessage = emailMessage
+            self.emailSubject = emailSubject
+        }
+
         /// The custom SMS message to be sent to your users. Must include the codeParameter value that you received in the request.
         public let smsMessage: String?
 
