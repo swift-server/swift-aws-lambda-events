@@ -45,7 +45,7 @@ final class CognitoTests: XCTestCase {
         """
         let event = try JSONDecoder().decode(CognitoEvent.self, from: json.data(using: .utf8)!)
 
-        guard case .preSignUpSignUp(let params, let request) = event else {
+        guard case .preSignUp(let params, let request) = event else {
             XCTFail()
             return
         }

@@ -81,7 +81,7 @@ public enum CognitoEvent: Equatable, Sendable {
         public let callerContext: CallerContext
     }
 
-    case preSignUpSignUp(Parameters, PreSignUp)
+    case preSignUp(Parameters, PreSignUp)
 
     public struct PreSignUp: Codable, Hashable, Sendable {
         /// One or more name-value pairs representing user attributes. The attribute names are the keys.
@@ -154,7 +154,7 @@ public enum CognitoEvent: Equatable, Sendable {
 
     public var commonParameters: Parameters {
         switch self {
-        case .preSignUpSignUp(let params, _):
+        case .preSignUp(let params, _):
             return params
         case .postConfirmation(let params, _):
             return params
@@ -193,7 +193,7 @@ extension CognitoEvent: Codable {
         switch triggerSource {
         case .preSignUp_SignUp, .preSignUp_ExternalProvider, .preSignUp_AdminCreateUser:
             let value = try container.decode(CognitoEvent.PreSignUp.self, forKey: .request)
-            self = .preSignUpSignUp(params, value)
+            self = .preSignUp(params, value)
 
         case .postConfirmation_ConfirmSignUp, .postConfirmation_ConfirmForgotPassword:
             let value = try container.decode(CognitoEvent.PostConfirmation.self, forKey: .request)
@@ -225,7 +225,7 @@ extension CognitoEvent: Codable {
         try container.encode(params.callerContext, forKey: .callerContext)
 
         switch self {
-        case .preSignUpSignUp(_, let value):
+        case .preSignUp(_, let value):
             try container.encode(value, forKey: .response)
         case .postConfirmation(_, let value):
             try container.encode(value, forKey: .response)
