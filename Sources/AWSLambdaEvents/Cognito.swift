@@ -19,8 +19,11 @@ enum CognitoEventError: Error, Sendable {
 /// https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-identity-pools-working-with-aws-lambda-triggers.html
 public enum CognitoEvent: Equatable, Sendable {
     public struct CallerContext: Codable, Hashable, Sendable {
-        let awsSdkVersion: String
-        let clientId: String
+        /// The version of the AWS SDK that generated the request.
+        public let awsSdkVersion: String
+
+        /// The ID of the user pool app client.
+        public let clientId: String
     }
 
     public enum TriggerSource: String, Codable, Sendable {
@@ -51,12 +54,25 @@ public enum CognitoEvent: Equatable, Sendable {
     }
 
     public struct Parameters: Codable, Equatable, Sendable {
-        let version: String
-        let triggerSource: TriggerSource
-        let region: AWSRegion
-        let userPoolId: String
-        let userName: String
-        let callerContext: CallerContext
+        /// The version number of your Lambda function.
+        public let version: String
+
+        /// The name of the event that triggered the Lambda function.
+        ///
+        /// For a description of each triggerSource see Connecting Lambda triggers to user pool functional operations. https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-identity-pools-working-with-aws-lambda-triggers.html#cognito-user-identity-pools-working-with-aws-lambda-trigger-sources
+        public let triggerSource: TriggerSource
+
+        /// The AWS Region as an AWSRegion instance.
+        public let region: AWSRegion
+
+        /// The ID of the user pool.
+        public let userPoolId: String
+
+        /// The current user's username.
+        public let userName: String
+
+        /// Metadata about the request and the code environment.
+        public let callerContext: CallerContext
     }
 
     case preSignUpSignUp(Parameters, PreSignUp)
