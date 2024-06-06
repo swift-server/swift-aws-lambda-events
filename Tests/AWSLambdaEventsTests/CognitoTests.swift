@@ -73,13 +73,13 @@ final class CognitoTests: XCTestCase {
                                                             autoVerifyPhone: true,
                                                             autoVerifyEmail: true)
 
-        let response = CognitoEventResponse.preSignUpSignUp(params, request, signUpResponse)
+        let response = CognitoEventResponse.preSignUp(params, request, signUpResponse)
 
         let data = try JSONEncoder().encode(response)
 
         let decodedResponse = try JSONDecoder().decode(CognitoEventResponse.self, from: data)
 
-        guard case .preSignUpSignUp(let decodedParams, let decodedRequest, let decodedResponse) = decodedResponse else {
+        guard case .preSignUp(let decodedParams, let decodedRequest, let decodedResponse) = decodedResponse else {
             XCTFail()
             return
         }

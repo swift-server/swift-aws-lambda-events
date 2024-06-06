@@ -28,10 +28,15 @@ public enum CognitoEvent: Equatable, Sendable {
 
     public enum TriggerSource: String, Codable, Sendable {
         case preSignUp_SignUp = "PreSignUp_SignUp"
+        case preSignUp_AdminCreateUser = "PreSignUp_AdminCreateUser"
         case preSignUp_ExternalProvider = "PreSignUp_ExternalProvider"
+
         case postConfirmation_ConfirmSignUp = "PostConfirmation_ConfirmSignUp"
+        case postConfirmation_ConfirmForgotPassword = "PostConfirmation_ConfirmForgotPassword"
+
         case preAuthentication_Authentication = "PreAuthentication_Authentication"
         case postAuthentication_Authentication = "PostAuthentication_Authentication"
+
         case customMessage_SignUp = "CustomMessage_SignUp"
         case customMessage_AdminCreateUser = "CustomMessage_AdminCreateUser"
         case customMessage_ResendCode = "CustomMessage_ResendCode"
@@ -39,16 +44,17 @@ public enum CognitoEvent: Equatable, Sendable {
         case customMessage_UpdateUserAttribute = "CustomMessage_UpdateUserAttribute"
         case customMessage_VerifyUserAttribute = "CustomMessage_VerifyUserAttribute"
         case customMessage_Authentication = "CustomMessage_Authentication"
+
         case defineAuthChallenge_Authentication = "DefineAuthChallenge_Authentication"
         case createAuthChallenge_Authentication = "CreateAuthChallenge_Authentication"
         case verifyAuthChallengeResponse_Authentication = "VerifyAuthChallengeResponse_Authentication"
-        case preSignUp_AdminCreateUser = "PreSignUp_AdminCreateUser"
-        case postConfirmation_ConfirmForgotPassword = "PostConfirmation_ConfirmForgotPassword"
+
         case tokenGeneration_HostedAuth = "TokenGeneration_HostedAuth"
         case tokenGeneration_Authentication = "TokenGeneration_Authentication"
         case tokenGeneration_NewPasswordChallenge = "TokenGeneration_NewPasswordChallenge"
         case tokenGeneration_AuthenticateDevice = "TokenGeneration_AuthenticateDevice"
         case tokenGeneration_RefreshTokens = "TokenGeneration_RefreshTokens"
+
         case userMigration_Authentication = "UserMigration_Authentication"
         case userMigration_ForgotPassword = "UserMigration_ForgotPassword"
     }
@@ -185,7 +191,7 @@ extension CognitoEvent: Codable {
         let params = CognitoEvent.Parameters(version: version, triggerSource: triggerSource, region: region, userPoolId: userPoolId, userName: userName, callerContext: callerContext)
 
         switch triggerSource {
-        case .preSignUp_SignUp:
+        case .preSignUp_SignUp, .preSignUp_ExternalProvider, .preSignUp_AdminCreateUser:
             let value = try container.decode(CognitoEvent.PreSignUp.self, forKey: .request)
             self = .preSignUpSignUp(params, value)
 
@@ -237,7 +243,7 @@ public enum CognitoEventResponse: Sendable {
         public init() {}
     }
 
-    case preSignUpSignUp(CognitoEvent.Parameters, CognitoEvent.PreSignUp, PreSignUp)
+    case preSignUp(CognitoEvent.Parameters, CognitoEvent.PreSignUp, PreSignUp)
 
     public struct PreSignUp: Codable, Hashable, Sendable {
         public let autoConfirmUser: Bool
@@ -276,7 +282,7 @@ public enum CognitoEventResponse: Sendable {
 
     public var commonParameters: CognitoEvent.Parameters {
         switch self {
-        case .preSignUpSignUp(let params, _, _):
+        case .preSignUp(let params, _, _):
             return params
         case .postConfirmation(let params, _, _):
             return params
@@ -313,11 +319,11 @@ extension CognitoEventResponse: Codable {
         let params = CognitoEvent.Parameters(version: version, triggerSource: triggerSource, region: region, userPoolId: userPoolId, userName: userName, callerContext: callerContext)
 
         switch triggerSource {
-        case .preSignUp_SignUp:
+        case .preSignUp_SignUp, .preSignUp_AdminCreateUser, .preSignUp_ExternalProvider:
             let request = try container.decode(CognitoEvent.PreSignUp.self, forKey: .request)
             let response = try container.decode(CognitoEventResponse.PreSignUp.self, forKey: .response)
 
-            self = .preSignUpSignUp(params, request, response)
+            self = .preSignUp(params, request, response)
 
         case .postConfirmation_ConfirmSignUp, .postConfirmation_ConfirmForgotPassword:
             let request = try container.decode(CognitoEvent.PostConfirmation.self, forKey: .request)
@@ -355,7 +361,7 @@ extension CognitoEventResponse: Codable {
         try container.encode(params.callerContext, forKey: .callerContext)
 
         switch self {
-        case .preSignUpSignUp(_, let request, let response):
+        case .preSignUp(_, let request, let response):
             try container.encode(request, forKey: .request)
             try container.encode(response, forKey: .response)
         case .postConfirmation(_, let request, let response):
