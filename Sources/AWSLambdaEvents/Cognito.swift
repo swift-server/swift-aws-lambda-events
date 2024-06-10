@@ -26,6 +26,7 @@ public enum CognitoEvent: Equatable, Sendable {
         public let clientId: String
     }
 
+    /// https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-identity-pools-working-with-aws-lambda-triggers.html#cognito-user-identity-pools-working-with-aws-lambda-trigger-sources
     public enum TriggerSource: String, Codable, Sendable {
         case preSignUp_SignUp = "PreSignUp_SignUp"
         case preSignUp_AdminCreateUser = "PreSignUp_AdminCreateUser"
