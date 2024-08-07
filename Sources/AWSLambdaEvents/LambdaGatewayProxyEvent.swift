@@ -12,11 +12,13 @@
 //
 //===----------------------------------------------------------------------===//
 
+import HTTPTypes
+
 /// LambdaGatewayProxyEvent contains data coming from the new HTTP API Gateway Proxy
-public struct LambdaGatewayProxyEvent: Decodable {
-    public struct RequestContext: Decodable {
+public struct LambdaGatewayProxyEvent: Decodable, Sendable {
+    public struct RequestContext: Decodable, Sendable {
         /// Authorizer contains authorizer information for the request context.
-        public struct Authorizer: Codable {
+        public struct Authorizer: Codable, Sendable {
             public let claims: [String: String]?
             public let scopes: [String]?
         }
@@ -28,7 +30,7 @@ public struct LambdaGatewayProxyEvent: Decodable {
         public let stage: String
         public let requestID: String
 
-        public let httpMethod: HTTPMethod
+        public let httpMethod: HTTPRequest.Method
         public let authorizer: Authorizer?
 
         public let resourcePath: String?
@@ -73,9 +75,3 @@ public struct LambdaGatewayProxyEvent: Decodable {
     public let body: String?
     public let isBase64Encoded: Bool
 }
-
-#if swift(>=5.6)
-extension LambdaGatewayProxyEvent: Sendable {}
-extension LambdaGatewayProxyEvent.RequestContext: Sendable {}
-extension LambdaGatewayProxyEvent.RequestContext.Authorizer: Sendable {}
-#endif

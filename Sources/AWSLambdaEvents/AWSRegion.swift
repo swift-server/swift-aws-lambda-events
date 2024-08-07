@@ -16,7 +16,7 @@
 //   $ aws ssm get-parameters-by-path --path /aws/service/global-infrastructure/services/lambda/regions --output json
 
 /// Enumeration of the AWS Regions.
-public struct AWSRegion: RawRepresentable, Equatable {
+public struct AWSRegion: RawRepresentable, Equatable, Sendable {
     public typealias RawValue = String
 
     public let rawValue: String
@@ -107,7 +107,3 @@ extension AWSRegion: Codable {
         try container.encode(self.rawValue)
     }
 }
-
-#if swift(>=5.6)
-extension AWSRegion: Sendable {}
-#endif

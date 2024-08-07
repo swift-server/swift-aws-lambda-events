@@ -16,8 +16,8 @@ import struct Foundation.Date
 
 // https://docs.aws.amazon.com/lambda/latest/dg/services-ses.html
 
-public struct SESEvent: Decodable {
-    public struct Record: Decodable {
+public struct SESEvent: Decodable, Sendable {
+    public struct Record: Decodable, Sendable {
         public let eventSource: String
         public let eventVersion: String
         public let ses: Message
@@ -29,12 +29,12 @@ public struct SESEvent: Decodable {
         case records = "Records"
     }
 
-    public struct Message: Decodable {
+    public struct Message: Decodable, Sendable {
         public let mail: Mail
         public let receipt: Receipt
     }
 
-    public struct Mail: Decodable {
+    public struct Mail: Decodable, Sendable {
         public let commonHeaders: CommonHeaders
         public let destination: [String]
         public let headers: [Header]
@@ -44,7 +44,7 @@ public struct SESEvent: Decodable {
         @ISO8601WithFractionalSecondsCoding public var timestamp: Date
     }
 
-    public struct CommonHeaders: Decodable {
+    public struct CommonHeaders: Decodable, Sendable {
         public let bcc: [String]?
         public let cc: [String]?
         @RFC5322DateTimeCoding public var date: Date
@@ -55,12 +55,12 @@ public struct SESEvent: Decodable {
         public let to: [String]?
     }
 
-    public struct Header: Decodable {
+    public struct Header: Decodable, Sendable {
         public let name: String
         public let value: String
     }
 
-    public struct Receipt: Decodable {
+    public struct Receipt: Decodable, Sendable {
         public let action: Action
         public let dmarcPolicy: DMARCPolicy?
         public let dmarcVerdict: Verdict?
@@ -73,40 +73,26 @@ public struct SESEvent: Decodable {
         public let virusVerdict: Verdict
     }
 
-    public struct Action: Decodable {
+    public struct Action: Decodable, Sendable {
         public let functionArn: String
         public let invocationType: String
         public let type: String
     }
 
-    public struct Verdict: Decodable {
+    public struct Verdict: Decodable, Sendable {
         public let status: Status
     }
 
-    public enum DMARCPolicy: String, Decodable {
+    public enum DMARCPolicy: String, Decodable, Sendable {
         case none
         case quarantine
         case reject
     }
 
-    public enum Status: String, Decodable {
+    public enum Status: String, Decodable, Sendable {
         case pass = "PASS"
         case fail = "FAIL"
         case gray = "GRAY"
         case processingFailed = "PROCESSING_FAILED"
     }
 }
-
-#if swift(>=5.6)
-extension SESEvent: Sendable {}
-extension SESEvent.Record: Sendable {}
-extension SESEvent.Message: Sendable {}
-extension SESEvent.Mail: Sendable {}
-extension SESEvent.Receipt: Sendable {}
-extension SESEvent.CommonHeaders: Sendable {}
-extension SESEvent.Action: Sendable {}
-extension SESEvent.Header: Sendable {}
-extension SESEvent.DMARCPolicy: Sendable {}
-extension SESEvent.Verdict: Sendable {}
-extension SESEvent.Status: Sendable {}
-#endif

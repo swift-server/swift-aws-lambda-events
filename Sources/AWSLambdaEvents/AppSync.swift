@@ -12,11 +12,13 @@
 //
 //===----------------------------------------------------------------------===//
 
+import HTTPTypes
+
 // https://docs.aws.amazon.com/appsync/latest/devguide/resolver-context-reference.html
-public struct AppSyncEvent: Decodable {
+public struct AppSyncEvent: Decodable, Sendable {
     public let arguments: [String: ArgumentValue]
 
-    public enum ArgumentValue: Codable {
+    public enum ArgumentValue: Codable, Sendable {
         case string(String)
         case dictionary([String: String])
 
@@ -46,7 +48,7 @@ public struct AppSyncEvent: Decodable {
     }
 
     public let request: Request
-    public struct Request: Decodable {
+    public struct Request: Decodable, Sendable {
         let headers: HTTPHeaders
     }
 
@@ -54,7 +56,7 @@ public struct AppSyncEvent: Decodable {
     public let stash: [String: String]?
 
     public let info: Info
-    public struct Info: Codable {
+    public struct Info: Codable, Sendable {
         public var selectionSetList: [String]
         public var selectionSetGraphQL: String
         public var parentTypeName: String
@@ -63,11 +65,11 @@ public struct AppSyncEvent: Decodable {
     }
 
     public let identity: Identity?
-    public enum Identity: Codable {
+    public enum Identity: Codable, Sendable {
         case iam(IAMIdentity)
         case cognitoUserPools(CognitoUserPoolIdentity)
 
-        public struct IAMIdentity: Codable {
+        public struct IAMIdentity: Codable, Sendable {
             public let accountId: String
             public let cognitoIdentityPoolId: String
             public let cognitoIdentityId: String
@@ -78,7 +80,7 @@ public struct AppSyncEvent: Decodable {
             public let cognitoIdentityAuthProvider: String
         }
 
-        public struct CognitoUserPoolIdentity: Codable {
+        public struct CognitoUserPoolIdentity: Codable, Sendable {
             public let defaultAuthStrategy: String
             public let issuer: String
             public let sourceIp: [String]
@@ -163,14 +165,4 @@ public enum AppSyncResponse<ResultType: Encodable>: Encodable {
 }
 
 public typealias AppSyncJSONResponse = AppSyncResponse<String>
-
-#if swift(>=5.6)
-extension AppSyncEvent: Sendable {}
-extension AppSyncEvent.ArgumentValue: Sendable {}
-extension AppSyncEvent.Request: Sendable {}
-extension AppSyncEvent.Info: Sendable {}
-extension AppSyncEvent.Identity: Sendable {}
-extension AppSyncEvent.Identity.CognitoUserPoolIdentity: Sendable {}
-extension AppSyncEvent.Identity.IAMIdentity: Sendable {}
 extension AppSyncResponse: Sendable where ResultType: Sendable {}
-#endif

@@ -12,15 +12,17 @@
 //
 //===----------------------------------------------------------------------===//
 
+import HTTPTypes
+
 import class Foundation.JSONEncoder
 
 // https://docs.aws.amazon.com/lambda/latest/dg/services-apigateway.html
 // https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
 
 /// `APIGatewayRequest` contains data coming from the API Gateway.
-public struct APIGatewayRequest: Codable {
-    public struct Context: Codable {
-        public struct Identity: Codable {
+public struct APIGatewayRequest: Codable, Sendable {
+    public struct Context: Codable, Sendable {
+        public struct Identity: Codable, Sendable {
             public let cognitoIdentityPoolId: String?
 
             public let apiKey: String?
@@ -35,6 +37,10 @@ public struct APIGatewayRequest: Codable {
             public let accountId: String?
         }
 
+        public struct Authorizer: Codable, Sendable {
+            public let claims: [String: String]?
+        }
+
         public let resourceId: String
         public let apiId: String
         public let domainName: String?
@@ -45,13 +51,14 @@ public struct APIGatewayRequest: Codable {
         public let stage: String
 
         public let identity: Identity
+        public let authorizer: Authorizer?
         public let extendedRequestId: String?
         public let path: String
     }
 
     public let resource: String
     public let path: String
-    public let httpMethod: HTTPMethod
+    public let httpMethod: HTTPRequest.Method
 
     public let queryStringParameters: [String: String]?
     public let multiValueQueryStringParameters: [String: [String]]?
@@ -67,15 +74,15 @@ public struct APIGatewayRequest: Codable {
 
 // MARK: - Response -
 
-public struct APIGatewayResponse: Codable {
-    public var statusCode: HTTPResponseStatus
+public struct APIGatewayResponse: Codable, Sendable {
+    public var statusCode: HTTPResponse.Status
     public var headers: HTTPHeaders?
     public var multiValueHeaders: HTTPMultiValueHeaders?
     public var body: String?
     public var isBase64Encoded: Bool?
 
     public init(
-        statusCode: HTTPResponseStatus,
+        statusCode: HTTPResponse.Status,
         headers: HTTPHeaders? = nil,
         multiValueHeaders: HTTPMultiValueHeaders? = nil,
         body: String? = nil,
@@ -88,10 +95,3 @@ public struct APIGatewayResponse: Codable {
         self.isBase64Encoded = isBase64Encoded
     }
 }
-
-#if swift(>=5.6)
-extension APIGatewayRequest: Sendable {}
-extension APIGatewayRequest.Context: Sendable {}
-extension APIGatewayRequest.Context.Identity: Sendable {}
-extension APIGatewayResponse: Sendable {}
-#endif

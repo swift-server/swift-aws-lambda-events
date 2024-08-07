@@ -12,12 +12,14 @@
 //
 //===----------------------------------------------------------------------===//
 
+import HTTPTypes
+
 /// `APIGatewayV2Request` contains data coming from the new HTTP API Gateway.
-public struct APIGatewayV2Request: Codable {
+public struct APIGatewayV2Request: Codable, Sendable {
     /// `Context` contains information to identify the AWS account and resources invoking the Lambda function.
-    public struct Context: Codable {
-        public struct HTTP: Codable {
-            public let method: HTTPMethod
+    public struct Context: Codable, Sendable {
+        public struct HTTP: Codable, Sendable {
+            public let method: HTTPRequest.Method
             public let path: String
             public let `protocol`: String
             public let sourceIp: String
@@ -25,14 +27,52 @@ public struct APIGatewayV2Request: Codable {
         }
 
         /// `Authorizer` contains authorizer information for the request context.
-        public struct Authorizer: Codable {
+        public struct Authorizer: Codable, Sendable {
             /// `JWT` contains JWT authorizer information for the request context.
-            public struct JWT: Codable {
+            public struct JWT: Codable, Sendable {
                 public let claims: [String: String]?
                 public let scopes: [String]?
             }
 
-            public let jwt: JWT
+            public let jwt: JWT?
+
+            // `IAM` contains AWS IAM authorizer information for the request context.
+            public struct IAM: Codable, Sendable {
+                public struct CognitoIdentity: Codable, Sendable {
+                    public let amr: [String]?
+                    public let identityId: String?
+                    public let identityPoolId: String?
+                }
+
+                public let accessKey: String?
+                public let accountId: String?
+                public let callerId: String?
+                public let cognitoIdentity: CognitoIdentity?
+                public let principalOrgId: String?
+                public let userArn: String?
+                public let userId: String?
+            }
+
+            public let iam: IAM?
+
+            public let lambda: LambdaAuthorizerContext?
+        }
+
+        public struct Authentication: Codable, Sendable {
+            public struct ClientCert: Codable, Sendable {
+                public struct Validity: Codable, Sendable {
+                    public let notBefore: String
+                    public let notAfter: String
+                }
+
+                public let clientCertPem: String
+                public let subjectDN: String
+                public let issuerDN: String
+                public let serialNumber: String
+                public let validity: Validity
+            }
+
+            public let clientCert: ClientCert?
         }
 
         public let accountId: String
@@ -44,6 +84,7 @@ public struct APIGatewayV2Request: Codable {
 
         public let http: HTTP
         public let authorizer: Authorizer?
+        public let authentication: Authentication?
 
         /// The request time in format: 23/Apr/2020:11:08:18 +0000
         public let time: String
@@ -85,15 +126,15 @@ public struct APIGatewayV2Request: Codable {
     }
 }
 
-public struct APIGatewayV2Response: Codable {
-    public var statusCode: HTTPResponseStatus
+public struct APIGatewayV2Response: Codable, Sendable {
+    public var statusCode: HTTPResponse.Status
     public var headers: HTTPHeaders?
     public var body: String?
     public var isBase64Encoded: Bool?
     public var cookies: [String]?
 
     public init(
-        statusCode: HTTPResponseStatus,
+        statusCode: HTTPResponse.Status,
         headers: HTTPHeaders? = nil,
         body: String? = nil,
         isBase64Encoded: Bool? = nil,
@@ -106,12 +147,3 @@ public struct APIGatewayV2Response: Codable {
         self.cookies = cookies
     }
 }
-
-#if swift(>=5.6)
-extension APIGatewayV2Request: Sendable {}
-extension APIGatewayV2Request.Context: Sendable {}
-extension APIGatewayV2Request.Context.HTTP: Sendable {}
-extension APIGatewayV2Request.Context.Authorizer: Sendable {}
-extension APIGatewayV2Request.Context.Authorizer.JWT: Sendable {}
-extension APIGatewayV2Response: Sendable {}
-#endif
