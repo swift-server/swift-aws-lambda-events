@@ -25,7 +25,7 @@ public struct AWSRegion: RawRepresentable, Equatable, Sendable {
         self.rawValue = rawValue
     }
 
-    static var all: [AWSRegion] = [
+    static let all: [AWSRegion] = [
         Self.af_south_1,
         Self.ap_northeast_1,
         Self.ap_northeast_2,
