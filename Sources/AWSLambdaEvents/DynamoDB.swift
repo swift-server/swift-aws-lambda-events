@@ -17,6 +17,7 @@ import struct Foundation.Date
 #else
 @preconcurrency import struct Foundation.Date
 #endif
+import struct Foundation.Data
 
 // https://docs.aws.amazon.com/lambda/latest/dg/with-ddb.html
 public struct DynamoDBEvent: Decodable, Sendable {
@@ -619,11 +620,14 @@ extension DynamoDBEvent {
         }
 
         func decode(_: String.Type) throws -> String {
-            guard case .string(let string) = self.value else {
+            switch self.value {
+            case .string(let string):
+                return string
+            case .binary(let binary):
+                return Data(binary).base64EncodedString()
+            default:
                 throw self.createTypeMismatchError(type: String.self, value: self.value)
             }
-
-            return string
         }
 
         func decode(_: Double.Type) throws -> Double {
