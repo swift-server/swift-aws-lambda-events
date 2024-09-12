@@ -507,6 +507,9 @@ extension DynamoDBEvent {
 
         func decode<T>(_ type: T.Type, forKey key: K) throws -> T where T: Decodable {
             let decoder = try self.decoderForKey(key)
+            if case .list(let list) = decoder.value, list.isEmpty {
+                return [] as! T
+            }
             return try T(from: decoder)
         }
 
