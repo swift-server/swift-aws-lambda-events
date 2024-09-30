@@ -12,10 +12,10 @@
 //
 //===----------------------------------------------------------------------===//
 
-#if canImport(Darwin)
-import struct Foundation.Date
+#if canImport(FoundationEssentials)
+import FoundationEssentials
 #else
-@preconcurrency import struct Foundation.Date
+import Foundation
 #endif
 
 // https://docs.aws.amazon.com/lambda/latest/dg/with-ddb.html

@@ -12,14 +12,11 @@
 //
 //===----------------------------------------------------------------------===//
 
-#if canImport(Darwin)
-import struct Foundation.Date
+#if canImport(FoundationEssentials)
+import FoundationEssentials
 #else
-@preconcurrency import struct Foundation.Date
+import Foundation
 #endif
-import class Foundation.DateFormatter
-import struct Foundation.Locale
-import struct Foundation.TimeZone
 
 @propertyWrapper
 public struct ISO8601Coding: Decodable, Sendable {
