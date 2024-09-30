@@ -14,7 +14,11 @@
 
 import HTTPTypes
 
-import class Foundation.JSONEncoder
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
+import Foundation
+#endif
 
 // https://github.com/aws/aws-lambda-go/blob/master/events/alb.go
 /// `ALBTargetGroupRequest` contains data originating from the ALB Lambda target group integration.

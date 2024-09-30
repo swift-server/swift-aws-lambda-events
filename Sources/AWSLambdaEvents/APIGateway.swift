@@ -14,7 +14,11 @@
 
 import HTTPTypes
 
-import class Foundation.JSONEncoder
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
+import Foundation
+#endif
 
 // https://docs.aws.amazon.com/lambda/latest/dg/services-apigateway.html
 // https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html

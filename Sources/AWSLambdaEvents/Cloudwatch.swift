@@ -12,10 +12,10 @@
 //
 //===----------------------------------------------------------------------===//
 
-#if canImport(Darwin)
-import struct Foundation.Date
+#if canImport(FoundationEssentials)
+import FoundationEssentials
 #else
-@preconcurrency import struct Foundation.Date
+import Foundation
 #endif
 
 /// EventBridge has the same events/notification types as CloudWatch
