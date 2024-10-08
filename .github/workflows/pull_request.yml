@@ -11,8 +11,8 @@ jobs:
         with:
             license_header_check_project_name: "SwiftAWSLambdaEvents"
             shell_check_enabled: false
-            api_breakage_check_container_image: "swift:6.0-jammy"
-            docs_check_container_image: "swift:6.0-focal"
+            api_breakage_check_container_image: "swift:6.0-noble"
+            docs_check_container_image: "swift:6.0-noble"
 
     unit-tests:
         name: Unit tests
