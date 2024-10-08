@@ -29,10 +29,13 @@ public struct AppSyncEvent: Decodable, Sendable {
             } else if let dictionaryValue = try? container.decode([String: String].self) {
                 self = .dictionary(dictionaryValue)
             } else {
-                throw DecodingError.dataCorruptedError(in: container, debugDescription: """
-                Unexpected AppSync argument.
-                Expected a String or a Dictionary.
-                """)
+                throw DecodingError.dataCorruptedError(
+                    in: container,
+                    debugDescription: """
+                        Unexpected AppSync argument.
+                        Expected a String or a Dictionary.
+                        """
+                )
             }
         }
 
@@ -127,10 +130,13 @@ public struct AppSyncEvent: Decodable, Sendable {
             } else if let cognitoIdentity = try? container.decode(CognitoUserPoolIdentity.self) {
                 self = .cognitoUserPools(cognitoIdentity)
             } else {
-                throw DecodingError.dataCorruptedError(in: container, debugDescription: """
-                Unexpected Identity argument.
-                Expected a IAM Identity or a Cognito User Pool Identity.
-                """)
+                throw DecodingError.dataCorruptedError(
+                    in: container,
+                    debugDescription: """
+                        Unexpected Identity argument.
+                        Expected a IAM Identity or a Cognito User Pool Identity.
+                        """
+                )
             }
         }
 

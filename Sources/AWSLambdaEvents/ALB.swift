@@ -20,7 +20,7 @@ import FoundationEssentials
 import Foundation
 #endif
 
-// https://github.com/aws/aws-lambda-go/blob/master/events/alb.go
+// https://github.com/aws/aws-lambda-go/blob/main/events/alb.go
 /// `ALBTargetGroupRequest` contains data originating from the ALB Lambda target group integration.
 public struct ALBTargetGroupRequest: Codable, Sendable {
     /// `Context` contains information to identify the load balancer invoking the lambda.

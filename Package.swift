@@ -7,7 +7,7 @@ let swiftSettings: [SwiftSetting] = [.enableExperimentalFeature("StrictConcurren
 let package = Package(
     name: "swift-aws-lambda-events",
     products: [
-        .library(name: "AWSLambdaEvents", targets: ["AWSLambdaEvents"]),
+        .library(name: "AWSLambdaEvents", targets: ["AWSLambdaEvents"])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"),
@@ -17,14 +17,14 @@ let package = Package(
         .target(
             name: "AWSLambdaEvents",
             dependencies: [
-                .product(name: "HTTPTypes", package: "swift-http-types"),
+                .product(name: "HTTPTypes", package: "swift-http-types")
             ],
             swiftSettings: swiftSettings
         ),
         .testTarget(
             name: "AWSLambdaEventsTests",
             dependencies: [
-                "AWSLambdaEvents",
+                "AWSLambdaEvents"
             ],
             swiftSettings: swiftSettings
         ),

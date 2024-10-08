@@ -12,37 +12,38 @@
 //
 //===----------------------------------------------------------------------===//
 
-@testable import AWSLambdaEvents
 import XCTest
+
+@testable import AWSLambdaEvents
 
 final class CognitoTests: XCTestCase {
     func testPreSignUpRequest() throws {
         let json = """
-        {
-         "version": "1",
-         "triggerSource": "PreSignUp_SignUp",
-         "region": "us-east-1",
-         "userPoolId": "abc",
-         "userName": "blob",
-         "callerContext": {
-          "awsSdkVersion": "1",
-          "clientId": "abc",
-         },
-         "request": {
-          "userAttributes": {
-           "string": "string"
-          },
-          "validationData": {
-           "string": "string"
-           },
-          "clientMetadata": {
-           "string": "string"
-           }
-         },
+            {
+             "version": "1",
+             "triggerSource": "PreSignUp_SignUp",
+             "region": "us-east-1",
+             "userPoolId": "abc",
+             "userName": "blob",
+             "callerContext": {
+              "awsSdkVersion": "1",
+              "clientId": "abc",
+             },
+             "request": {
+              "userAttributes": {
+               "string": "string"
+              },
+              "validationData": {
+               "string": "string"
+               },
+              "clientMetadata": {
+               "string": "string"
+               }
+             },
 
-         "response": {}
-        }
-        """
+             "response": {}
+            }
+            """
         let event = try JSONDecoder().decode(CognitoEvent.self, from: json.data(using: .utf8)!)
 
         guard case .preSignUp(let params, let request) = event else {
@@ -52,26 +53,34 @@ final class CognitoTests: XCTestCase {
 
         XCTAssertEqual(params.triggerSource, .preSignUp_SignUp)
 
-        let signUp = CognitoEvent.PreSignUp(userAttributes: ["string": "string"],
-                                            validationData: ["string": "string"],
-                                            clientMetadata: ["string": "string"])
+        let signUp = CognitoEvent.PreSignUp(
+            userAttributes: ["string": "string"],
+            validationData: ["string": "string"],
+            clientMetadata: ["string": "string"]
+        )
         XCTAssertEqual(request, signUp)
     }
 
     func testPreSignUpResponse() throws {
-        let params = CognitoEvent.Parameters(version: "1",
-                                             triggerSource: .preSignUp_SignUp,
-                                             region: .us_east_1,
-                                             userPoolId: "abc",
-                                             userName: "blob",
-                                             callerContext: .init(awsSdkVersion: "1", clientId: "abc"))
-        let request = CognitoEvent.PreSignUp(userAttributes: ["string": "string"],
-                                             validationData: ["string": "string"],
-                                             clientMetadata: ["string": "string"])
+        let params = CognitoEvent.Parameters(
+            version: "1",
+            triggerSource: .preSignUp_SignUp,
+            region: .us_east_1,
+            userPoolId: "abc",
+            userName: "blob",
+            callerContext: .init(awsSdkVersion: "1", clientId: "abc")
+        )
+        let request = CognitoEvent.PreSignUp(
+            userAttributes: ["string": "string"],
+            validationData: ["string": "string"],
+            clientMetadata: ["string": "string"]
+        )
 
-        let signUpResponse = CognitoEventResponse.PreSignUp(autoConfirmUser: true,
-                                                            autoVerifyPhone: true,
-                                                            autoVerifyEmail: true)
+        let signUpResponse = CognitoEventResponse.PreSignUp(
+            autoConfirmUser: true,
+            autoVerifyPhone: true,
+            autoVerifyEmail: true
+        )
 
         let response = CognitoEventResponse.preSignUp(params, request, signUpResponse)
 
@@ -91,27 +100,27 @@ final class CognitoTests: XCTestCase {
 
     func testPostConfirmationRequest() throws {
         let json = """
-        {
-         "version": "1",
-         "triggerSource": "PostConfirmation_ConfirmSignUp",
-         "region": "us-east-1",
-         "userPoolId": "abc",
-         "userName": "blob",
-         "callerContext": {
-          "awsSdkVersion": "1",
-          "clientId": "abc",
-         },
-         "request": {
-          "userAttributes": {
-           "string": "string"
-          },
-          "clientMetadata": {
-           "string": "string"
-          }
-         },
-         "response": {}
-        }
-        """
+            {
+             "version": "1",
+             "triggerSource": "PostConfirmation_ConfirmSignUp",
+             "region": "us-east-1",
+             "userPoolId": "abc",
+             "userName": "blob",
+             "callerContext": {
+              "awsSdkVersion": "1",
+              "clientId": "abc",
+             },
+             "request": {
+              "userAttributes": {
+               "string": "string"
+              },
+              "clientMetadata": {
+               "string": "string"
+              }
+             },
+             "response": {}
+            }
+            """
         let event = try JSONDecoder().decode(CognitoEvent.self, from: json.data(using: .utf8)!)
 
         guard case .postConfirmation(let params, let request) = event else {
@@ -121,20 +130,26 @@ final class CognitoTests: XCTestCase {
 
         XCTAssertEqual(params.triggerSource, .postConfirmation_ConfirmSignUp)
 
-        let postConfirmation = CognitoEvent.PostConfirmation(userAttributes: ["string": "string"],
-                                                             clientMetadata: ["string": "string"])
+        let postConfirmation = CognitoEvent.PostConfirmation(
+            userAttributes: ["string": "string"],
+            clientMetadata: ["string": "string"]
+        )
         XCTAssertEqual(request, postConfirmation)
     }
 
     func testPostConfirmationResponse() throws {
-        let params = CognitoEvent.Parameters(version: "1",
-                                             triggerSource: .postConfirmation_ConfirmSignUp,
-                                             region: .us_east_1,
-                                             userPoolId: "abc",
-                                             userName: "blob",
-                                             callerContext: .init(awsSdkVersion: "1", clientId: "abc"))
-        let request = CognitoEvent.PostConfirmation(userAttributes: ["string": "string"],
-                                                    clientMetadata: ["string": "string"])
+        let params = CognitoEvent.Parameters(
+            version: "1",
+            triggerSource: .postConfirmation_ConfirmSignUp,
+            region: .us_east_1,
+            userPoolId: "abc",
+            userName: "blob",
+            callerContext: .init(awsSdkVersion: "1", clientId: "abc")
+        )
+        let request = CognitoEvent.PostConfirmation(
+            userAttributes: ["string": "string"],
+            clientMetadata: ["string": "string"]
+        )
 
         let postConfirmationResponse = CognitoEventResponse.EmptyResponse()
 
@@ -144,7 +159,8 @@ final class CognitoTests: XCTestCase {
 
         let decodedResponse = try JSONDecoder().decode(CognitoEventResponse.self, from: data)
 
-        guard case .postConfirmation(let decodedParams, let decodedRequest, let decodedResponse) = decodedResponse else {
+        guard case .postConfirmation(let decodedParams, let decodedRequest, let decodedResponse) = decodedResponse
+        else {
             XCTFail()
             return
         }
@@ -156,28 +172,28 @@ final class CognitoTests: XCTestCase {
 
     func testPostAuthenticationRequest() throws {
         let json = """
-        {
-         "version": "1",
-         "triggerSource": "PostAuthentication_Authentication",
-         "region": "us-east-1",
-         "userPoolId": "abc",
-         "userName": "blob",
-         "callerContext": {
-          "awsSdkVersion": "1",
-          "clientId": "abc",
-         },
-         "request": {
-          "newDeviceUsed": false,
-          "userAttributes": {
-           "string": "string"
-          },
-          "clientMetadata": {
-           "string": "string"
-          }
-         },
-         "response": {}
-        }
-        """
+            {
+             "version": "1",
+             "triggerSource": "PostAuthentication_Authentication",
+             "region": "us-east-1",
+             "userPoolId": "abc",
+             "userName": "blob",
+             "callerContext": {
+              "awsSdkVersion": "1",
+              "clientId": "abc",
+             },
+             "request": {
+              "newDeviceUsed": false,
+              "userAttributes": {
+               "string": "string"
+              },
+              "clientMetadata": {
+               "string": "string"
+              }
+             },
+             "response": {}
+            }
+            """
         let event = try JSONDecoder().decode(CognitoEvent.self, from: json.data(using: .utf8)!)
 
         guard case .postAuthentication(let params, let request) = event else {
@@ -187,22 +203,28 @@ final class CognitoTests: XCTestCase {
 
         XCTAssertEqual(params.triggerSource, .postAuthentication_Authentication)
 
-        let postAuthentication = CognitoEvent.PostAuthentication(newDeviceUsed: false,
-                                                                 userAttributes: ["string": "string"],
-                                                                 clientMetadata: ["string": "string"])
+        let postAuthentication = CognitoEvent.PostAuthentication(
+            newDeviceUsed: false,
+            userAttributes: ["string": "string"],
+            clientMetadata: ["string": "string"]
+        )
         XCTAssertEqual(request, postAuthentication)
     }
 
     func testPostAuthenticationResponse() throws {
-        let params = CognitoEvent.Parameters(version: "1",
-                                             triggerSource: .postAuthentication_Authentication,
-                                             region: .us_east_1,
-                                             userPoolId: "abc",
-                                             userName: "blob",
-                                             callerContext: .init(awsSdkVersion: "1", clientId: "abc"))
-        let request = CognitoEvent.PostAuthentication(newDeviceUsed: false,
-                                                      userAttributes: ["string": "string"],
-                                                      clientMetadata: ["string": "string"])
+        let params = CognitoEvent.Parameters(
+            version: "1",
+            triggerSource: .postAuthentication_Authentication,
+            region: .us_east_1,
+            userPoolId: "abc",
+            userName: "blob",
+            callerContext: .init(awsSdkVersion: "1", clientId: "abc")
+        )
+        let request = CognitoEvent.PostAuthentication(
+            newDeviceUsed: false,
+            userAttributes: ["string": "string"],
+            clientMetadata: ["string": "string"]
+        )
 
         let postAuthenticationResponse = CognitoEventResponse.EmptyResponse()
 
@@ -212,7 +234,8 @@ final class CognitoTests: XCTestCase {
 
         let decodedResponse = try JSONDecoder().decode(CognitoEventResponse.self, from: data)
 
-        guard case .postAuthentication(let decodedParams, let decodedRequest, let decodedResponse) = decodedResponse else {
+        guard case .postAuthentication(let decodedParams, let decodedRequest, let decodedResponse) = decodedResponse
+        else {
             XCTFail()
             return
         }
@@ -224,29 +247,29 @@ final class CognitoTests: XCTestCase {
 
     func testCustomMessageRequest() throws {
         let json = """
-        {
-         "version": "1",
-         "triggerSource": "CustomMessage_AdminCreateUser",
-         "region": "us-east-1",
-         "userPoolId": "abc",
-         "userName": "blob",
-         "callerContext": {
-          "awsSdkVersion": "1",
-          "clientId": "abc",
-         },
-         "request": {
-          "codeParameter": "######",
-          "usernameParameter": "user123",
-          "userAttributes": {
-           "string": "string"
-          },
-          "clientMetadata": {
-           "string": "string"
-          }
-         },
-         "response": {}
-        }
-        """
+            {
+             "version": "1",
+             "triggerSource": "CustomMessage_AdminCreateUser",
+             "region": "us-east-1",
+             "userPoolId": "abc",
+             "userName": "blob",
+             "callerContext": {
+              "awsSdkVersion": "1",
+              "clientId": "abc",
+             },
+             "request": {
+              "codeParameter": "######",
+              "usernameParameter": "user123",
+              "userAttributes": {
+               "string": "string"
+              },
+              "clientMetadata": {
+               "string": "string"
+              }
+             },
+             "response": {}
+            }
+            """
         let event = try JSONDecoder().decode(CognitoEvent.self, from: json.data(using: .utf8)!)
 
         guard case .customMessage(let params, let request) = event else {
@@ -256,26 +279,36 @@ final class CognitoTests: XCTestCase {
 
         XCTAssertEqual(params.triggerSource, .customMessage_AdminCreateUser)
 
-        let postAuthentication = CognitoEvent.CustomMessage(codeParameter: "######",
-                                                            usernameParameter: "user123",
-                                                            userAttributes: ["string": "string"],
-                                                            clientMetadata: ["string": "string"])
+        let postAuthentication = CognitoEvent.CustomMessage(
+            codeParameter: "######",
+            usernameParameter: "user123",
+            userAttributes: ["string": "string"],
+            clientMetadata: ["string": "string"]
+        )
         XCTAssertEqual(request, postAuthentication)
     }
 
     func testCustomMessageResponse() throws {
-        let params = CognitoEvent.Parameters(version: "1",
-                                             triggerSource: .customMessage_AdminCreateUser,
-                                             region: .us_east_1,
-                                             userPoolId: "abc",
-                                             userName: "blob",
-                                             callerContext: .init(awsSdkVersion: "1", clientId: "abc"))
-        let request = CognitoEvent.CustomMessage(codeParameter: "######",
-                                                 usernameParameter: "user123",
-                                                 userAttributes: ["string": "string"],
-                                                 clientMetadata: ["string": "string"])
+        let params = CognitoEvent.Parameters(
+            version: "1",
+            triggerSource: .customMessage_AdminCreateUser,
+            region: .us_east_1,
+            userPoolId: "abc",
+            userName: "blob",
+            callerContext: .init(awsSdkVersion: "1", clientId: "abc")
+        )
+        let request = CognitoEvent.CustomMessage(
+            codeParameter: "######",
+            usernameParameter: "user123",
+            userAttributes: ["string": "string"],
+            clientMetadata: ["string": "string"]
+        )
 
-        let customMessageResponse = CognitoEventResponse.CustomMessage(smsMessage: nil, emailMessage: "<html><body>Your code is ######</body></html>", emailSubject: "Sign up code")
+        let customMessageResponse = CognitoEventResponse.CustomMessage(
+            smsMessage: nil,
+            emailMessage: "<html><body>Your code is ######</body></html>",
+            emailSubject: "Sign up code"
+        )
 
         let response = CognitoEventResponse.customMessage(params, request, customMessageResponse)
 

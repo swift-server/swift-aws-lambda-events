@@ -86,10 +86,14 @@ extension SQSEvent.Message.Attribute: Decodable {
             let bytes = try base64encoded.base64decoded()
             self = .binary(bytes)
         default:
-            throw DecodingError.dataCorruptedError(forKey: .dataType, in: container, debugDescription: """
-            Unexpected value \"\(dataType)\" for key \(CodingKeys.dataType).
-            Expected `String`, `Binary` or `Number`.
-            """)
+            throw DecodingError.dataCorruptedError(
+                forKey: .dataType,
+                in: container,
+                debugDescription: """
+                    Unexpected value \"\(dataType)\" for key \(CodingKeys.dataType).
+                    Expected `String`, `Binary` or `Number`.
+                    """
+            )
         }
     }
 }

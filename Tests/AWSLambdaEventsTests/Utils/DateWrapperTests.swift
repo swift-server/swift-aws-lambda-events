@@ -12,8 +12,9 @@
 //
 //===----------------------------------------------------------------------===//
 
-@testable import AWSLambdaEvents
 import XCTest
+
+@testable import AWSLambdaEvents
 
 class DateWrapperTests: XCTestCase {
     func testISO8601CodingWrapperSuccess() {
@@ -35,15 +36,19 @@ class DateWrapperTests: XCTestCase {
             var date: Date
         }
 
-        let date = "2020-03-26T16:53:05" // missing Z at end
+        let date = "2020-03-26T16:53:05"  // missing Z at end
         let json = #"{"date":"\#(date)"}"#
         XCTAssertThrowsError(_ = try JSONDecoder().decode(TestEvent.self, from: json.data(using: .utf8)!)) { error in
             guard case DecodingError.dataCorrupted(let context) = error else {
-                XCTFail("Unexpected error: \(error)"); return
+                XCTFail("Unexpected error: \(error)")
+                return
             }
 
             XCTAssertEqual(context.codingPath.map(\.stringValue), ["date"])
-            XCTAssertEqual(context.debugDescription, "Expected date to be in ISO8601 date format, but `\(date)` is not in the correct format")
+            XCTAssertEqual(
+                context.debugDescription,
+                "Expected date to be in ISO8601 date format, but `\(date)` is not in the correct format"
+            )
             XCTAssertNil(context.underlyingError)
         }
     }
@@ -67,15 +72,19 @@ class DateWrapperTests: XCTestCase {
             var date: Date
         }
 
-        let date = "2020-03-26T16:53:05Z" // missing fractional seconds
+        let date = "2020-03-26T16:53:05Z"  // missing fractional seconds
         let json = #"{"date":"\#(date)"}"#
         XCTAssertThrowsError(_ = try JSONDecoder().decode(TestEvent.self, from: json.data(using: .utf8)!)) { error in
             guard case DecodingError.dataCorrupted(let context) = error else {
-                XCTFail("Unexpected error: \(error)"); return
+                XCTFail("Unexpected error: \(error)")
+                return
             }
 
             XCTAssertEqual(context.codingPath.map(\.stringValue), ["date"])
-            XCTAssertEqual(context.debugDescription, "Expected date to be in ISO8601 date format with fractional seconds, but `\(date)` is not in the correct format")
+            XCTAssertEqual(
+                context.debugDescription,
+                "Expected date to be in ISO8601 date format with fractional seconds, but `\(date)` is not in the correct format"
+            )
             XCTAssertNil(context.underlyingError)
         }
     }
@@ -138,15 +147,19 @@ class DateWrapperTests: XCTestCase {
             var date: Date
         }
 
-        let date = "Thu, 5 Apr 2012 23:47 +0200" // missing seconds
+        let date = "Thu, 5 Apr 2012 23:47 +0200"  // missing seconds
         let json = #"{"date":"\#(date)"}"#
         XCTAssertThrowsError(_ = try JSONDecoder().decode(TestEvent.self, from: json.data(using: .utf8)!)) { error in
             guard case DecodingError.dataCorrupted(let context) = error else {
-                XCTFail("Unexpected error: \(error)"); return
+                XCTFail("Unexpected error: \(error)")
+                return
             }
 
             XCTAssertEqual(context.codingPath.map(\.stringValue), ["date"])
-            XCTAssertEqual(context.debugDescription, "Expected date to be in RFC5322 date-time format, but `\(date)` is not in the correct format")
+            XCTAssertEqual(
+                context.debugDescription,
+                "Expected date to be in RFC5322 date-time format, but `\(date)` is not in the correct format"
+            )
             XCTAssertNil(context.underlyingError)
         }
     }
