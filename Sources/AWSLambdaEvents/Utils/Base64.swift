@@ -42,8 +42,8 @@ extension Base64 {
     ) throws -> [UInt8] where Buffer.Element == UInt8 {
         let alphabet =
             options.contains(.base64UrlAlphabet)
-            ? Base64.decodeDataUrl
-            : Base64.decodeData
+            ? Base64.urlAlphabet
+            : Base64.defaultAlphabet
 
         // In Base64 4 encoded bytes, become 3 decoded bytes. We pad to the
         // nearest multiple of three.
@@ -112,7 +112,7 @@ extension Base64 {
     // MARK: Internal
 
     @usableFromInline
-    static let decodeData: [UInt8] = [
+    static let defaultAlphabet: [UInt8] = [
         //     0    1    2    3    4    5    6    7    8    9
         255, 255, 255, 255, 255, 255, 255, 255, 255, 255,  //  0
         255, 255, 255, 255, 255, 255, 255, 255, 255, 255,  //  1
@@ -143,7 +143,7 @@ extension Base64 {
     ]
 
     @usableFromInline
-    static let decodeDataUrl: [UInt8] = [
+    static let urlAlphabet: [UInt8] = [
         //     0    1    2    3    4    5    6    7    8    9
         255, 255, 255, 255, 255, 255, 255, 255, 255, 255,  //  0
         255, 255, 255, 255, 255, 255, 255, 255, 255, 255,  //  1
