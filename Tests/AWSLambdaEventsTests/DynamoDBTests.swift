@@ -222,7 +222,7 @@ class DynamoDBTests: XCTestCase {
     func testAttributeValueEmptyDecoding() {
         let json = "{\"haha\": 1}"
         XCTAssertThrowsError(
-            _ = try JSONDecoder().decode(DynamoDBEvent.AttributeValue.self, from: json.data(using: .utf8)!)
+            try JSONDecoder().decode(DynamoDBEvent.AttributeValue.self, from: json.data(using: .utf8)!)
         ) { error in
             guard case DecodingError.dataCorrupted = error else {
                 XCTFail("Unexpected error: \(String(describing: error))")
