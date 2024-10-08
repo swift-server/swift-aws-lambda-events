@@ -60,8 +60,10 @@ public struct APIGatewayLambdaAuthorizerSimpleResponse: Codable, Sendable {
     public let isAuthorized: Bool
     public let context: LambdaAuthorizerContext?
 
-    public init(isAuthorized: Bool,
-                context: LambdaAuthorizerContext?) {
+    public init(
+        isAuthorized: Bool,
+        context: LambdaAuthorizerContext?
+    ) {
         self.isAuthorized = isAuthorized
         self.context = context
     }

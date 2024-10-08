@@ -189,7 +189,14 @@ extension CognitoEvent: Codable {
         let userName = try container.decode(String.self, forKey: .userName)
         let callerContext = try container.decode(CallerContext.self, forKey: .callerContext)
 
-        let params = CognitoEvent.Parameters(version: version, triggerSource: triggerSource, region: region, userPoolId: userPoolId, userName: userName, callerContext: callerContext)
+        let params = CognitoEvent.Parameters(
+            version: version,
+            triggerSource: triggerSource,
+            region: region,
+            userPoolId: userPoolId,
+            userName: userName,
+            callerContext: callerContext
+        )
 
         switch triggerSource {
         case .preSignUp_SignUp, .preSignUp_ExternalProvider, .preSignUp_AdminCreateUser:
@@ -204,7 +211,9 @@ extension CognitoEvent: Codable {
             let value = try container.decode(CognitoEvent.PostAuthentication.self, forKey: .request)
             self = .postAuthentication(params, value)
 
-        case .customMessage_SignUp, .customMessage_AdminCreateUser, .customMessage_ResendCode, .customMessage_ForgotPassword, .customMessage_UpdateUserAttribute, .customMessage_VerifyUserAttribute, .customMessage_Authentication:
+        case .customMessage_SignUp, .customMessage_AdminCreateUser, .customMessage_ResendCode,
+            .customMessage_ForgotPassword, .customMessage_UpdateUserAttribute, .customMessage_VerifyUserAttribute,
+            .customMessage_Authentication:
             let value = try container.decode(CognitoEvent.CustomMessage.self, forKey: .request)
             self = .customMessage(params, value)
 
@@ -317,7 +326,14 @@ extension CognitoEventResponse: Codable {
         let userName = try container.decode(String.self, forKey: .userName)
         let callerContext = try container.decode(CognitoEvent.CallerContext.self, forKey: .callerContext)
 
-        let params = CognitoEvent.Parameters(version: version, triggerSource: triggerSource, region: region, userPoolId: userPoolId, userName: userName, callerContext: callerContext)
+        let params = CognitoEvent.Parameters(
+            version: version,
+            triggerSource: triggerSource,
+            region: region,
+            userPoolId: userPoolId,
+            userName: userName,
+            callerContext: callerContext
+        )
 
         switch triggerSource {
         case .preSignUp_SignUp, .preSignUp_AdminCreateUser, .preSignUp_ExternalProvider:
@@ -338,7 +354,9 @@ extension CognitoEventResponse: Codable {
 
             self = .postAuthentication(params, request, response)
 
-        case .customMessage_SignUp, .customMessage_AdminCreateUser, .customMessage_ResendCode, .customMessage_ForgotPassword, .customMessage_UpdateUserAttribute, .customMessage_VerifyUserAttribute, .customMessage_Authentication:
+        case .customMessage_SignUp, .customMessage_AdminCreateUser, .customMessage_ResendCode,
+            .customMessage_ForgotPassword, .customMessage_UpdateUserAttribute, .customMessage_VerifyUserAttribute,
+            .customMessage_Authentication:
             let request = try container.decode(CognitoEvent.CustomMessage.self, forKey: .request)
             let response = try container.decode(CognitoEventResponse.CustomMessage.self, forKey: .response)
 

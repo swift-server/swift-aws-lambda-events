@@ -26,8 +26,11 @@ public struct ISO8601Coding: Decodable, Sendable {
         let container = try decoder.singleValueContainer()
         let dateString = try container.decode(String.self)
         guard let date = Self.dateFormatter.date(from: dateString) else {
-            throw DecodingError.dataCorruptedError(in: container, debugDescription:
-                "Expected date to be in ISO8601 date format, but `\(dateString)` is not in the correct format")
+            throw DecodingError.dataCorruptedError(
+                in: container,
+                debugDescription:
+                    "Expected date to be in ISO8601 date format, but `\(dateString)` is not in the correct format"
+            )
         }
         self.wrappedValue = date
     }
@@ -53,8 +56,11 @@ public struct ISO8601WithFractionalSecondsCoding: Decodable, Sendable {
         let container = try decoder.singleValueContainer()
         let dateString = try container.decode(String.self)
         guard let date = Self.dateFormatter.date(from: dateString) else {
-            throw DecodingError.dataCorruptedError(in: container, debugDescription:
-                "Expected date to be in ISO8601 date format with fractional seconds, but `\(dateString)` is not in the correct format")
+            throw DecodingError.dataCorruptedError(
+                in: container,
+                debugDescription:
+                    "Expected date to be in ISO8601 date format with fractional seconds, but `\(dateString)` is not in the correct format"
+            )
         }
         self.wrappedValue = date
     }
@@ -82,7 +88,7 @@ public struct RFC5322DateTimeCoding: Decodable, Sendable {
         // RFC5322 dates sometimes have the alphabetic version of the timezone in brackets after the numeric version. The date formatter
         // fails to parse this so we need to remove this before parsing.
         if let bracket = string.firstIndex(of: "(") {
-            string = String(string[string.startIndex ..< bracket].trimmingCharacters(in: .whitespaces))
+            string = String(string[string.startIndex..<bracket].trimmingCharacters(in: .whitespaces))
         }
         for formatter in Self.dateFormatters {
             if let date = formatter.date(from: string) {
@@ -90,8 +96,11 @@ public struct RFC5322DateTimeCoding: Decodable, Sendable {
                 return
             }
         }
-        throw DecodingError.dataCorruptedError(in: container, debugDescription:
-            "Expected date to be in RFC5322 date-time format, but `\(string)` is not in the correct format")
+        throw DecodingError.dataCorruptedError(
+            in: container,
+            debugDescription:
+                "Expected date to be in RFC5322 date-time format, but `\(string)` is not in the correct format"
+        )
     }
 
     private static var dateFormatters: [DateFormatter] {

@@ -56,7 +56,7 @@ extension String.UTF8View {
                     return false
                 }
 
-                for idx in 0 ..< lhsBuffer.count {
+                for idx in 0..<lhsBuffer.count {
                     // let's hope this gets vectorised ;)
                     if lhsBuffer[idx] & 0xDF != rhsBuffer[idx] & 0xDF {
                         return false
@@ -96,7 +96,10 @@ extension HTTPRequest.Method: Codable {
         let container = try decoder.singleValueContainer()
         let rawMethod = try container.decode(String.self)
         guard let method = HTTPRequest.Method(rawMethod) else {
-            throw DecodingError.dataCorruptedError(in: container, debugDescription: "\"\(rawMethod)\" is not a valid method")
+            throw DecodingError.dataCorruptedError(
+                in: container,
+                debugDescription: "\"\(rawMethod)\" is not a valid method"
+            )
         }
 
         self = method

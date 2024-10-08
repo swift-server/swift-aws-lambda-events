@@ -12,9 +12,10 @@
 //
 //===----------------------------------------------------------------------===//
 
-@testable import AWSLambdaEvents
 import HTTPTypes
 import XCTest
+
+@testable import AWSLambdaEvents
 
 class BedrockAgentTests: XCTestCase {
     static let eventBody =
