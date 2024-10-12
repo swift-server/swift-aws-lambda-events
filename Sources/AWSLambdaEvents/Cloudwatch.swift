@@ -135,3 +135,463 @@ public enum CloudwatchDetails {
         let type: any CloudwatchDetail.Type
     }
 }
+
+// MARK: - S3 Event Notification
+
+/// https://docs.aws.amazon.com/AmazonS3/latest/userguide/ev-events.html
+
+public typealias CloudWatchS3ObjectCreatedNotificationEvent = CloudwatchEvent<CloudwatchDetails.S3.ObjectCreatedNotification>
+public typealias CloudWatchS3ObjectDeletedNotificationEvent = CloudwatchEvent<CloudwatchDetails.S3.ObjectDeletedNotification>
+public typealias CloudWatchS3ObjectRestoreInitiatedNotificationEvent = CloudwatchEvent<CloudwatchDetails.S3.ObjectRestoreInitiatedNotification>
+public typealias CloudWatchS3ObjectRestoreCompletedNotificationEvent = CloudwatchEvent<CloudwatchDetails.S3.ObjectRestoreCompletedNotification>
+public typealias CloudWatchS3ObjectRestoreExpiredNotificationEvent = CloudwatchEvent<CloudwatchDetails.S3.ObjectRestoreExpiredNotification>
+public typealias CloudWatchS3ObjectStorageClassChangedNotificationEvent = CloudwatchEvent<CloudwatchDetails.S3.ObjectStorageClassChangedNotification>
+public typealias CloudWatchS3ObjectAccessTierChangedNotificationEvent = CloudwatchEvent<CloudwatchDetails.S3.ObjectAccessTierChangedNotification>
+public typealias CloudWatchS3ObjectACLUpdatedNotificationEvent = CloudwatchEvent<CloudwatchDetails.S3.ObjectACLUpdatedNotification>
+public typealias CloudWatchS3ObjectTagsAddedNotificationEvent = CloudwatchEvent<CloudwatchDetails.S3.ObjectTagsAddedNotification>
+public typealias CloudWatchS3ObjectTagsDeletedNotificationEvent = CloudwatchEvent<CloudwatchDetails.S3.ObjectTagsDeletedNotification>
+
+extension CloudwatchDetails {
+    public enum S3: Sendable {
+        public struct ObjectCreatedNotification: CloudwatchDetail {
+            public static let name: String = "Object Created"
+
+            public struct Bucket: Codable, Sendable {
+                public let name: String
+            }
+
+            public struct Object: Codable, Sendable {
+                public let key: String
+                public let size: UInt64
+                public let etag: String
+                public let versionId: String?
+                public let sequencer: String
+
+                enum CodingKeys: String, CodingKey {
+                    case key
+                    case size
+                    case etag
+                    case versionId = "version-id"
+                    case sequencer
+                }
+            }
+
+            public enum Reason: String, Codable, Sendable {
+                case putObject = "PutObject"
+                case postObject = "POST Object"
+                case copyObject = "CopyObject"
+                case completeMultipartUpload = "CompleteMultipartUpload"
+            }
+
+            public let version: String
+            public let bucket: Bucket
+			public let object: Object
+            public let requestId: String
+            public let requester: String
+            public let sourceIpAddress: String
+            public let reason: Reason
+
+            enum CodingKeys: String, CodingKey {
+                case version
+                case bucket
+				case object
+                case requestId = "request-id"
+                case requester
+                case sourceIpAddress = "source-ip-address"
+                case reason
+            }
+        }
+
+        public struct ObjectDeletedNotification: CloudwatchDetail {
+            public static let name: String = "Object Deleted"
+
+            public struct Bucket: Codable, Sendable {
+                public let name: String
+            }
+
+            public struct Object: Codable, Sendable {
+                public let key: String
+                public let etag: String
+                public let versionId: String?
+                public let sequencer: String
+
+                enum CodingKeys: String, CodingKey {
+                    case key
+                    case etag
+                    case versionId = "version-id"
+                    case sequencer
+                }
+            }
+
+            public enum Reason: String, Codable, Sendable {
+                case deleteObject = "DeleteObject"
+                case lifecycleExpiration = "Lifecycle Expiration"
+            }
+
+            public enum DeletionType: String, Codable, Sendable {
+                case permanentlyDeleted = "Permanently Deleted"
+                case deleteMarkerCreated = "Delete Marker Created"
+            }
+
+            public let version: String
+            public let bucket: Bucket
+			public let object: Object
+            public let requestId: String
+            public let requester: String
+            public let sourceIpAddress: String
+            public let reason: Reason
+            public let deletionType: DeletionType
+
+            enum CodingKeys: String, CodingKey {
+                case version
+                case bucket
+				case object
+                case requestId = "request-id"
+                case requester
+                case sourceIpAddress = "source-ip-address"
+                case reason
+                case deletionType = "deletion-type"
+            }
+        }
+
+        public struct ObjectRestoreInitiatedNotification: CloudwatchDetail {
+            public static let name: String = "Object Restore Initiated"
+
+            public struct Bucket: Codable, Sendable {
+                public let name: String
+            }
+
+            public struct Object: Codable, Sendable {
+                public let key: String
+                public let size: UInt64
+                public let etag: String
+                public let versionId: String?
+
+                enum CodingKeys: String, CodingKey {
+                    case key
+                    case size
+                    case etag
+                    case versionId = "version-id"
+                }
+            }
+
+            public enum SourceStorageClass: String, Codable, Sendable {
+                case standard = "STANDARD"
+                case reducedRedundancy = "REDUCED_REDUNDANCY"
+                case standardIA = "STANDARD_IA"
+                case onezoneIA = "ONEZONE_IA"
+                case intelligentTiering = "INTELLIGENT_TIERING"
+                case glacier = "GLACIER"
+                case deepArchive = "DEEP_ARCHIVE"
+                case outposts = "OUTPOSTS"
+                case glacierIr = "GLACIER_IR"
+            }
+
+            public let version: String
+            public let bucket: Bucket
+            public let object: Object
+            public let requestId: String
+            public let requester: String
+            public let sourceIpAddress: String
+            public let sourceStorageClass: SourceStorageClass
+
+            enum CodingKeys: String, CodingKey {
+                case version
+                case bucket
+                case object
+                case requestId = "request-id"
+                case requester
+                case sourceIpAddress = "source-ip-address"
+                case sourceStorageClass = "source-storage-class"
+            }
+        }
+
+        public struct ObjectRestoreCompletedNotification: CloudwatchDetail {
+            public static let name: String = "Object Restore Completed"
+
+            public struct Bucket: Codable, Sendable {
+                public let name: String
+            }
+
+            public struct Object: Codable, Sendable {
+                public let key: String
+                public let size: UInt64
+                public let etag: String
+                public let versionId: String?
+
+                enum CodingKeys: String, CodingKey {
+                    case key
+                    case size
+                    case etag
+                    case versionId = "version-id"
+                }
+            }
+
+            public enum SourceStorageClass: String, Codable, Sendable {
+                case standard = "STANDARD"
+                case reducedRedundancy = "REDUCED_REDUNDANCY"
+                case standardIA = "STANDARD_IA"
+                case onezoneIA = "ONEZONE_IA"
+                case intelligentTiering = "INTELLIGENT_TIERING"
+                case glacier = "GLACIER"
+                case deepArchive = "DEEP_ARCHIVE"
+                case outposts = "OUTPOSTS"
+                case glacierIr = "GLACIER_IR"
+            }
+
+            public let version: String
+            public let bucket: Bucket
+            public let object: Object
+            public let requestId: String
+            public let requester: String
+			@ISO8601Coding
+            public var restoreExpiryTime: Date
+            public let sourceStorageClass: SourceStorageClass
+
+            enum CodingKeys: String, CodingKey {
+                case version
+                case bucket
+                case object
+                case requestId = "request-id"
+                case requester
+                case restoreExpiryTime = "restore-expiry-time"
+                case sourceStorageClass = "source-storage-class"
+            }
+        }
+
+        public struct ObjectRestoreExpiredNotification: CloudwatchDetail {
+            public static let name: String = "Object Restore Expired"
+
+            public struct Bucket: Codable, Sendable {
+                public let name: String
+            }
+
+            public struct Object: Codable, Sendable {
+                public let key: String
+                public let etag: String
+                public let versionId: String?
+
+                enum CodingKeys: String, CodingKey {
+                    case key
+                    case etag
+                    case versionId = "version-id"
+                }
+            }
+
+            public let version: String
+            public let bucket: Bucket
+            public let object: Object
+            public let requestId: String
+            public let requester: String
+
+            enum CodingKeys: String, CodingKey {
+                case version
+                case bucket
+                case object
+                case requestId = "request-id"
+                case requester
+            }
+        }
+
+        public struct ObjectStorageClassChangedNotification: CloudwatchDetail {
+            public static let name: String = "Object Storage Class Changed"
+
+            public struct Bucket: Codable, Sendable {
+                public let name: String
+            }
+
+            public struct Object: Codable, Sendable {
+                public let key: String
+                public let size: UInt64
+                public let etag: String
+                public let versionId: String?
+
+                enum CodingKeys: String, CodingKey {
+                    case key
+                    case size
+                    case etag
+                    case versionId = "version-id"
+                }
+            }
+
+            public enum DestinationStorageClass: String, Codable, Sendable {
+                case standard = "STANDARD"
+                case reducedRedundancy = "REDUCED_REDUNDANCY"
+                case standardIA = "STANDARD_IA"
+                case onezoneIA = "ONEZONE_IA"
+                case intelligentTiering = "INTELLIGENT_TIERING"
+                case glacier = "GLACIER"
+                case deepArchive = "DEEP_ARCHIVE"
+                case outposts = "OUTPOSTS"
+                case glacierIr = "GLACIER_IR"
+            }
+
+            public let version: String
+            public let bucket: Bucket
+            public let object: Object
+            public let requestId: String
+            public let requester: String
+            public let destinationStorageClass: DestinationStorageClass
+
+            enum CodingKeys: String, CodingKey {
+                case version
+                case bucket
+                case object
+                case requestId = "request-id"
+                case requester
+                case destinationStorageClass = "destination-storage-class"
+            }
+        }
+
+        public struct ObjectAccessTierChangedNotification: CloudwatchDetail {
+            public static let name: String = "Object Access Tier Changed"
+
+            public struct Bucket: Codable, Sendable {
+                public let name: String
+            }
+
+            public struct Object: Codable, Sendable {
+                public let key: String
+                public let size: UInt64
+                public let etag: String
+                public let versionId: String?
+
+                enum CodingKeys: String, CodingKey {
+                    case key
+                    case size
+                    case etag
+                    case versionId = "version-id"
+                }
+            }
+
+            public enum DestinationAccessTier: String, Codable, Sendable {
+                case archiveAccess = "ARCHIVE_ACCESS"
+                case deepArchiveAccess = "DEEP_ARCHIVE_ACCESS"
+            }
+
+            public let version: String
+            public let bucket: Bucket
+            public let object: Object
+            public let requestId: String
+            public let requester: String
+            public let destinationAccessTier: DestinationAccessTier
+
+            enum CodingKeys: String, CodingKey {
+                case version
+                case bucket
+                case object
+                case requestId = "request-id"
+                case requester
+                case destinationAccessTier = "destination-access-tier"
+            }
+        }
+
+        public struct ObjectACLUpdatedNotification: CloudwatchDetail {
+            public static let name: String = "Object ACL Updated"
+
+            public struct Bucket: Codable, Sendable {
+                public let name: String
+            }
+
+            public struct Object: Codable, Sendable {
+                public let key: String
+                public let etag: String
+                public let versionId: String?
+
+                enum CodingKeys: String, CodingKey {
+                    case key
+                    case etag
+                    case versionId = "version-id"
+                }
+            }
+
+            public let version: String
+            public let bucket: Bucket
+            public let object: Object
+            public let requestId: String
+            public let requester: String
+            public let sourceIpAddress: String
+
+            enum CodingKeys: String, CodingKey {
+                case version
+                case bucket
+                case object
+                case requestId = "request-id"
+                case requester
+                case sourceIpAddress = "source-ip-address"
+            }
+        }
+
+        public struct ObjectTagsAddedNotification: CloudwatchDetail {
+            public static let name: String = "Object Tags Added"
+
+            public struct Bucket: Codable, Sendable {
+                public let name: String
+            }
+
+            public struct Object: Codable, Sendable {
+                public let key: String
+                public let etag: String
+                public let versionId: String?
+
+                enum CodingKeys: String, CodingKey {
+                    case key
+                    case etag
+                    case versionId = "version-id"
+                }
+            }
+
+            public let version: String
+            public let bucket: Bucket
+            public let object: Object
+            public let requestId: String
+            public let requester: String
+            public let sourceIpAddress: String
+
+            enum CodingKeys: String, CodingKey {
+                case version
+                case bucket
+                case object
+                case requestId = "request-id"
+                case requester
+                case sourceIpAddress = "source-ip-address"
+            }
+        }
+
+        public struct ObjectTagsDeletedNotification: CloudwatchDetail {
+            public static let name: String = "Object Tags Deleted"
+
+            public struct Bucket: Codable, Sendable {
+                public let name: String
+            }
+
+            public struct Object: Codable, Sendable {
+                public let key: String
+                public let etag: String
+                public let versionId: String?
+
+                enum CodingKeys: String, CodingKey {
+                    case key
+                    case etag
+                    case versionId = "version-id"
+                }
+            }
+
+            public let version: String
+            public let bucket: Bucket
+            public let object: Object
+            public let requestId: String
+            public let requester: String
+            public let sourceIpAddress: String
+
+            enum CodingKeys: String, CodingKey {
+                case version
+                case bucket
+                case object
+                case requestId = "request-id"
+                case requester
+                case sourceIpAddress = "source-ip-address"
+            }
+        }
+    }
+}
