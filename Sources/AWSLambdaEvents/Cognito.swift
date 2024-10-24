@@ -23,7 +23,7 @@ public enum CognitoEvent: Equatable, Sendable {
         public let awsSdkVersion: String
 
         /// The ID of the user pool app client.
-        public let clientId: String
+        public let clientId: String?
     }
 
     /// https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-identity-pools-working-with-aws-lambda-triggers.html#cognito-user-identity-pools-working-with-aws-lambda-trigger-sources
