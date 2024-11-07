@@ -140,16 +140,36 @@ public enum CloudwatchDetails {
 
 /// https://docs.aws.amazon.com/AmazonS3/latest/userguide/ev-events.html
 
-public typealias CloudWatchS3ObjectCreatedNotificationEvent = CloudwatchEvent<CloudwatchDetails.S3.ObjectCreatedNotification>
-public typealias CloudWatchS3ObjectDeletedNotificationEvent = CloudwatchEvent<CloudwatchDetails.S3.ObjectDeletedNotification>
-public typealias CloudWatchS3ObjectRestoreInitiatedNotificationEvent = CloudwatchEvent<CloudwatchDetails.S3.ObjectRestoreInitiatedNotification>
-public typealias CloudWatchS3ObjectRestoreCompletedNotificationEvent = CloudwatchEvent<CloudwatchDetails.S3.ObjectRestoreCompletedNotification>
-public typealias CloudWatchS3ObjectRestoreExpiredNotificationEvent = CloudwatchEvent<CloudwatchDetails.S3.ObjectRestoreExpiredNotification>
-public typealias CloudWatchS3ObjectStorageClassChangedNotificationEvent = CloudwatchEvent<CloudwatchDetails.S3.ObjectStorageClassChangedNotification>
-public typealias CloudWatchS3ObjectAccessTierChangedNotificationEvent = CloudwatchEvent<CloudwatchDetails.S3.ObjectAccessTierChangedNotification>
-public typealias CloudWatchS3ObjectACLUpdatedNotificationEvent = CloudwatchEvent<CloudwatchDetails.S3.ObjectACLUpdatedNotification>
-public typealias CloudWatchS3ObjectTagsAddedNotificationEvent = CloudwatchEvent<CloudwatchDetails.S3.ObjectTagsAddedNotification>
-public typealias CloudWatchS3ObjectTagsDeletedNotificationEvent = CloudwatchEvent<CloudwatchDetails.S3.ObjectTagsDeletedNotification>
+public typealias CloudWatchS3ObjectCreatedNotificationEvent = CloudwatchEvent<
+    CloudwatchDetails.S3.ObjectCreatedNotification
+>
+public typealias CloudWatchS3ObjectDeletedNotificationEvent = CloudwatchEvent<
+    CloudwatchDetails.S3.ObjectDeletedNotification
+>
+public typealias CloudWatchS3ObjectRestoreInitiatedNotificationEvent = CloudwatchEvent<
+    CloudwatchDetails.S3.ObjectRestoreInitiatedNotification
+>
+public typealias CloudWatchS3ObjectRestoreCompletedNotificationEvent = CloudwatchEvent<
+    CloudwatchDetails.S3.ObjectRestoreCompletedNotification
+>
+public typealias CloudWatchS3ObjectRestoreExpiredNotificationEvent = CloudwatchEvent<
+    CloudwatchDetails.S3.ObjectRestoreExpiredNotification
+>
+public typealias CloudWatchS3ObjectStorageClassChangedNotificationEvent = CloudwatchEvent<
+    CloudwatchDetails.S3.ObjectStorageClassChangedNotification
+>
+public typealias CloudWatchS3ObjectAccessTierChangedNotificationEvent = CloudwatchEvent<
+    CloudwatchDetails.S3.ObjectAccessTierChangedNotification
+>
+public typealias CloudWatchS3ObjectACLUpdatedNotificationEvent = CloudwatchEvent<
+    CloudwatchDetails.S3.ObjectACLUpdatedNotification
+>
+public typealias CloudWatchS3ObjectTagsAddedNotificationEvent = CloudwatchEvent<
+    CloudwatchDetails.S3.ObjectTagsAddedNotification
+>
+public typealias CloudWatchS3ObjectTagsDeletedNotificationEvent = CloudwatchEvent<
+    CloudwatchDetails.S3.ObjectTagsDeletedNotification
+>
 
 extension CloudwatchDetails {
     public enum S3: Sendable {
@@ -185,7 +205,7 @@ extension CloudwatchDetails {
 
             public let version: String
             public let bucket: Bucket
-			public let object: Object
+            public let object: Object
             public let requestId: String
             public let requester: String
             public let sourceIpAddress: String
@@ -194,7 +214,7 @@ extension CloudwatchDetails {
             enum CodingKeys: String, CodingKey {
                 case version
                 case bucket
-				case object
+                case object
                 case requestId = "request-id"
                 case requester
                 case sourceIpAddress = "source-ip-address"
@@ -235,7 +255,7 @@ extension CloudwatchDetails {
 
             public let version: String
             public let bucket: Bucket
-			public let object: Object
+            public let object: Object
             public let requestId: String
             public let requester: String
             public let sourceIpAddress: String
@@ -245,7 +265,7 @@ extension CloudwatchDetails {
             enum CodingKeys: String, CodingKey {
                 case version
                 case bucket
-				case object
+                case object
                 case requestId = "request-id"
                 case requester
                 case sourceIpAddress = "source-ip-address"
@@ -344,7 +364,7 @@ extension CloudwatchDetails {
             public let object: Object
             public let requestId: String
             public let requester: String
-			@ISO8601Coding
+            @ISO8601Coding
             public var restoreExpiryTime: Date
             public let sourceStorageClass: SourceStorageClass
 
