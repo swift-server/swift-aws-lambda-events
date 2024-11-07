@@ -58,7 +58,7 @@ public struct AWSRegion: RawRepresentable, Equatable, Sendable {
         Self.sa_east_1,
         Self.me_central_1,
         Self.me_south_1,
-        Self.il_central_1
+        Self.il_central_1,
     ]
 
     public static var af_south_1: Self { AWSRegion(rawValue: "af-south-1")! }
