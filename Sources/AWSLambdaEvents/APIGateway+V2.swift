@@ -15,7 +15,7 @@
 import HTTPTypes
 
 /// `APIGatewayV2Request` contains data coming from the new HTTP API Gateway.
-public struct APIGatewayV2Request: Codable, Sendable {
+public struct APIGatewayV2Request: Encodable, Sendable {
     /// `Context` contains information to identify the AWS account and resources invoking the Lambda function.
     public struct Context: Codable, Sendable {
         public struct HTTP: Codable, Sendable {
@@ -96,13 +96,13 @@ public struct APIGatewayV2Request: Codable, Sendable {
     public let rawPath: String
     public let rawQueryString: String
 
-    public let cookies: [String]?
+    public let cookies: [String]
     public let headers: HTTPHeaders
-    public let queryStringParameters: [String: String]?
-    public let pathParameters: [String: String]?
+    public let queryStringParameters: [String: String]
+    public let pathParameters: [String: String]
 
     public let context: Context
-    public let stageVariables: [String: String]?
+    public let stageVariables: [String: String]
 
     public let body: String?
     public let isBase64Encoded: Bool
@@ -145,5 +145,27 @@ public struct APIGatewayV2Response: Codable, Sendable {
         self.body = body
         self.isBase64Encoded = isBase64Encoded
         self.cookies = cookies
+    }
+}
+
+extension APIGatewayV2Request: Decodable {
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.version = try container.decode(String.self, forKey: .version)
+        self.routeKey = try container.decode(String.self, forKey: .routeKey)
+        self.rawPath = try container.decode(String.self, forKey: .rawPath)
+        self.rawQueryString = try container.decode(String.self, forKey: .rawQueryString)
+    
+        self.cookies = try container.decodeIfPresent([String].self, forKey: .cookies) ?? []
+        self.headers = try container.decodeIfPresent(HTTPHeaders.self, forKey: .headers) ?? HTTPHeaders()
+        self.queryStringParameters = try container.decodeIfPresent([String: String].self, forKey: .queryStringParameters) ?? [:]
+        self.pathParameters = try container.decodeIfPresent([String: String].self, forKey: .pathParameters) ?? [:]
+    
+        self.context = try container.decode(Context.self, forKey: .context)
+        self.stageVariables = try container.decodeIfPresent([String: String].self, forKey: .stageVariables) ?? [:]
+    
+        self.body = try container.decodeIfPresent(String.self, forKey: .body)
+        self.isBase64Encoded = try container.decode(Bool.self, forKey: .isBase64Encoded)
     }
 }
