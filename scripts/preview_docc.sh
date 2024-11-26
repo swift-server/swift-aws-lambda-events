@@ -27,4 +27,4 @@
 ##
 ##===----------------------------------------------------------------------===##
 
-swift package --disable-sandbox preview-documentation --target $1
+swift package --disable-sandbox preview-documentation --target "$1"
