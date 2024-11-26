@@ -41,4 +41,3 @@ jobs:
           persist-credentials: false
       - name: Check for Semantic Version label
         uses: apple/swift-nio/.github/actions/pull_request_semver_label_checker@main
-        
