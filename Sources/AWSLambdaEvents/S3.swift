@@ -77,7 +77,7 @@ public struct S3Event: Decodable, Sendable {
         public let size: UInt64?
         public let urlDecodedKey: String?
         public let versionId: String?
-        public let eTag: String
+        public let eTag: String?
         public let sequencer: String
     }
 }
