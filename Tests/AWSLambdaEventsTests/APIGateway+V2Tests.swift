@@ -74,44 +74,44 @@ class APIGatewayV2Tests: XCTestCase {
         """
 
     static let exampleGetEventBodyNilHeaders = """
-    {
-        "routeKey":"GET /hello",
-        "version":"2.0",
-        "rawPath":"/hello",
-        "requestContext":{
-            "timeEpoch":1587750461466,
-            "domainPrefix":"hello",
-            "authorizer":{
-                "jwt":{
-                    "scopes":[
-                        "hello"
-                    ],
-                    "claims":{
-                        "aud":"customers",
-                        "iss":"https://hello.test.com/",
-                        "iat":"1587749276",
-                        "exp":"1587756476"
+        {
+            "routeKey":"GET /hello",
+            "version":"2.0",
+            "rawPath":"/hello",
+            "requestContext":{
+                "timeEpoch":1587750461466,
+                "domainPrefix":"hello",
+                "authorizer":{
+                    "jwt":{
+                        "scopes":[
+                            "hello"
+                        ],
+                        "claims":{
+                            "aud":"customers",
+                            "iss":"https://hello.test.com/",
+                            "iat":"1587749276",
+                            "exp":"1587756476"
+                        }
                     }
-                }
+                },
+                "accountId":"0123456789",
+                "stage":"$default",
+                "domainName":"hello.test.com",
+                "apiId":"pb5dg6g3rg",
+                "requestId":"LgLpnibOFiAEPCA=",
+                "http":{
+                    "path":"/hello",
+                    "userAgent":"Paw/3.1.10 (Macintosh; OS X/10.15.4) GCDHTTPRequest",
+                    "method":"GET",
+                    "protocol":"HTTP/1.1",
+                    "sourceIp":"91.64.117.86"
+                },
+                "time":"24/Apr/2020:17:47:41 +0000"
             },
-            "accountId":"0123456789",
-            "stage":"$default",
-            "domainName":"hello.test.com",
-            "apiId":"pb5dg6g3rg",
-            "requestId":"LgLpnibOFiAEPCA=",
-            "http":{
-                "path":"/hello",
-                "userAgent":"Paw/3.1.10 (Macintosh; OS X/10.15.4) GCDHTTPRequest",
-                "method":"GET",
-                "protocol":"HTTP/1.1",
-                "sourceIp":"91.64.117.86"
-            },
-            "time":"24/Apr/2020:17:47:41 +0000"
-        },
-        "isBase64Encoded":false,
-        "rawQueryString":"foo=bar"
-    }
-    """
+            "isBase64Encoded":false,
+            "rawQueryString":"foo=bar"
+        }
+        """
 
     static let fullExamplePayload = """
         {
