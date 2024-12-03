@@ -108,10 +108,14 @@ extension APIGatewayRequest: Decodable {
         self.path = try container.decode(String.self, forKey: .path)
         self.httpMethod = try container.decode(HTTPRequest.Method.self, forKey: .httpMethod)
 
-        self.queryStringParameters = try container.decodeIfPresent([String: String].self, forKey: .queryStringParameters) ?? [:]
-        self.multiValueQueryStringParameters = try container.decodeIfPresent([String: [String]].self, forKey: .multiValueQueryStringParameters) ?? [:]
+        self.queryStringParameters =
+            try container.decodeIfPresent([String: String].self, forKey: .queryStringParameters) ?? [:]
+        self.multiValueQueryStringParameters =
+            try container.decodeIfPresent([String: [String]].self, forKey: .multiValueQueryStringParameters) ?? [:]
         self.headers = try container.decodeIfPresent(HTTPHeaders.self, forKey: .headers) ?? HTTPHeaders()
-        self.multiValueHeaders = try container.decodeIfPresent(HTTPMultiValueHeaders.self, forKey: .multiValueHeaders) ?? HTTPMultiValueHeaders()
+        self.multiValueHeaders =
+            try container.decodeIfPresent(HTTPMultiValueHeaders.self, forKey: .multiValueHeaders)
+            ?? HTTPMultiValueHeaders()
         self.pathParameters = try container.decodeIfPresent([String: String].self, forKey: .pathParameters) ?? [:]
         self.stageVariables = try container.decodeIfPresent([String: String].self, forKey: .stageVariables) ?? [:]
 
