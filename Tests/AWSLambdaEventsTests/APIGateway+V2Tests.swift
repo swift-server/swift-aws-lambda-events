@@ -73,6 +73,46 @@ class APIGatewayV2Tests: XCTestCase {
         }
         """
 
+    static let exampleGetEventBodyNilHeaders = """
+        {
+            "routeKey":"GET /hello",
+            "version":"2.0",
+            "rawPath":"/hello",
+            "requestContext":{
+                "timeEpoch":1587750461466,
+                "domainPrefix":"hello",
+                "authorizer":{
+                    "jwt":{
+                        "scopes":[
+                            "hello"
+                        ],
+                        "claims":{
+                            "aud":"customers",
+                            "iss":"https://hello.test.com/",
+                            "iat":"1587749276",
+                            "exp":"1587756476"
+                        }
+                    }
+                },
+                "accountId":"0123456789",
+                "stage":"$default",
+                "domainName":"hello.test.com",
+                "apiId":"pb5dg6g3rg",
+                "requestId":"LgLpnibOFiAEPCA=",
+                "http":{
+                    "path":"/hello",
+                    "userAgent":"Paw/3.1.10 (Macintosh; OS X/10.15.4) GCDHTTPRequest",
+                    "method":"GET",
+                    "protocol":"HTTP/1.1",
+                    "sourceIp":"91.64.117.86"
+                },
+                "time":"24/Apr/2020:17:47:41 +0000"
+            },
+            "isBase64Encoded":false,
+            "rawQueryString":"foo=bar"
+        }
+        """
+
     static let fullExamplePayload = """
         {
             "version": "2.0",
@@ -156,7 +196,7 @@ class APIGatewayV2Tests: XCTestCase {
 
         XCTAssertEqual(req?.rawPath, "/hello")
         XCTAssertEqual(req?.context.http.method, .get)
-        XCTAssertEqual(req?.queryStringParameters?.count, 1)
+        XCTAssertEqual(req?.queryStringParameters.count, 1)
         XCTAssertEqual(req?.rawQueryString, "foo=bar")
         XCTAssertEqual(req?.headers.count, 8)
         XCTAssertEqual(req?.context.authorizer?.jwt?.claims?["aud"], "customers")
@@ -175,5 +215,10 @@ class APIGatewayV2Tests: XCTestCase {
         XCTAssertEqual(clientCert?.serialNumber, "a1:a1:a1:a1:a1:a1:a1:a1:a1:a1:a1:a1:a1:a1:a1:a1")
         XCTAssertEqual(clientCert?.validity.notBefore, "May 28 12:30:02 2019 GMT")
         XCTAssertEqual(clientCert?.validity.notAfter, "Aug  5 09:36:04 2021 GMT")
+    }
+
+    func testDecodingNilCollections() {
+        let data = APIGatewayV2Tests.exampleGetEventBodyNilHeaders.data(using: .utf8)!
+        XCTAssertNoThrow(_ = try JSONDecoder().decode(APIGatewayV2Request.self, from: data))
     }
 }

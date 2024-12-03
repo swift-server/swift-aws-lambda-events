@@ -24,7 +24,7 @@ import Foundation
 // https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
 
 /// `APIGatewayRequest` contains data coming from the API Gateway.
-public struct APIGatewayRequest: Codable, Sendable {
+public struct APIGatewayRequest: Encodable, Sendable {
     public struct Context: Codable, Sendable {
         public struct Identity: Codable, Sendable {
             public let cognitoIdentityPoolId: String?
@@ -64,12 +64,12 @@ public struct APIGatewayRequest: Codable, Sendable {
     public let path: String
     public let httpMethod: HTTPRequest.Method
 
-    public let queryStringParameters: [String: String]?
-    public let multiValueQueryStringParameters: [String: [String]]?
+    public let queryStringParameters: [String: String]
+    public let multiValueQueryStringParameters: [String: [String]]
     public let headers: HTTPHeaders
     public let multiValueHeaders: HTTPMultiValueHeaders
-    public let pathParameters: [String: String]?
-    public let stageVariables: [String: String]?
+    public let pathParameters: [String: String]
+    public let stageVariables: [String: String]
 
     public let requestContext: Context
     public let body: String?
@@ -97,5 +97,30 @@ public struct APIGatewayResponse: Codable, Sendable {
         self.multiValueHeaders = multiValueHeaders
         self.body = body
         self.isBase64Encoded = isBase64Encoded
+    }
+}
+
+extension APIGatewayRequest: Decodable {
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        self.resource = try container.decode(String.self, forKey: .resource)
+        self.path = try container.decode(String.self, forKey: .path)
+        self.httpMethod = try container.decode(HTTPRequest.Method.self, forKey: .httpMethod)
+
+        self.queryStringParameters =
+            try container.decodeIfPresent([String: String].self, forKey: .queryStringParameters) ?? [:]
+        self.multiValueQueryStringParameters =
+            try container.decodeIfPresent([String: [String]].self, forKey: .multiValueQueryStringParameters) ?? [:]
+        self.headers = try container.decodeIfPresent(HTTPHeaders.self, forKey: .headers) ?? HTTPHeaders()
+        self.multiValueHeaders =
+            try container.decodeIfPresent(HTTPMultiValueHeaders.self, forKey: .multiValueHeaders)
+            ?? HTTPMultiValueHeaders()
+        self.pathParameters = try container.decodeIfPresent([String: String].self, forKey: .pathParameters) ?? [:]
+        self.stageVariables = try container.decodeIfPresent([String: String].self, forKey: .stageVariables) ?? [:]
+
+        self.requestContext = try container.decode(Context.self, forKey: .requestContext)
+        self.body = try container.decodeIfPresent(String.self, forKey: .body)
+        self.isBase64Encoded = try container.decode(Bool.self, forKey: .isBase64Encoded)
     }
 }
