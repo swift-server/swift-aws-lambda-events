@@ -72,7 +72,7 @@ class SNSTests: XCTestCase {
         XCTAssertEqual(record.sns.messageId, "bdb6900e-1ae9-5b4b-b7fc-c681fde222e3")
         XCTAssertEqual(record.sns.topicArn, "arn:aws:sns:eu-central-1:079477498937:EventSources-SNSTopic-1NHENSE2MQKF5")
         XCTAssertEqual(record.sns.message, "{\"hello\": \"world\"}")
-        XCTAssertEqual(record.sns.timestamp, Date(timeIntervalSince1970: 1_578_493_131.203))
+        XCTAssertEqual(record.sns.timestamp.timeIntervalSince1970, 1_578_493_131.203, accuracy: 0.001)
         XCTAssertEqual(record.sns.signatureVersion, "1")
         XCTAssertEqual(
             record.sns.signature,

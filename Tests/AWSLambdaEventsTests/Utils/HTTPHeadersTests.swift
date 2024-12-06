@@ -16,7 +16,7 @@ import AWSLambdaEvents
 import XCTest
 
 class HTTPHeadersTests: XCTestCase {
-    func first() throws {
+    func testFirst() throws {
         let headers: HTTPHeaders = [
             ":method": "GET",
             "foo": "bar",
