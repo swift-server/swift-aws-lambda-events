@@ -195,7 +195,8 @@ struct RFC5322DateStrategy {
                 guard let first = first,
                     let second = second,
                     let third = third,
-                    let fourth = fourth else { return nil }
+                    let fourth = fourth
+                else { return nil }
                 return Int(first - UInt8(ascii: "0")) * 1000
                     + Int(second - UInt8(ascii: "0")) * 100
                     + Int(third - UInt8(ascii: "0")) * 10
