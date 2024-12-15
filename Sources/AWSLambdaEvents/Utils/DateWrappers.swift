@@ -117,9 +117,9 @@ public struct RFC5322DateTimeCoding: Decodable, Sendable {
 
         do {
             if #available(macOS 12.0, *) {
-                self.wrappedValue = try Date(string, strategy: RFC5322DateStrategy())
+                self.wrappedValue = try Date(string, strategy: RFC5322DateParseStrategy())
             } else {
-                self.wrappedValue = try RFC5322DateStrategy().parse(string)
+                self.wrappedValue = try RFC5322DateParseStrategy().parse(string)
             }
         } catch {
             throw DecodingError.dataCorruptedError(
@@ -133,7 +133,7 @@ public struct RFC5322DateTimeCoding: Decodable, Sendable {
 
 struct RFC5322DateParsingError: Error {}
 
-struct RFC5322DateStrategy {
+struct RFC5322DateParseStrategy {
     func parse(_ input: String) throws -> Date {
         guard let components = self.components(from: input) else {
             throw RFC5322DateParsingError()
@@ -152,7 +152,7 @@ struct RFC5322DateStrategy {
         }
         var s = input[input.startIndex..<endIndex]
 
-        let asciiNumbers = UInt8(ascii: "0")...UInt8(ascii: "9")
+        let asciiDigits = UInt8(ascii: "0")...UInt8(ascii: "9")
 
         return s.withUTF8 { buffer -> DateComponents? in
             func parseDay(_ it: inout UnsafeBufferPointer<UInt8>.Iterator) -> Int? {
@@ -160,9 +160,9 @@ struct RFC5322DateStrategy {
                 let second = it.next()
                 guard let first = first, let second = second else { return nil }
 
-                guard asciiNumbers.contains(first) else { return nil }
+                guard asciiDigits.contains(first) else { return nil }
 
-                if asciiNumbers.contains(second) {
+                if asciiDigits.contains(second) {
                     return Int(first - UInt8(ascii: "0")) * 10 + Int(second - UInt8(ascii: "0"))
                 } else {
                     return Int(first - UInt8(ascii: "0"))
@@ -188,10 +188,10 @@ struct RFC5322DateStrategy {
             }
 
             func parseYear(_ it: inout UnsafeBufferPointer<UInt8>.Iterator) -> Int? {
-                let first = it.nextAsciiNumber(skippingWhitespace: true)
-                let second = it.nextAsciiNumber()
-                let third = it.nextAsciiNumber()
-                let fourth = it.nextAsciiNumber()
+                let first = it.nextAsciiDigit(skippingWhitespace: true)
+                let second = it.nextAsciiDigit()
+                let third = it.nextAsciiDigit()
+                let fourth = it.nextAsciiDigit()
                 guard let first = first,
                     let second = second,
                     let third = third,
@@ -204,22 +204,22 @@ struct RFC5322DateStrategy {
             }
 
             func parseHour(_ it: inout UnsafeBufferPointer<UInt8>.Iterator) -> Int? {
-                let first = it.nextAsciiNumber(skippingWhitespace: true)
-                let second = it.nextAsciiNumber()
+                let first = it.nextAsciiDigit(skippingWhitespace: true)
+                let second = it.nextAsciiDigit()
                 guard let first = first, let second = second else { return nil }
                 return Int(first - UInt8(ascii: "0")) * 10 + Int(second - UInt8(ascii: "0"))
             }
 
             func parseMinute(_ it: inout UnsafeBufferPointer<UInt8>.Iterator) -> Int? {
-                let first = it.nextAsciiNumber(skippingWhitespace: true)
-                let second = it.nextAsciiNumber()
+                let first = it.nextAsciiDigit(skippingWhitespace: true)
+                let second = it.nextAsciiDigit()
                 guard let first = first, let second = second else { return nil }
                 return Int(first - UInt8(ascii: "0")) * 10 + Int(second - UInt8(ascii: "0"))
             }
 
             func parseSecond(_ it: inout UnsafeBufferPointer<UInt8>.Iterator) -> Int? {
-                let first = it.nextAsciiNumber(skippingWhitespace: true)
-                let second = it.nextAsciiNumber()
+                let first = it.nextAsciiDigit(skippingWhitespace: true)
+                let second = it.nextAsciiDigit()
                 guard let first = first, let second = second else { return nil }
                 return Int(first - UInt8(ascii: "0")) * 10 + Int(second - UInt8(ascii: "0"))
             }
@@ -281,7 +281,7 @@ struct RFC5322DateStrategy {
 }
 
 @available(macOS 12.0, *)
-extension RFC5322DateStrategy: ParseStrategy {}
+extension RFC5322DateParseStrategy: ParseStrategy {}
 
 extension IteratorProtocol where Self.Element == UInt8 {
     mutating func expect(_ expected: UInt8) -> Bool {
@@ -298,7 +298,7 @@ extension IteratorProtocol where Self.Element == UInt8 {
         return nil
     }
 
-    mutating func nextAsciiNumber(skippingWhitespace: Bool = false) -> UInt8? {
+    mutating func nextAsciiDigit(skippingWhitespace: Bool = false) -> UInt8? {
         while let c = self.next() {
             if skippingWhitespace {
                 if c == UInt8(ascii: " ") {
