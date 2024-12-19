@@ -16,7 +16,7 @@
 //   $ aws ssm get-parameters-by-path --path /aws/service/global-infrastructure/services/lambda/regions --output json
 
 /// Enumeration of the AWS Regions.
-public struct AWSRegion: RawRepresentable, Equatable {
+public struct AWSRegion: RawRepresentable, Equatable, Sendable {
     public typealias RawValue = String
 
     public let rawValue: String
@@ -25,10 +25,11 @@ public struct AWSRegion: RawRepresentable, Equatable {
         self.rawValue = rawValue
     }
 
-    static var all: [AWSRegion] = [
+    static let all: [AWSRegion] = [
         Self.af_south_1,
         Self.ap_northeast_1,
         Self.ap_northeast_2,
+        Self.ap_northeast_3,
         Self.ap_east_1,
         Self.ap_southeast_1,
         Self.ap_southeast_2,
@@ -53,15 +54,18 @@ public struct AWSRegion: RawRepresentable, Equatable {
         Self.us_gov_east_1,
         Self.us_gov_west_1,
         Self.ca_central_1,
+        Self.ca_west_1,
         Self.sa_east_1,
         Self.me_central_1,
         Self.me_south_1,
+        Self.il_central_1,
     ]
 
     public static var af_south_1: Self { AWSRegion(rawValue: "af-south-1")! }
 
     public static var ap_northeast_1: Self { AWSRegion(rawValue: "ap-northeast-1")! }
     public static var ap_northeast_2: Self { AWSRegion(rawValue: "ap-northeast-2")! }
+    public static var ap_northeast_3: Self { AWSRegion(rawValue: "ap-northeast-3")! }
     public static var ap_east_1: Self { AWSRegion(rawValue: "ap-east-1")! }
     public static var ap_southeast_1: Self { AWSRegion(rawValue: "ap-southeast-1")! }
     public static var ap_southeast_2: Self { AWSRegion(rawValue: "ap-southeast-2")! }
@@ -90,9 +94,12 @@ public struct AWSRegion: RawRepresentable, Equatable {
     public static var us_gov_west_1: Self { AWSRegion(rawValue: "us-gov-west-1")! }
 
     public static var ca_central_1: Self { AWSRegion(rawValue: "ca-central-1")! }
+    public static var ca_west_1: Self { AWSRegion(rawValue: "ca-west-1")! }
     public static var sa_east_1: Self { AWSRegion(rawValue: "sa-east-1")! }
     public static var me_central_1: Self { AWSRegion(rawValue: "me-central-1")! }
     public static var me_south_1: Self { AWSRegion(rawValue: "me-south-1")! }
+
+    public static var il_central_1: Self { AWSRegion(rawValue: "il-central-1")! }
 }
 
 extension AWSRegion: Codable {
@@ -107,7 +114,3 @@ extension AWSRegion: Codable {
         try container.encode(self.rawValue)
     }
 }
-
-#if swift(>=5.6)
-extension AWSRegion: Sendable {}
-#endif

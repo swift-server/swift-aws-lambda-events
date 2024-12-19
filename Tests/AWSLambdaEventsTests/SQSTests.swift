@@ -12,52 +12,53 @@
 //
 //===----------------------------------------------------------------------===//
 
-@testable import AWSLambdaEvents
 import XCTest
+
+@testable import AWSLambdaEvents
 
 class SQSTests: XCTestCase {
     static let eventBody = """
-    {
-      "Records": [
         {
-          "messageId": "19dd0b57-b21e-4ac1-bd88-01bbb068cb78",
-          "receiptHandle": "MessageReceiptHandle",
-          "body": "Hello from SQS!",
-          "attributes": {
-            "ApproximateReceiveCount": "1",
-            "SentTimestamp": "1523232000000",
-            "SenderId": "123456789012",
-            "ApproximateFirstReceiveTimestamp": "1523232000001"
-          },
-          "messageAttributes": {
-            "number":{
-              "stringValue":"123",
-              "stringListValues":[],
-              "binaryListValues":[],
-              "dataType":"Number"
-            },
-            "string":{
-              "stringValue":"abc123",
-              "stringListValues":[],
-              "binaryListValues":[],
-              "dataType":"String"
-            },
-            "binary":{
-              "dataType": "Binary",
-              "stringListValues":[],
-              "binaryListValues":[],
-              "binaryValue":"YmFzZTY0"
-            },
+          "Records": [
+            {
+              "messageId": "19dd0b57-b21e-4ac1-bd88-01bbb068cb78",
+              "receiptHandle": "MessageReceiptHandle",
+              "body": "Hello from SQS!",
+              "attributes": {
+                "ApproximateReceiveCount": "1",
+                "SentTimestamp": "1523232000000",
+                "SenderId": "123456789012",
+                "ApproximateFirstReceiveTimestamp": "1523232000001"
+              },
+              "messageAttributes": {
+                "number":{
+                  "stringValue":"123",
+                  "stringListValues":[],
+                  "binaryListValues":[],
+                  "dataType":"Number"
+                },
+                "string":{
+                  "stringValue":"abc123",
+                  "stringListValues":[],
+                  "binaryListValues":[],
+                  "dataType":"String"
+                },
+                "binary":{
+                  "dataType": "Binary",
+                  "stringListValues":[],
+                  "binaryListValues":[],
+                  "binaryValue":"YmFzZTY0"
+                },
 
-          },
-          "md5OfBody": "7b270e59b47ff90a553787216d55d91d",
-          "eventSource": "aws:sqs",
-          "eventSourceARN": "arn:aws:sqs:us-east-1:123456789012:MyQueue",
-          "awsRegion": "us-east-1"
+              },
+              "md5OfBody": "7b270e59b47ff90a553787216d55d91d",
+              "eventSource": "aws:sqs",
+              "eventSourceARN": "arn:aws:sqs:us-east-1:123456789012:MyQueue",
+              "awsRegion": "us-east-1"
+            }
+          ]
         }
-      ]
-    }
-    """
+        """
 
     func testSimpleEventFromJSON() {
         let data = SQSTests.eventBody.data(using: .utf8)!
@@ -74,11 +75,14 @@ class SQSTests: XCTestCase {
         XCTAssertEqual(message.body, "Hello from SQS!")
         XCTAssertEqual(message.attributes.count, 4)
 
-        XCTAssertEqual(message.messageAttributes, [
-            "number": .number("123"),
-            "string": .string("abc123"),
-            "binary": .binary([UInt8]("base64".utf8)),
-        ])
+        XCTAssertEqual(
+            message.messageAttributes,
+            [
+                "number": .number("123"),
+                "string": .string("abc123"),
+                "binary": .binary([UInt8]("base64".utf8)),
+            ]
+        )
         XCTAssertEqual(message.md5OfBody, "7b270e59b47ff90a553787216d55d91d")
         XCTAssertEqual(message.eventSource, "aws:sqs")
         XCTAssertEqual(message.eventSourceArn, "arn:aws:sqs:us-east-1:123456789012:MyQueue")

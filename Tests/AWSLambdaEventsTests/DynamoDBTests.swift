@@ -12,105 +12,106 @@
 //
 //===----------------------------------------------------------------------===//
 
-@testable import AWSLambdaEvents
 import XCTest
+
+@testable import AWSLambdaEvents
 
 class DynamoDBTests: XCTestCase {
     static let streamEventBody = """
-    {
-      "Records": [
         {
-          "eventID": "1",
-          "eventVersion": "1.0",
-          "dynamodb": {
-            "ApproximateCreationDateTime": 1.578648338E9,
-            "Keys": {
-              "Id": {
-                "N": "101"
-              }
-            },
-            "NewImage": {
-              "Message": {
-                "S": "New item!"
+          "Records": [
+            {
+              "eventID": "1",
+              "eventVersion": "1.0",
+              "dynamodb": {
+                "ApproximateCreationDateTime": 1.578648338E9,
+                "Keys": {
+                  "Id": {
+                    "N": "101"
+                  }
+                },
+                "NewImage": {
+                  "Message": {
+                    "S": "New item!"
+                  },
+                  "Id": {
+                    "N": "101"
+                  }
+                },
+                "StreamViewType": "NEW_AND_OLD_IMAGES",
+                "SequenceNumber": "111",
+                "SizeBytes": 26
               },
-              "Id": {
-                "N": "101"
-              }
+              "awsRegion": "eu-central-1",
+              "eventName": "INSERT",
+              "eventSourceARN": "arn:aws:dynamodb:eu-central-1:account-id:table/ExampleTableWithStream/stream/2015-06-27T00:48:05.899",
+              "eventSource": "aws:dynamodb"
             },
-            "StreamViewType": "NEW_AND_OLD_IMAGES",
-            "SequenceNumber": "111",
-            "SizeBytes": 26
-          },
-          "awsRegion": "eu-central-1",
-          "eventName": "INSERT",
-          "eventSourceARN": "arn:aws:dynamodb:eu-central-1:account-id:table/ExampleTableWithStream/stream/2015-06-27T00:48:05.899",
-          "eventSource": "aws:dynamodb"
-        },
-        {
-          "eventID": "2",
-          "eventVersion": "1.0",
-          "dynamodb": {
-            "ApproximateCreationDateTime": 1.578648338E9,
-            "OldImage": {
-              "Message": {
-                "S": "New item!"
+            {
+              "eventID": "2",
+              "eventVersion": "1.0",
+              "dynamodb": {
+                "ApproximateCreationDateTime": 1.578648338E9,
+                "OldImage": {
+                  "Message": {
+                    "S": "New item!"
+                  },
+                  "Id": {
+                    "N": "101"
+                  }
+                },
+                "SequenceNumber": "222",
+                "Keys": {
+                  "Id": {
+                    "N": "101"
+                  }
+                },
+                "SizeBytes": 59,
+                "NewImage": {
+                  "Message": {
+                    "S": "This item has changed"
+                  },
+                  "Id": {
+                    "N": "101"
+                  }
+                },
+                "StreamViewType": "NEW_AND_OLD_IMAGES"
               },
-              "Id": {
-                "N": "101"
-              }
+              "awsRegion": "eu-central-1",
+              "eventName": "MODIFY",
+              "eventSourceARN": "arn:aws:dynamodb:eu-central-1:account-id:table/ExampleTableWithStream/stream/2015-06-27T00:48:05.899",
+              "eventSource": "aws:dynamodb"
             },
-            "SequenceNumber": "222",
-            "Keys": {
-              "Id": {
-                "N": "101"
-              }
-            },
-            "SizeBytes": 59,
-            "NewImage": {
-              "Message": {
-                "S": "This item has changed"
+            {
+              "eventID": "3",
+              "eventVersion": "1.0",
+              "dynamodb": {
+                "ApproximateCreationDateTime":1.578648338E9,
+                "Keys": {
+                  "Id": {
+                    "N": "101"
+                  }
+                },
+                "SizeBytes": 38,
+                "SequenceNumber": "333",
+                "OldImage": {
+                  "Message": {
+                    "S": "This item has changed"
+                  },
+                  "Id": {
+                    "N": "101"
+                  }
+                },
+                "StreamViewType": "NEW_AND_OLD_IMAGES"
               },
-              "Id": {
-                "N": "101"
-              }
-            },
-            "StreamViewType": "NEW_AND_OLD_IMAGES"
-          },
-          "awsRegion": "eu-central-1",
-          "eventName": "MODIFY",
-          "eventSourceARN": "arn:aws:dynamodb:eu-central-1:account-id:table/ExampleTableWithStream/stream/2015-06-27T00:48:05.899",
-          "eventSource": "aws:dynamodb"
-        },
-        {
-          "eventID": "3",
-          "eventVersion": "1.0",
-          "dynamodb": {
-            "ApproximateCreationDateTime":1.578648338E9,
-            "Keys": {
-              "Id": {
-                "N": "101"
-              }
-            },
-            "SizeBytes": 38,
-            "SequenceNumber": "333",
-            "OldImage": {
-              "Message": {
-                "S": "This item has changed"
-              },
-              "Id": {
-                "N": "101"
-              }
-            },
-            "StreamViewType": "NEW_AND_OLD_IMAGES"
-          },
-          "awsRegion": "eu-central-1",
-          "eventName": "REMOVE",
-          "eventSourceARN": "arn:aws:dynamodb:eu-central-1:account-id:table/ExampleTableWithStream/stream/2015-06-27T00:48:05.899",
-          "eventSource": "aws:dynamodb"
+              "awsRegion": "eu-central-1",
+              "eventName": "REMOVE",
+              "eventSourceARN": "arn:aws:dynamodb:eu-central-1:account-id:table/ExampleTableWithStream/stream/2015-06-27T00:48:05.899",
+              "eventSource": "aws:dynamodb"
+            }
+          ]
         }
-      ]
-    }
-    """
+        """
 
     func testEventFromJSON() {
         let data = DynamoDBTests.streamEventBody.data(using: .utf8)!
@@ -125,79 +126,104 @@ class DynamoDBTests: XCTestCase {
     func testAttributeValueBoolDecoding() {
         let json = "{\"BOOL\": true}"
         var value: DynamoDBEvent.AttributeValue?
-        XCTAssertNoThrow(value = try JSONDecoder().decode(DynamoDBEvent.AttributeValue.self, from: json.data(using: .utf8)!))
+        XCTAssertNoThrow(
+            value = try JSONDecoder().decode(DynamoDBEvent.AttributeValue.self, from: json.data(using: .utf8)!)
+        )
         XCTAssertEqual(value, .boolean(true))
     }
 
     func testAttributeValueBinaryDecoding() {
         let json = "{\"B\": \"YmFzZTY0\"}"
         var value: DynamoDBEvent.AttributeValue?
-        XCTAssertNoThrow(value = try JSONDecoder().decode(DynamoDBEvent.AttributeValue.self, from: json.data(using: .utf8)!))
+        XCTAssertNoThrow(
+            value = try JSONDecoder().decode(DynamoDBEvent.AttributeValue.self, from: json.data(using: .utf8)!)
+        )
         XCTAssertEqual(value, .binary([UInt8]("base64".utf8)))
     }
 
     func testAttributeValueBinarySetDecoding() {
         let json = "{\"BS\": [\"YmFzZTY0\", \"YWJjMTIz\"]}"
         var value: DynamoDBEvent.AttributeValue?
-        XCTAssertNoThrow(value = try JSONDecoder().decode(DynamoDBEvent.AttributeValue.self, from: json.data(using: .utf8)!))
+        XCTAssertNoThrow(
+            value = try JSONDecoder().decode(DynamoDBEvent.AttributeValue.self, from: json.data(using: .utf8)!)
+        )
         XCTAssertEqual(value, .binarySet([[UInt8]("base64".utf8), [UInt8]("abc123".utf8)]))
     }
 
     func testAttributeValueStringDecoding() {
         let json = "{\"S\": \"huhu\"}"
         var value: DynamoDBEvent.AttributeValue?
-        XCTAssertNoThrow(value = try JSONDecoder().decode(DynamoDBEvent.AttributeValue.self, from: json.data(using: .utf8)!))
+        XCTAssertNoThrow(
+            value = try JSONDecoder().decode(DynamoDBEvent.AttributeValue.self, from: json.data(using: .utf8)!)
+        )
         XCTAssertEqual(value, .string("huhu"))
     }
 
     func testAttributeValueStringSetDecoding() {
         let json = "{\"SS\": [\"huhu\", \"haha\"]}"
         var value: DynamoDBEvent.AttributeValue?
-        XCTAssertNoThrow(value = try JSONDecoder().decode(DynamoDBEvent.AttributeValue.self, from: json.data(using: .utf8)!))
+        XCTAssertNoThrow(
+            value = try JSONDecoder().decode(DynamoDBEvent.AttributeValue.self, from: json.data(using: .utf8)!)
+        )
         XCTAssertEqual(value, .stringSet(["huhu", "haha"]))
     }
 
     func testAttributeValueNullDecoding() {
         let json = "{\"NULL\": true}"
         var value: DynamoDBEvent.AttributeValue?
-        XCTAssertNoThrow(value = try JSONDecoder().decode(DynamoDBEvent.AttributeValue.self, from: json.data(using: .utf8)!))
+        XCTAssertNoThrow(
+            value = try JSONDecoder().decode(DynamoDBEvent.AttributeValue.self, from: json.data(using: .utf8)!)
+        )
         XCTAssertEqual(value, .null)
     }
 
     func testAttributeValueNumberDecoding() {
         let json = "{\"N\": \"1.2345\"}"
         var value: DynamoDBEvent.AttributeValue?
-        XCTAssertNoThrow(value = try JSONDecoder().decode(DynamoDBEvent.AttributeValue.self, from: json.data(using: .utf8)!))
+        XCTAssertNoThrow(
+            value = try JSONDecoder().decode(DynamoDBEvent.AttributeValue.self, from: json.data(using: .utf8)!)
+        )
         XCTAssertEqual(value, .number("1.2345"))
     }
 
     func testAttributeValueNumberSetDecoding() {
         let json = "{\"NS\": [\"1.2345\", \"-19\"]}"
         var value: DynamoDBEvent.AttributeValue?
-        XCTAssertNoThrow(value = try JSONDecoder().decode(DynamoDBEvent.AttributeValue.self, from: json.data(using: .utf8)!))
+        XCTAssertNoThrow(
+            value = try JSONDecoder().decode(DynamoDBEvent.AttributeValue.self, from: json.data(using: .utf8)!)
+        )
         XCTAssertEqual(value, .numberSet(["1.2345", "-19"]))
     }
 
     func testAttributeValueListDecoding() {
         let json = "{\"L\": [{\"NS\": [\"1.2345\", \"-19\"]}, {\"S\": \"huhu\"}]}"
         var value: DynamoDBEvent.AttributeValue?
-        XCTAssertNoThrow(value = try JSONDecoder().decode(DynamoDBEvent.AttributeValue.self, from: json.data(using: .utf8)!))
+        XCTAssertNoThrow(
+            value = try JSONDecoder().decode(DynamoDBEvent.AttributeValue.self, from: json.data(using: .utf8)!)
+        )
         XCTAssertEqual(value, .list([.numberSet(["1.2345", "-19"]), .string("huhu")]))
     }
 
     func testAttributeValueMapDecoding() {
         let json = "{\"M\": {\"numbers\": {\"NS\": [\"1.2345\", \"-19\"]}, \"string\": {\"S\": \"huhu\"}}}"
         var value: DynamoDBEvent.AttributeValue?
-        XCTAssertNoThrow(value = try JSONDecoder().decode(DynamoDBEvent.AttributeValue.self, from: json.data(using: .utf8)!))
-        XCTAssertEqual(value, .map([
-            "numbers": .numberSet(["1.2345", "-19"]),
-            "string": .string("huhu"),
-        ]))
+        XCTAssertNoThrow(
+            value = try JSONDecoder().decode(DynamoDBEvent.AttributeValue.self, from: json.data(using: .utf8)!)
+        )
+        XCTAssertEqual(
+            value,
+            .map([
+                "numbers": .numberSet(["1.2345", "-19"]),
+                "string": .string("huhu"),
+            ])
+        )
     }
 
     func testAttributeValueEmptyDecoding() {
         let json = "{\"haha\": 1}"
-        XCTAssertThrowsError(_ = try JSONDecoder().decode(DynamoDBEvent.AttributeValue.self, from: json.data(using: .utf8)!)) { error in
+        XCTAssertThrowsError(
+            try JSONDecoder().decode(DynamoDBEvent.AttributeValue.self, from: json.data(using: .utf8)!)
+        ) { error in
             guard case DecodingError.dataCorrupted = error else {
                 XCTFail("Unexpected error: \(String(describing: error))")
                 return

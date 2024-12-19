@@ -12,17 +12,23 @@
 //
 //===----------------------------------------------------------------------===//
 
-import class Foundation.JSONEncoder
+import HTTPTypes
 
-// https://github.com/aws/aws-lambda-go/blob/master/events/alb.go
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
+import Foundation
+#endif
+
+// https://github.com/aws/aws-lambda-go/blob/main/events/alb.go
 /// `ALBTargetGroupRequest` contains data originating from the ALB Lambda target group integration.
-public struct ALBTargetGroupRequest: Codable {
+public struct ALBTargetGroupRequest: Codable, Sendable {
     /// `Context` contains information to identify the load balancer invoking the lambda.
-    public struct Context: Codable {
+    public struct Context: Codable, Sendable {
         public let elb: ELBContext
     }
 
-    public let httpMethod: HTTPMethod
+    public let httpMethod: HTTPRequest.Method
     public let path: String
     public let queryStringParameters: [String: String]
 
@@ -44,13 +50,13 @@ public struct ALBTargetGroupRequest: Codable {
     public let body: String?
 
     /// `ELBContext` contains information to identify the ARN invoking the lambda.
-    public struct ELBContext: Codable {
+    public struct ELBContext: Codable, Sendable {
         public let targetGroupArn: String
     }
 }
 
-public struct ALBTargetGroupResponse: Codable {
-    public var statusCode: HTTPResponseStatus
+public struct ALBTargetGroupResponse: Codable, Sendable {
+    public var statusCode: HTTPResponse.Status
     public var statusDescription: String?
     public var headers: HTTPHeaders?
     public var multiValueHeaders: HTTPMultiValueHeaders?
@@ -58,7 +64,7 @@ public struct ALBTargetGroupResponse: Codable {
     public var isBase64Encoded: Bool
 
     public init(
-        statusCode: HTTPResponseStatus,
+        statusCode: HTTPResponse.Status,
         statusDescription: String? = nil,
         headers: HTTPHeaders? = nil,
         multiValueHeaders: HTTPMultiValueHeaders? = nil,
@@ -73,10 +79,3 @@ public struct ALBTargetGroupResponse: Codable {
         self.isBase64Encoded = isBase64Encoded
     }
 }
-
-#if swift(>=5.6)
-extension ALBTargetGroupRequest: Sendable {}
-extension ALBTargetGroupRequest.Context: Sendable {}
-extension ALBTargetGroupRequest.ELBContext: Sendable {}
-extension ALBTargetGroupResponse: Sendable {}
-#endif

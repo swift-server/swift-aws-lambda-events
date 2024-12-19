@@ -12,46 +12,46 @@
 //
 //===----------------------------------------------------------------------===//
 
-#if canImport(Darwin)
-import struct Foundation.Date
+#if canImport(FoundationEssentials)
+import FoundationEssentials
 #else
-@preconcurrency import struct Foundation.Date
+import Foundation
 #endif
 
 // https://docs.aws.amazon.com/lambda/latest/dg/with-ddb.html
-public struct DynamoDBEvent: Decodable {
+public struct DynamoDBEvent: Decodable, Sendable {
     public let records: [EventRecord]
 
-    public enum CodingKeys: String, CodingKey {
+    public enum CodingKeys: String, CodingKey, Sendable {
         case records = "Records"
     }
 
-    public enum KeyType: String, Codable {
+    public enum KeyType: String, Codable, Sendable {
         case hash = "HASH"
         case range = "RANGE"
     }
 
-    public enum OperationType: String, Codable {
+    public enum OperationType: String, Codable, Sendable {
         case insert = "INSERT"
         case modify = "MODIFY"
         case remove = "REMOVE"
     }
 
-    public enum SharedIteratorType: String, Codable {
+    public enum SharedIteratorType: String, Codable, Sendable {
         case trimHorizon = "TRIM_HORIZON"
         case latest = "LATEST"
         case atSequenceNumber = "AT_SEQUENCE_NUMBER"
         case afterSequenceNumber = "AFTER_SEQUENCE_NUMBER"
     }
 
-    public enum StreamStatus: String, Codable {
+    public enum StreamStatus: String, Codable, Sendable {
         case enabling = "ENABLING"
         case enabled = "ENABLED"
         case disabling = "DISABLING"
         case disabled = "DISABLED"
     }
 
-    public enum StreamViewType: String, Codable {
+    public enum StreamViewType: String, Codable, Sendable {
         /// The entire item, as it appeared after it was modified.
         case newImage = "NEW_IMAGE"
         /// The entire item, as it appeared before it was modified.
@@ -62,7 +62,7 @@ public struct DynamoDBEvent: Decodable {
         case keysOnly = "KEYS_ONLY"
     }
 
-    public struct EventRecord: Decodable {
+    public struct EventRecord: Decodable, Sendable {
         /// The region in which the GetRecords request was received.
         public let awsRegion: AWSRegion
 
@@ -117,7 +117,7 @@ public struct DynamoDBEvent: Decodable {
         }
     }
 
-    public struct StreamRecord {
+    public struct StreamRecord: Sendable {
         /// The approximate date and time when the stream record was created, in UNIX
         /// epoch time (http://www.epochconverter.com/) format.
         public let approximateCreationDateTime: Date?
@@ -142,7 +142,7 @@ public struct DynamoDBEvent: Decodable {
         public let streamViewType: StreamViewType
     }
 
-    public struct UserIdentity: Codable {
+    public struct UserIdentity: Codable, Sendable {
         public let type: String
         public let principalId: String
     }
@@ -191,7 +191,7 @@ extension DynamoDBEvent.StreamRecord: Decodable {
 // MARK: - AttributeValue -
 
 extension DynamoDBEvent {
-    public enum AttributeValue {
+    public enum AttributeValue: Sendable {
         case boolean(Bool)
         case binary([UInt8])
         case binarySet([[UInt8]])
@@ -312,13 +312,17 @@ extension DynamoDBEvent {
 
         public init() {}
 
-        @inlinable public func decode<T: Decodable>(_ type: T.Type, from image: [String: AttributeValue])
-            throws -> T {
+        @inlinable public func decode<T: Decodable>(
+            _ type: T.Type,
+            from image: [String: AttributeValue]
+        ) throws -> T {
             try self.decode(type, from: .map(image))
         }
 
-        @inlinable public func decode<T: Decodable>(_ type: T.Type, from value: AttributeValue)
-            throws -> T {
+        @inlinable public func decode<T: Decodable>(
+            _ type: T.Type,
+            from value: AttributeValue
+        ) throws -> T {
             let decoder = _DecoderImpl(userInfo: userInfo, from: value, codingPath: [])
             return try decoder.decode(T.self)
         }
@@ -340,13 +344,17 @@ extension DynamoDBEvent {
             try T(from: self)
         }
 
-        @usableFromInline func container<Key>(keyedBy type: Key.Type) throws ->
-            KeyedDecodingContainer<Key> where Key: CodingKey {
+        @usableFromInline func container<Key>(keyedBy type: Key.Type) throws -> KeyedDecodingContainer<Key>
+        where Key: CodingKey {
             guard case .map(let dictionary) = self.value else {
-                throw DecodingError.typeMismatch([String: AttributeValue].self, DecodingError.Context(
-                    codingPath: self.codingPath,
-                    debugDescription: "Expected to decode \([String: AttributeValue].self) but found \(self.value.debugDataTypeDescription) instead."
-                ))
+                throw DecodingError.typeMismatch(
+                    [String: AttributeValue].self,
+                    DecodingError.Context(
+                        codingPath: self.codingPath,
+                        debugDescription:
+                            "Expected to decode \([String: AttributeValue].self) but found \(self.value.debugDataTypeDescription) instead."
+                    )
+                )
             }
 
             let container = _KeyedDecodingContainer<Key>(
@@ -359,10 +367,14 @@ extension DynamoDBEvent {
 
         @usableFromInline func unkeyedContainer() throws -> UnkeyedDecodingContainer {
             guard case .list(let array) = self.value else {
-                throw DecodingError.typeMismatch([AttributeValue].self, DecodingError.Context(
-                    codingPath: self.codingPath,
-                    debugDescription: "Expected to decode \([AttributeValue].self) but found \(self.value.debugDataTypeDescription) instead."
-                ))
+                throw DecodingError.typeMismatch(
+                    [AttributeValue].self,
+                    DecodingError.Context(
+                        codingPath: self.codingPath,
+                        debugDescription:
+                            "Expected to decode \([AttributeValue].self) but found \(self.value.debugDataTypeDescription) instead."
+                    )
+                )
             }
 
             return _UnkeyedDecodingContainer(
@@ -381,7 +393,7 @@ extension DynamoDBEvent {
         }
     }
 
-    struct ArrayKey: CodingKey, Equatable {
+    struct ArrayKey: CodingKey, Equatable, Sendable {
         init(index: Int) {
             self.intValue = index
         }
@@ -509,8 +521,12 @@ extension DynamoDBEvent {
             return try T(from: decoder)
         }
 
-        func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type, forKey key: K) throws
-            -> KeyedDecodingContainer<NestedKey> where NestedKey: CodingKey {
+        func nestedContainer<NestedKey>(
+            keyedBy type: NestedKey.Type,
+            forKey key: K
+        ) throws
+            -> KeyedDecodingContainer<NestedKey> where NestedKey: CodingKey
+        {
             try self.decoderForKey(key).container(keyedBy: type)
         }
 
@@ -540,24 +556,38 @@ extension DynamoDBEvent {
 
         @inline(__always) private func getValue(forKey key: K) throws -> AttributeValue {
             guard let value = self.dictionary[key.stringValue] else {
-                throw DecodingError.keyNotFound(key, .init(
-                    codingPath: self.codingPath,
-                    debugDescription: "No value associated with key \(key) (\"\(key.stringValue)\")."
-                ))
+                throw DecodingError.keyNotFound(
+                    key,
+                    .init(
+                        codingPath: self.codingPath,
+                        debugDescription: "No value associated with key \(key) (\"\(key.stringValue)\")."
+                    )
+                )
             }
 
             return value
         }
 
-        @inline(__always) private func createTypeMismatchError(type: Any.Type, forKey key: K, value: AttributeValue) -> DecodingError {
+        @inline(__always) private func createTypeMismatchError(
+            type: Any.Type,
+            forKey key: K,
+            value: AttributeValue
+        ) -> DecodingError {
             let codingPath = self.codingPath + [key]
-            return DecodingError.typeMismatch(type, .init(
-                codingPath: codingPath, debugDescription: "Expected to decode \(type) but found \(value.debugDataTypeDescription) instead."
-            ))
+            return DecodingError.typeMismatch(
+                type,
+                .init(
+                    codingPath: codingPath,
+                    debugDescription: "Expected to decode \(type) but found \(value.debugDataTypeDescription) instead."
+                )
+            )
         }
 
-        @inline(__always) private func decodeFixedWidthInteger<T: FixedWidthInteger>(key: Self.Key)
-            throws -> T {
+        @inline(__always) private func decodeFixedWidthInteger<T: FixedWidthInteger>(
+            key: Self.Key
+        )
+            throws -> T
+        {
             let value = try getValue(forKey: key)
 
             guard case .number(let number) = value else {
@@ -576,7 +606,8 @@ extension DynamoDBEvent {
         }
 
         @inline(__always) private func decodeLosslessStringConvertible<T: LosslessStringConvertible>(
-            key: Self.Key) throws -> T {
+            key: Self.Key
+        ) throws -> T {
             let value = try getValue(forKey: key)
 
             guard case .number(let number) = value else {
@@ -679,14 +710,18 @@ extension DynamoDBEvent {
         }
 
         @inline(__always) private func createTypeMismatchError(type: Any.Type, value: AttributeValue) -> DecodingError {
-            DecodingError.typeMismatch(type, .init(
-                codingPath: self.codingPath,
-                debugDescription: "Expected to decode \(type) but found \(value.debugDataTypeDescription) instead."
-            ))
+            DecodingError.typeMismatch(
+                type,
+                .init(
+                    codingPath: self.codingPath,
+                    debugDescription: "Expected to decode \(type) but found \(value.debugDataTypeDescription) instead."
+                )
+            )
         }
 
         @inline(__always) private func decodeFixedWidthInteger<T: FixedWidthInteger>() throws
-            -> T {
+            -> T
+        {
             guard case .number(let number) = self.value else {
                 throw self.createTypeMismatchError(type: T.self, value: self.value)
             }
@@ -702,7 +737,8 @@ extension DynamoDBEvent {
         }
 
         @inline(__always) private func decodeLosslessStringConvertible<T: LosslessStringConvertible>()
-            throws -> T {
+            throws -> T
+        {
             guard case .number(let number) = self.value else {
                 throw self.createTypeMismatchError(type: T.self, value: self.value)
             }
@@ -723,7 +759,7 @@ extension DynamoDBEvent {
         let codingPath: [CodingKey]
         let array: [AttributeValue]
 
-        let count: Int? // protocol requirement to be optional
+        let count: Int?  // protocol requirement to be optional
         var isAtEnd = false
         var currentIndex = 0
 
@@ -844,8 +880,11 @@ extension DynamoDBEvent {
             return try T(from: decoder)
         }
 
-        mutating func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type) throws
-            -> KeyedDecodingContainer<NestedKey> where NestedKey: CodingKey {
+        mutating func nestedContainer<NestedKey>(
+            keyedBy type: NestedKey.Type
+        ) throws
+            -> KeyedDecodingContainer<NestedKey> where NestedKey: CodingKey
+        {
             try self.impl.container(keyedBy: type)
         }
 
@@ -859,13 +898,18 @@ extension DynamoDBEvent {
 
         @inline(__always) private func createTypeMismatchError(type: Any.Type, value: AttributeValue) -> DecodingError {
             let codingPath = self.codingPath + [ArrayKey(index: self.currentIndex)]
-            return DecodingError.typeMismatch(type, .init(
-                codingPath: codingPath, debugDescription: "Expected to decode \(type) but found \(value.debugDataTypeDescription) instead."
-            ))
+            return DecodingError.typeMismatch(
+                type,
+                .init(
+                    codingPath: codingPath,
+                    debugDescription: "Expected to decode \(type) but found \(value.debugDataTypeDescription) instead."
+                )
+            )
         }
 
         @inline(__always) private mutating func decodeFixedWidthInteger<T: FixedWidthInteger>() throws
-            -> T {
+            -> T
+        {
             defer {
                 currentIndex += 1
                 if currentIndex == count {
@@ -878,15 +922,18 @@ extension DynamoDBEvent {
             }
 
             guard let integer = T(number) else {
-                throw DecodingError.dataCorruptedError(in: self,
-                                                       debugDescription: "Parsed JSON number <\(number)> does not fit in \(T.self).")
+                throw DecodingError.dataCorruptedError(
+                    in: self,
+                    debugDescription: "Parsed JSON number <\(number)> does not fit in \(T.self)."
+                )
             }
 
             return integer
         }
 
         @inline(__always) private mutating func decodeLosslessStringConvertible<T: LosslessStringConvertible>()
-            throws -> T {
+            throws -> T
+        {
             defer {
                 currentIndex += 1
                 if currentIndex == count {
@@ -899,8 +946,10 @@ extension DynamoDBEvent {
             }
 
             guard let float = T(number) else {
-                throw DecodingError.dataCorruptedError(in: self,
-                                                       debugDescription: "Parsed JSON number <\(number)> does not fit in \(T.self).")
+                throw DecodingError.dataCorruptedError(
+                    in: self,
+                    debugDescription: "Parsed JSON number <\(number)> does not fit in \(T.self)."
+                )
             }
 
             return float
@@ -934,13 +983,3 @@ extension DynamoDBEvent.AttributeValue {
         }
     }
 }
-
-#if swift(>=5.6)
-extension DynamoDBEvent: Sendable {}
-extension DynamoDBEvent.EventRecord: Sendable {}
-extension DynamoDBEvent.StreamRecord: Sendable {}
-extension DynamoDBEvent.UserIdentity: Sendable {}
-extension DynamoDBEvent.OperationType: Sendable {}
-extension DynamoDBEvent.AttributeValue: Sendable {}
-extension DynamoDBEvent.StreamViewType: Sendable {}
-#endif

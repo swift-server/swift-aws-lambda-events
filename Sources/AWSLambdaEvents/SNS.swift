@@ -12,12 +12,16 @@
 //
 //===----------------------------------------------------------------------===//
 
-import struct Foundation.Date
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
+import Foundation
+#endif
 
 // https://docs.aws.amazon.com/lambda/latest/dg/with-sns.html
 
-public struct SNSEvent: Decodable {
-    public struct Record: Decodable {
+public struct SNSEvent: Decodable, Sendable {
+    public struct Record: Decodable, Sendable {
         public let eventVersion: String
         public let eventSubscriptionArn: String
         public let eventSource: String
@@ -37,8 +41,8 @@ public struct SNSEvent: Decodable {
         case records = "Records"
     }
 
-    public struct Message {
-        public enum Attribute {
+    public struct Message: Sendable {
+        public enum Attribute: Sendable {
             case string(String)
             case binary([UInt8])
         }
@@ -97,17 +101,14 @@ extension SNSEvent.Message.Attribute: Decodable {
             let bytes = try base64encoded.base64decoded()
             self = .binary(bytes)
         default:
-            throw DecodingError.dataCorruptedError(forKey: .dataType, in: container, debugDescription: """
-            Unexpected value \"\(dataType)\" for key \(CodingKeys.dataType).
-            Expected `String` or `Binary`.
-            """)
+            throw DecodingError.dataCorruptedError(
+                forKey: .dataType,
+                in: container,
+                debugDescription: """
+                    Unexpected value \"\(dataType)\" for key \(CodingKeys.dataType).
+                    Expected `String` or `Binary`.
+                    """
+            )
         }
     }
 }
-
-#if swift(>=5.6)
-extension SNSEvent: Sendable {}
-extension SNSEvent.Record: Sendable {}
-extension SNSEvent.Message: Sendable {}
-extension SNSEvent.Message.Attribute: Sendable {}
-#endif

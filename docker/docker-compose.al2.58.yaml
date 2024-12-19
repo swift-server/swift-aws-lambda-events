@@ -8,6 +8,9 @@ services:
       args:
         swift_version: "5.8"
 
+  soundness:
+    image: swift-aws-lambda-events:al2-5.8
+
   test:
     image: swift-aws-lambda-events:al2-5.8
 

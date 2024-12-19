@@ -14,16 +14,16 @@
 
 // https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html
 
-public struct SQSEvent: Decodable {
+public struct SQSEvent: Decodable, Sendable {
     public let records: [Message]
 
     enum CodingKeys: String, CodingKey {
         case records = "Records"
     }
 
-    public struct Message {
+    public struct Message: Sendable {
         /// https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_MessageAttributeValue.html
-        public enum Attribute {
+        public enum Attribute: Sendable {
             case string(String)
             case binary([UInt8])
             case number(String)
@@ -86,16 +86,14 @@ extension SQSEvent.Message.Attribute: Decodable {
             let bytes = try base64encoded.base64decoded()
             self = .binary(bytes)
         default:
-            throw DecodingError.dataCorruptedError(forKey: .dataType, in: container, debugDescription: """
-            Unexpected value \"\(dataType)\" for key \(CodingKeys.dataType).
-            Expected `String`, `Binary` or `Number`.
-            """)
+            throw DecodingError.dataCorruptedError(
+                forKey: .dataType,
+                in: container,
+                debugDescription: """
+                    Unexpected value \"\(dataType)\" for key \(CodingKeys.dataType).
+                    Expected `String`, `Binary` or `Number`.
+                    """
+            )
         }
     }
 }
-
-#if swift(>=5.6)
-extension SQSEvent: Sendable {}
-extension SQSEvent.Message: Sendable {}
-extension SQSEvent.Message.Attribute: Sendable {}
-#endif

@@ -12,15 +12,21 @@
 //
 //===----------------------------------------------------------------------===//
 
-import class Foundation.JSONEncoder
+import HTTPTypes
+
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
+import Foundation
+#endif
 
 // https://docs.aws.amazon.com/lambda/latest/dg/services-apigateway.html
 // https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
 
 /// `APIGatewayRequest` contains data coming from the API Gateway.
-public struct APIGatewayRequest: Codable {
-    public struct Context: Codable {
-        public struct Identity: Codable {
+public struct APIGatewayRequest: Encodable, Sendable {
+    public struct Context: Codable, Sendable {
+        public struct Identity: Codable, Sendable {
             public let cognitoIdentityPoolId: String?
 
             public let apiKey: String?
@@ -35,7 +41,7 @@ public struct APIGatewayRequest: Codable {
             public let accountId: String?
         }
 
-        public struct Authorizer: Codable {
+        public struct Authorizer: Codable, Sendable {
             public let claims: [String: String]?
         }
 
@@ -56,14 +62,14 @@ public struct APIGatewayRequest: Codable {
 
     public let resource: String
     public let path: String
-    public let httpMethod: HTTPMethod
+    public let httpMethod: HTTPRequest.Method
 
-    public let queryStringParameters: [String: String]?
-    public let multiValueQueryStringParameters: [String: [String]]?
+    public let queryStringParameters: [String: String]
+    public let multiValueQueryStringParameters: [String: [String]]
     public let headers: HTTPHeaders
     public let multiValueHeaders: HTTPMultiValueHeaders
-    public let pathParameters: [String: String]?
-    public let stageVariables: [String: String]?
+    public let pathParameters: [String: String]
+    public let stageVariables: [String: String]
 
     public let requestContext: Context
     public let body: String?
@@ -72,15 +78,15 @@ public struct APIGatewayRequest: Codable {
 
 // MARK: - Response -
 
-public struct APIGatewayResponse: Codable {
-    public var statusCode: HTTPResponseStatus
+public struct APIGatewayResponse: Codable, Sendable {
+    public var statusCode: HTTPResponse.Status
     public var headers: HTTPHeaders?
     public var multiValueHeaders: HTTPMultiValueHeaders?
     public var body: String?
     public var isBase64Encoded: Bool?
 
     public init(
-        statusCode: HTTPResponseStatus,
+        statusCode: HTTPResponse.Status,
         headers: HTTPHeaders? = nil,
         multiValueHeaders: HTTPMultiValueHeaders? = nil,
         body: String? = nil,
@@ -94,10 +100,27 @@ public struct APIGatewayResponse: Codable {
     }
 }
 
-#if swift(>=5.6)
-extension APIGatewayRequest: Sendable {}
-extension APIGatewayRequest.Context: Sendable {}
-extension APIGatewayRequest.Context.Identity: Sendable {}
-extension APIGatewayRequest.Context.Authorizer: Sendable {}
-extension APIGatewayResponse: Sendable {}
-#endif
+extension APIGatewayRequest: Decodable {
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        self.resource = try container.decode(String.self, forKey: .resource)
+        self.path = try container.decode(String.self, forKey: .path)
+        self.httpMethod = try container.decode(HTTPRequest.Method.self, forKey: .httpMethod)
+
+        self.queryStringParameters =
+            try container.decodeIfPresent([String: String].self, forKey: .queryStringParameters) ?? [:]
+        self.multiValueQueryStringParameters =
+            try container.decodeIfPresent([String: [String]].self, forKey: .multiValueQueryStringParameters) ?? [:]
+        self.headers = try container.decodeIfPresent(HTTPHeaders.self, forKey: .headers) ?? HTTPHeaders()
+        self.multiValueHeaders =
+            try container.decodeIfPresent(HTTPMultiValueHeaders.self, forKey: .multiValueHeaders)
+            ?? HTTPMultiValueHeaders()
+        self.pathParameters = try container.decodeIfPresent([String: String].self, forKey: .pathParameters) ?? [:]
+        self.stageVariables = try container.decodeIfPresent([String: String].self, forKey: .stageVariables) ?? [:]
+
+        self.requestContext = try container.decode(Context.self, forKey: .requestContext)
+        self.body = try container.decodeIfPresent(String.self, forKey: .body)
+        self.isBase64Encoded = try container.decode(Bool.self, forKey: .isBase64Encoded)
+    }
+}
