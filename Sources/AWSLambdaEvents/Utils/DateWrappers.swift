@@ -43,8 +43,6 @@ public struct ISO8601Coding: Decodable, Sendable {
         }
     }
 
-    
-
     private static func parseISO8601(dateString: String) throws -> Date {
         if #available(macOS 12.0, *) {
             return try Date(dateString, strategy: .iso8601)
@@ -141,9 +139,9 @@ public struct RFC5322DateTimeCoding: Decodable, Sendable {
 
         do {
             if #available(macOS 12.0, *) {
-                self.wrappedValue = try Date(string, strategy: RFC5322DateParseStrategy())
+                self.wrappedValue = try Date(string, strategy: Self.rfc5322DateParseStrategy)
             } else {
-                self.wrappedValue = try RFC5322DateParseStrategy().parse(string)
+                self.wrappedValue = try Self.rfc5322DateParseStrategy.parse(string)
             }
         } catch {
             throw DecodingError.dataCorruptedError(
@@ -153,5 +151,7 @@ public struct RFC5322DateTimeCoding: Decodable, Sendable {
             )
         }
     }
+
+    private static let rfc5322DateParseStrategy = RFC5322DateParseStrategy(calendar: Calendar(identifier: .gregorian))
 
 }
