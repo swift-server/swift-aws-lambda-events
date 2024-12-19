@@ -43,11 +43,7 @@ public struct ISO8601Coding: Decodable, Sendable {
 
     private static func parseISO8601(dateString: String) -> Date? {
         #if canImport(FoundationEssentials)
-        if #available(macOS 12.0, *) {
-            return try? Date(dateString, strategy: .iso8601)
-        } else {
-            return Self.dateFormatter.date(from: dateString)
-        }
+        return try? Date(dateString, strategy: .iso8601)
         #else
         return Self.dateFormatter.date(from: dateString)
         #endif
@@ -89,11 +85,7 @@ public struct ISO8601WithFractionalSecondsCoding: Decodable, Sendable {
 
     private static func parseISO8601WithFractionalSeconds(dateString: String) -> Date? {
         #if canImport(FoundationEssentials)
-        if #available(macOS 12.0, *) {
-            return try? Date(dateString, strategy: Self.iso8601WithFractionalSeconds)
-        } else {
-            return Self.dateFormatter.date(from: dateString)
-        }
+        return try? Date(dateString, strategy: Self.iso8601WithFractionalSeconds)
         #else
         return Self.dateFormatter.date(from: dateString)
         #endif
