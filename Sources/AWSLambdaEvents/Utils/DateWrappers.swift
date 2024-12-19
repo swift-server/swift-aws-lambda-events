@@ -92,7 +92,6 @@ public struct ISO8601WithFractionalSecondsCoding: Decodable, Sendable {
     }
 
     #if canImport(FoundationEssentials)
-    @available(macOS 12.0, *)
     private static var iso8601WithFractionalSeconds: Date.ISO8601FormatStyle {
         Date.ISO8601FormatStyle(includingFractionalSeconds: true)
     }
