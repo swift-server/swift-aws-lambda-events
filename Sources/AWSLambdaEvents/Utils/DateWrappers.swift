@@ -120,11 +120,7 @@ public struct RFC5322DateTimeCoding: Decodable, Sendable {
 
         do {
             #if canImport(FoundationEssentials)
-            if #available(macOS 12.0, *) {
-                self.wrappedValue = try Date(string, strategy: Self.rfc5322DateParseStrategy)
-            } else {
-                self.wrappedValue = try Self.rfc5322DateParseStrategy.parse(string)
-            }
+            self.wrappedValue = try Date(string, strategy: Self.rfc5322DateParseStrategy)
             #else
             self.wrappedValue = try Self.rfc5322DateParseStrategy.parse(string)
             #endif
