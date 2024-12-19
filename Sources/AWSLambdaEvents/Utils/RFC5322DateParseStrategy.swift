@@ -179,7 +179,6 @@ struct RFC5322DateParseStrategy {
 }
 
 #if canImport(FoundationEssentials)
-@available(macOS 12.0, *)
 extension RFC5322DateParseStrategy: ParseStrategy {}
 #endif
 
