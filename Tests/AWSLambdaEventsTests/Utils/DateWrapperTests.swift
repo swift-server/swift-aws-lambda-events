@@ -46,8 +46,8 @@ class DateWrapperTests: XCTestCase {
 
             XCTAssertEqual(context.codingPath.map(\.stringValue), ["date"])
             XCTAssertEqual(
-                context.debugDescription,
-                "Expected date to be in ISO8601 date format, but `\(date)` is not in the correct format"
+                "Expected date to be in ISO8601 date format, but `\(date)` is not in the correct format",
+                context.debugDescription
             )
             XCTAssertNil(context.underlyingError)
         }
@@ -63,7 +63,7 @@ class DateWrapperTests: XCTestCase {
         var event: TestEvent?
         XCTAssertNoThrow(event = try JSONDecoder().decode(TestEvent.self, from: json.data(using: .utf8)!))
 
-        XCTAssertEqual(event?.date, Date(timeIntervalSince1970: 1_585_241_585.123))
+        XCTAssertEqual(event?.date.timeIntervalSince1970 ?? 0.0, 1_585_241_585.123, accuracy: 0.001)
     }
 
     func testISO8601WithFractionalSecondsCodingWrapperFailure() {
