@@ -30,32 +30,27 @@ public struct ISO8601Coding: Decodable, Sendable {
         let container = try decoder.singleValueContainer()
         let dateString = try container.decode(String.self)
 
-        struct InvalidDateError: Error {}
-
-        do {
-            self.wrappedValue = try Self.parseISO8601(dateString: dateString)
-        } catch {
+        guard let date = Self.parseISO8601(dateString: dateString) else {
             throw DecodingError.dataCorruptedError(
                 in: container,
                 debugDescription:
                     "Expected date to be in ISO8601 date format, but `\(dateString)` is not in the correct format"
             )
         }
+
+        self.wrappedValue = date
     }
 
-    private static func parseISO8601(dateString: String) throws -> Date {
+    private static func parseISO8601(dateString: String) -> Date? {
+        #if canImport(FoundationEssentials)
         if #available(macOS 12.0, *) {
-            return try Date(dateString, strategy: .iso8601)
+            return try? Date(dateString, strategy: .iso8601)
         } else {
-            #if !canImport(FoundationEssentials)
-            guard let date = Self.dateFormatter.date(from: dateString) else {
-                throw InvalidDateError()
-            }
-            return date
-            #endif
-
-            fatalError("ISO8601Coding is not supported on this platform - this should never happen")
+            return Self.dateFormatter.date(from: dateString)
         }
+        #else
+        return Self.dateFormatter.date(from: dateString)
+        #endif
     }
 
     #if !canImport(FoundationEssentials)
@@ -81,35 +76,35 @@ public struct ISO8601WithFractionalSecondsCoding: Decodable, Sendable {
         let container = try decoder.singleValueContainer()
         let dateString = try container.decode(String.self)
 
-        struct InvalidDateError: Error {}
-
-        do {
-            self.wrappedValue = try Self.parseISO8601WithFractionalSeconds(dateString: dateString)
-        } catch {
+        guard let date = Self.parseISO8601WithFractionalSeconds(dateString: dateString) else {
             throw DecodingError.dataCorruptedError(
                 in: container,
                 debugDescription:
                     "Expected date to be in ISO8601 date format with fractional seconds, but `\(dateString)` is not in the correct format"
             )
         }
+
+        self.wrappedValue = date
     }
 
-    private static func parseISO8601WithFractionalSeconds(dateString: String) throws -> Date {
+    private static func parseISO8601WithFractionalSeconds(dateString: String) -> Date? {
+        #if canImport(FoundationEssentials)
         if #available(macOS 12.0, *) {
-            return try Date(dateString, strategy: Self.iso8601WithFractionalSeconds)
+            return try? Date(dateString, strategy: Self.iso8601WithFractionalSeconds)
         } else {
-            #if !canImport(FoundationEssentials)
-            guard let date = Self.dateFormatter.date(from: dateString) else {
-                throw InvalidDateError()
-            }
-            return date
-            #endif
-
-            fatalError("ISO8601Coding is not supported on this platform - this should never happen")
+            return Self.dateFormatter.date(from: dateString)
         }
+        #else
+        return Self.dateFormatter.date(from: dateString)
+        #endif
     }
 
-    #if !canImport(FoundationEssentials)
+    #if canImport(FoundationEssentials)
+    @available(macOS 12.0, *)
+    private static var iso8601WithFractionalSeconds: Date.ISO8601FormatStyle {
+        Date.ISO8601FormatStyle(includingFractionalSeconds: true)
+    }
+    #else
     private static var dateFormatter: DateFormatter {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "en_US_POSIX")
@@ -118,11 +113,6 @@ public struct ISO8601WithFractionalSecondsCoding: Decodable, Sendable {
         return formatter
     }
     #endif
-
-    @available(macOS 12.0, *)
-    private static var iso8601WithFractionalSeconds: Date.ISO8601FormatStyle {
-        Date.ISO8601FormatStyle(includingFractionalSeconds: true)
-    }
 }
 
 @propertyWrapper
@@ -138,11 +128,15 @@ public struct RFC5322DateTimeCoding: Decodable, Sendable {
         let string = try container.decode(String.self)
 
         do {
+            #if canImport(FoundationEssentials)
             if #available(macOS 12.0, *) {
                 self.wrappedValue = try Date(string, strategy: Self.rfc5322DateParseStrategy)
             } else {
                 self.wrappedValue = try Self.rfc5322DateParseStrategy.parse(string)
             }
+            #else
+            self.wrappedValue = try Self.rfc5322DateParseStrategy.parse(string)
+            #endif
         } catch {
             throw DecodingError.dataCorruptedError(
                 in: container,
@@ -152,6 +146,7 @@ public struct RFC5322DateTimeCoding: Decodable, Sendable {
         }
     }
 
-    private static let rfc5322DateParseStrategy = RFC5322DateParseStrategy(calendar: Calendar(identifier: .gregorian))
-
+    private static var rfc5322DateParseStrategy: RFC5322DateParseStrategy {
+        RFC5322DateParseStrategy(calendar: Calendar(identifier: .gregorian))
+    }
 }

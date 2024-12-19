@@ -17,9 +17,11 @@ import XCTest
 @testable import AWSLambdaEvents
 
 class RFC5322DateParseStrategyTests: XCTestCase {
+    let strategy = RFC5322DateParseStrategy(calendar: Calendar(identifier: .gregorian))
+
     func testSuccess() {
         let input = "Fri, 26 Jun 2020 03:04:03 -0500 (CDT)"
-        let date = try? Date(input, strategy: RFC5322DateParseStrategy())
+        let date = try? strategy.parse(input)
         XCTAssertNotNil(date)
         XCTAssertEqual(date?.description, "2020-06-26 08:04:03 +0000")
     }
@@ -40,71 +42,71 @@ class RFC5322DateParseStrategyTests: XCTestCase {
         ]
 
         for (input, expected) in dates {
-            let date = try Date(input, strategy: RFC5322DateParseStrategy())
+            let date = try strategy.parse(input)
             XCTAssertEqual(date.description, expected)
         }
     }
 
     func testWithLeadingDayName() throws {
         let input = "Fri, 26 Jun 2020 03:04:03 -0500 (CDT)"
-        let date = try Date(input, strategy: RFC5322DateParseStrategy())
+        let date = try strategy.parse(input)
         XCTAssertEqual("2020-06-26 08:04:03 +0000", date.description)
     }
 
     func testEmptyString() {
         let input = ""
-        XCTAssertThrowsError(try Date(input, strategy: RFC5322DateParseStrategy()))
+        XCTAssertThrowsError(try strategy.parse(input))
     }
 
     func testWithInvalidDay() {
         let input = "Fri, 36 Jun 2020 03:04:03 -0500 (CDT)"
-        XCTAssertThrowsError(try Date(input, strategy: RFC5322DateParseStrategy()))
+        XCTAssertThrowsError(try strategy.parse(input))
     }
 
     func testWithInvalidMonth() {
         let input = "Fri, 26 XXX 2020 03:04:03 -0500 (CDT)"
-        XCTAssertThrowsError(try Date(input, strategy: RFC5322DateParseStrategy()))
+        XCTAssertThrowsError(try strategy.parse(input))
     }
 
     func testWithInvalidHour() {
         let input = "Fri, 26 Jun 2020 48:04:03 -0500 (CDT)"
-        XCTAssertThrowsError(try Date(input, strategy: RFC5322DateParseStrategy()))
+        XCTAssertThrowsError(try strategy.parse(input))
     }
 
     func testWithInvalidMinute() {
         let input = "Fri, 26 Jun 2020 03:64:03 -0500 (CDT)"
-        XCTAssertThrowsError(try Date(input, strategy: RFC5322DateParseStrategy()))
+        XCTAssertThrowsError(try strategy.parse(input))
     }
 
     func testWithInvalidSecond() {
         let input = "Fri, 26 Jun 2020 03:04:64 -0500 (CDT)"
-        XCTAssertThrowsError(try Date(input, strategy: RFC5322DateParseStrategy()))
+        XCTAssertThrowsError(try strategy.parse(input))
     }
 
     func testWithGMT() throws {
         let input = "Fri, 26 Jun 2020 03:04:03 GMT"
-        let date = try Date(input, strategy: RFC5322DateParseStrategy())
+        let date = try strategy.parse(input)
         XCTAssertEqual("2020-06-26 03:04:03 +0000", date.description)
     }
 
     func testWithUTC() throws {
         let input = "Fri, 26 Jun 2020 03:04:03 UTC"
-        let date = try Date(input, strategy: RFC5322DateParseStrategy())
+        let date = try strategy.parse(input)
         XCTAssertEqual("2020-06-26 03:04:03 +0000", date.description)
     }
 
     func testPartialInput() {
         let input = "Fri, 26 Jun 20"
-        XCTAssertThrowsError(try Date(input, strategy: RFC5322DateParseStrategy()))
+        XCTAssertThrowsError(try strategy.parse(input))
     }
 
     func testPartialTimezone() {
         let input = "Fri, 26 Jun 2020 03:04:03 -05"
-        XCTAssertThrowsError(try Date(input, strategy: RFC5322DateParseStrategy()))
+        XCTAssertThrowsError(try strategy.parse(input))
     }
 
     func testInvalidTimezone() {
         let input = "Fri, 26 Jun 2020 03:04:03 -05CDT (CDT)"
-        XCTAssertThrowsError(try Date(input, strategy: RFC5322DateParseStrategy()))
+        XCTAssertThrowsError(try strategy.parse(input))
     }
 }

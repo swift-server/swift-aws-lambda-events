@@ -178,8 +178,10 @@ struct RFC5322DateParseStrategy {
     }
 }
 
+#if canImport(FoundationEssentials)
 @available(macOS 12.0, *)
 extension RFC5322DateParseStrategy: ParseStrategy {}
+#endif
 
 extension IteratorProtocol where Self.Element == UInt8 {
     mutating func expect(_ expected: UInt8) -> Bool {
