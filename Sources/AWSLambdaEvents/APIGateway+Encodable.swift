@@ -22,8 +22,29 @@ import class Foundation.JSONEncoder
 import struct Foundation.Data
 #endif
 
-public enum APIGatewayResponseError: Error {
-    case failedToEncodeBody(Error)
+extension Encodable {
+    fileprivate func string() throws -> String {
+        let encoded = try JSONEncoder().encode(self)
+        return String(decoding: encoded, as: UTF8.self)
+    }
+}
+
+extension APIGatewayResponse {
+
+    public init<Input: Encodable>(
+        statusCode: HTTPResponse.Status,
+        headers: HTTPHeaders? = nil,
+        multiValueHeaders: HTTPMultiValueHeaders? = nil,
+        body: Input
+    ) throws {
+        self.init(
+            statusCode: statusCode,
+            headers: headers,
+            multiValueHeaders: multiValueHeaders,
+            body: try body.string(),
+            isBase64Encoded: nil
+        )
+    }
 }
 
 extension APIGatewayV2Response {
@@ -32,19 +53,14 @@ extension APIGatewayV2Response {
         statusCode: HTTPResponse.Status,
         headers: HTTPHeaders? = nil,
         body: Input,
-        isBase64Encoded: Bool? = nil,
         cookies: [String]? = nil
     ) throws {
-        let encodedBody: Data
-        do {
-            encodedBody = try JSONEncoder().encode(body)
-        } catch {
-            throw APIGatewayResponseError.failedToEncodeBody(error)
-        }
-        self.statusCode = statusCode
-        self.headers = headers
-        self.body = String(data: encodedBody, encoding: .utf8) ?? ""
-        self.isBase64Encoded = isBase64Encoded
-        self.cookies = cookies
+        self.init(
+            statusCode: statusCode,
+            headers: headers,
+            body: try body.string(),
+            isBase64Encoded: nil,
+            cookies: cookies
+        )
     }
 }

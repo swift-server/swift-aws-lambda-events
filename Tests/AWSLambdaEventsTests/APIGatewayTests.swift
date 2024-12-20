@@ -95,8 +95,8 @@ class APIGatewayTests: XCTestCase {
         let isBase64Encoded: Bool?
     }
 
-    func testResponseEncoding() {
-        let resp = APIGatewayResponse(
+    func testResponseEncoding() throws {
+        let resp = try APIGatewayResponse(
             statusCode: .ok,
             headers: ["Server": "Test"],
             body: "abc123"

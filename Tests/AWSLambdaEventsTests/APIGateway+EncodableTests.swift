@@ -17,7 +17,7 @@ import Testing
 
 @testable import AWSLambdaEvents
 
-struct APIGatewayV2EncodableResponseTests {
+struct APIGatewayEncodableResponseTests {
 
     // MARK: Encoding
     struct BusinessResponse: Codable, Equatable {
@@ -26,7 +26,7 @@ struct APIGatewayV2EncodableResponseTests {
     }
 
     @Test
-    func testResponseEncoding() throws {
+    func testResponseEncodingV2() throws {
 
         // given
         let businessResponse = BusinessResponse(message: "Hello World", code: 200)
@@ -34,6 +34,30 @@ struct APIGatewayV2EncodableResponseTests {
         var response: APIGatewayV2Response? = nil
         #expect(throws: Never.self) {
             try response = APIGatewayV2Response(statusCode: .ok, body: businessResponse)
+        }
+        try #require(response?.body != nil)
+
+        // when
+        let body = response?.body?.data(using: .utf8)
+        try #require(body != nil)
+
+        #expect(throws: Never.self) {
+            let encodedBody = try JSONDecoder().decode(BusinessResponse.self, from: body!)
+
+            // then
+            #expect(encodedBody == businessResponse)
+        }
+    }
+
+    @Test
+    func testResponseEncoding() throws {
+
+        // given
+        let businessResponse = BusinessResponse(message: "Hello World", code: 200)
+
+        var response: APIGatewayResponse? = nil
+        #expect(throws: Never.self) {
+            try response = APIGatewayResponse(statusCode: .ok, body: businessResponse)
         }
         try #require(response?.body != nil)
 
