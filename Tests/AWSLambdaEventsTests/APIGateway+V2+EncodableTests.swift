@@ -12,14 +12,12 @@
 //
 //===----------------------------------------------------------------------===//
 
+import Foundation
 import Testing
-
-import Foundation 
 
 @testable import AWSLambdaEvents
 
 struct APIGatewayV2EncodableResponseTests {
-
 
     // MARK: Encoding
     struct BusinessResponse: Codable, Equatable {
@@ -27,25 +25,25 @@ struct APIGatewayV2EncodableResponseTests {
         let code: Int
     }
 
-    @Test 
+    @Test
     func testResponseEncoding() throws {
 
-        // given 
+        // given
         let businessResponse = BusinessResponse(message: "Hello World", code: 200)
-        
+
         var response: APIGatewayV2Response? = nil
-        #expect(throws: Never.self) { 
+        #expect(throws: Never.self) {
             try response = APIGatewayV2Response(statusCode: .ok, body: businessResponse)
-        }        
+        }
         try #require(response?.body != nil)
 
-        // when 
-        let body = response?.body?.data(using: .utf8) 
+        // when
+        let body = response?.body?.data(using: .utf8)
         try #require(body != nil)
 
-        #expect(throws: Never.self) { 
+        #expect(throws: Never.self) {
             let encodedBody = try JSONDecoder().decode(BusinessResponse.self, from: body!)
-            
+
             // then
             #expect(encodedBody == businessResponse)
         }

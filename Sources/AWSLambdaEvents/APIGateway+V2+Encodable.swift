@@ -12,6 +12,8 @@
 //
 //===----------------------------------------------------------------------===//
 
+import HTTPTypes
+
 #if canImport(FoundationEssentials)
 import class FoundationEssentials.JSONEncoder
 import class FoundationEssentials.Data
@@ -20,15 +22,13 @@ import class Foundation.JSONEncoder
 import struct Foundation.Data
 #endif
 
-import HTTPTypes
-
 public enum APIGatewayResponseError: Error {
     case failedToEncodeBody(Error)
 }
 
 extension APIGatewayV2Response {
 
-    public init<Input: Encodable> (
+    public init<Input: Encodable>(
         statusCode: HTTPResponse.Status,
         headers: HTTPHeaders? = nil,
         body: Input,
