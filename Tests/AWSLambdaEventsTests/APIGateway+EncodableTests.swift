@@ -33,7 +33,7 @@ struct APIGatewayEncodableResponseTests {
 
         var response: APIGatewayV2Response? = nil
         #expect(throws: Never.self) {
-            try response = APIGatewayV2Response(statusCode: .ok, body: businessResponse)
+            try response = APIGatewayV2Response(body: businessResponse, statusCode: .ok)
         }
         try #require(response?.body != nil)
 
@@ -57,7 +57,7 @@ struct APIGatewayEncodableResponseTests {
 
         var response: APIGatewayResponse? = nil
         #expect(throws: Never.self) {
-            try response = APIGatewayResponse(statusCode: .ok, body: businessResponse)
+            try response = APIGatewayResponse(body: businessResponse, statusCode: .ok)
         }
         try #require(response?.body != nil)
 

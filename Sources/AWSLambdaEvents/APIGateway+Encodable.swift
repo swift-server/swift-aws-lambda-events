@@ -32,10 +32,10 @@ extension Encodable {
 extension APIGatewayResponse {
 
     public init<Input: Encodable>(
+        body: Input,
         statusCode: HTTPResponse.Status,
         headers: HTTPHeaders? = nil,
-        multiValueHeaders: HTTPMultiValueHeaders? = nil,
-        body: Input
+        multiValueHeaders: HTTPMultiValueHeaders? = nil
     ) throws {
         self.init(
             statusCode: statusCode,
@@ -50,9 +50,9 @@ extension APIGatewayResponse {
 extension APIGatewayV2Response {
 
     public init<Input: Encodable>(
+        body: Input,
         statusCode: HTTPResponse.Status,
         headers: HTTPHeaders? = nil,
-        body: Input,
         cookies: [String]? = nil
     ) throws {
         self.init(
