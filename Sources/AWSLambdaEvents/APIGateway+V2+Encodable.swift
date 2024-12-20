@@ -16,7 +16,7 @@ import HTTPTypes
 
 #if canImport(FoundationEssentials)
 import class FoundationEssentials.JSONEncoder
-import class FoundationEssentials.Data
+import struct FoundationEssentials.Data
 #else
 import class Foundation.JSONEncoder
 import struct Foundation.Data
