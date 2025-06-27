@@ -21,7 +21,7 @@ class APIGatewayWebSocketsTests: XCTestCase {
     	"headers": {
     		"Host": "lqrlmblaa2.execute-api.us-east-1.amazonaws.com",
     		"Origin": "wss://lqrlmblaa2.execute-api.us-east-1.amazonaws.com",
-    		"Sec-WebSocket-Extensions": "permessage-deflate; client_max_window_bits; 	server_max_window_bits=15",
+    		"Sec-WebSocket-Extensions": "",
     		"Sec-WebSocket-Key": "am5ubWVpbHd3bmNyYXF0ag==",
     		"Sec-WebSocket-Version": "13",
     		"X-Amzn-Trace-Id": "Root=1-64b83950-42de8e247b4c2b43091ef67c",
