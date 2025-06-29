@@ -12,21 +12,28 @@
 //
 //===----------------------------------------------------------------------===//
 
-import XCTest
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
+import Foundation
+#endif
+
+import Testing
 
 @testable import AWSLambdaEvents
 
-class RFC5322DateParseStrategyTests: XCTestCase {
+@Suite
+struct RFC5322DateParseStrategyTests {
     let strategy = RFC5322DateParseStrategy(calendar: Calendar(identifier: .gregorian))
 
-    func testSuccess() {
+    @Test func success() {
         let input = "Fri, 26 Jun 2020 03:04:03 -0500 (CDT)"
         let date = try? strategy.parse(input)
-        XCTAssertNotNil(date)
-        XCTAssertEqual(date?.description, "2020-06-26 08:04:03 +0000")
+        #expect(date != nil)
+        #expect(date?.description == "2020-06-26 08:04:03 +0000")
     }
 
-    func testSomeRandomDates() throws {
+    @Test func someRandomDates() throws {
         let dates = [
             ("1 Jan 2020 00:00:00 +0000", "2020-01-01 00:00:00 +0000"),
             ("15 Feb 2020 01:02:03 GMT", "2020-02-15 01:02:03 +0000"),
@@ -43,70 +50,70 @@ class RFC5322DateParseStrategyTests: XCTestCase {
 
         for (input, expected) in dates {
             let date = try strategy.parse(input)
-            XCTAssertEqual(date.description, expected)
+            #expect(date.description == expected)
         }
     }
 
-    func testWithLeadingDayName() throws {
+    @Test func withLeadingDayName() throws {
         let input = "Fri, 26 Jun 2020 03:04:03 -0500 (CDT)"
         let date = try strategy.parse(input)
-        XCTAssertEqual("2020-06-26 08:04:03 +0000", date.description)
+        #expect("2020-06-26 08:04:03 +0000" == date.description)
     }
 
-    func testEmptyString() {
+    @Test func emptyString() {
         let input = ""
-        XCTAssertThrowsError(try strategy.parse(input))
+        #expect(throws: (any Error).self) { try strategy.parse(input) }
     }
 
-    func testWithInvalidDay() {
+    @Test func withInvalidDay() {
         let input = "Fri, 36 Jun 2020 03:04:03 -0500 (CDT)"
-        XCTAssertThrowsError(try strategy.parse(input))
+        #expect(throws: (any Error).self) { try strategy.parse(input) }
     }
 
-    func testWithInvalidMonth() {
+    @Test func withInvalidMonth() {
         let input = "Fri, 26 XXX 2020 03:04:03 -0500 (CDT)"
-        XCTAssertThrowsError(try strategy.parse(input))
+        #expect(throws: (any Error).self) { try strategy.parse(input) }
     }
 
-    func testWithInvalidHour() {
+    @Test func withInvalidHour() {
         let input = "Fri, 26 Jun 2020 48:04:03 -0500 (CDT)"
-        XCTAssertThrowsError(try strategy.parse(input))
+        #expect(throws: (any Error).self) { try strategy.parse(input) }
     }
 
-    func testWithInvalidMinute() {
+    @Test func withInvalidMinute() {
         let input = "Fri, 26 Jun 2020 03:64:03 -0500 (CDT)"
-        XCTAssertThrowsError(try strategy.parse(input))
+        #expect(throws: (any Error).self) { try strategy.parse(input) }
     }
 
-    func testWithInvalidSecond() {
+    @Test func withInvalidSecond() {
         let input = "Fri, 26 Jun 2020 03:04:64 -0500 (CDT)"
-        XCTAssertThrowsError(try strategy.parse(input))
+        #expect(throws: (any Error).self) { try strategy.parse(input) }
     }
 
-    func testWithGMT() throws {
+    @Test func withGMT() throws {
         let input = "Fri, 26 Jun 2020 03:04:03 GMT"
         let date = try strategy.parse(input)
-        XCTAssertEqual("2020-06-26 03:04:03 +0000", date.description)
+        #expect("2020-06-26 03:04:03 +0000" == date.description)
     }
 
-    func testWithUTC() throws {
+    @Test func withUTC() throws {
         let input = "Fri, 26 Jun 2020 03:04:03 UTC"
         let date = try strategy.parse(input)
-        XCTAssertEqual("2020-06-26 03:04:03 +0000", date.description)
+        #expect("2020-06-26 03:04:03 +0000" == date.description)
     }
 
-    func testPartialInput() {
+    @Test func partialInput() {
         let input = "Fri, 26 Jun 20"
-        XCTAssertThrowsError(try strategy.parse(input))
+        #expect(throws: (any Error).self) { try strategy.parse(input) }
     }
 
-    func testPartialTimezone() {
+    @Test func partialTimezone() {
         let input = "Fri, 26 Jun 2020 03:04:03 -05"
-        XCTAssertThrowsError(try strategy.parse(input))
+        #expect(throws: (any Error).self) { try strategy.parse(input) }
     }
 
-    func testInvalidTimezone() {
+    @Test func invalidTimezone() {
         let input = "Fri, 26 Jun 2020 03:04:03 -05CDT (CDT)"
-        XCTAssertThrowsError(try strategy.parse(input))
+        #expect(throws: (any Error).self) { try strategy.parse(input) }
     }
 }

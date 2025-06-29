@@ -12,11 +12,13 @@
 //
 //===----------------------------------------------------------------------===//
 
-import XCTest
+import Foundation
+import Testing
 
 @testable import AWSLambdaEvents
 
-class SESTests: XCTestCase {
+@Suite
+struct SESTests {
     static let eventBody = """
         {
           "Records": [
@@ -86,47 +88,42 @@ class SESTests: XCTestCase {
         }
         """
 
-    func testSimpleEventFromJSON() {
+    @Test func simpleEventFromJSON() throws {
         let data = Data(SESTests.eventBody.utf8)
-        var event: SESEvent?
-        XCTAssertNoThrow(event = try JSONDecoder().decode(SESEvent.self, from: data))
+        let event = try JSONDecoder().decode(SESEvent.self, from: data)
+        let record = try #require(event.records.first)
 
-        guard let record = event?.records.first else {
-            XCTFail("Expected to have one record")
-            return
-        }
-
-        XCTAssertEqual(record.eventSource, "aws:ses")
-        XCTAssertEqual(record.eventVersion, "1.0")
-        XCTAssertEqual(record.ses.mail.commonHeaders.date.description, "2015-10-07 19:34:56 +0000")
-        XCTAssertEqual(record.ses.mail.commonHeaders.from[0], "Jane Doe <janedoe@example.com>")
-        XCTAssertEqual(record.ses.mail.commonHeaders.messageId, "<0123456789example.com>")
-        XCTAssertEqual(record.ses.mail.commonHeaders.returnPath, "janedoe@example.com")
-        XCTAssertEqual(record.ses.mail.commonHeaders.subject, "Test Subject")
-        XCTAssertEqual(record.ses.mail.commonHeaders.to?[0], "johndoe@example.com")
-        XCTAssertEqual(record.ses.mail.destination[0], "johndoe@example.com")
-        XCTAssertEqual(record.ses.mail.headers[0].name, "Return-Path")
-        XCTAssertEqual(record.ses.mail.headers[0].value, "<janedoe@example.com>")
-        XCTAssertEqual(record.ses.mail.headers[1].name, "Received")
-        XCTAssertEqual(
-            record.ses.mail.headers[1].value,
+        #expect(record.eventSource == "aws:ses")
+        #expect(record.eventVersion == "1.0")
+        #expect(record.ses.mail.commonHeaders.date.description == "2015-10-07 19:34:56 +0000")
+        #expect(record.ses.mail.commonHeaders.from[0] == "Jane Doe <janedoe@example.com>")
+        #expect(record.ses.mail.commonHeaders.messageId == "<0123456789example.com>")
+        #expect(record.ses.mail.commonHeaders.returnPath == "janedoe@example.com")
+        #expect(record.ses.mail.commonHeaders.subject == "Test Subject")
+        #expect(record.ses.mail.commonHeaders.to?[0] == "johndoe@example.com")
+        #expect(record.ses.mail.destination[0] == "johndoe@example.com")
+        #expect(record.ses.mail.headers[0].name == "Return-Path")
+        #expect(record.ses.mail.headers[0].value == "<janedoe@example.com>")
+        #expect(record.ses.mail.headers[1].name == "Received")
+        #expect(
+            record.ses.mail.headers[1].value ==
             "from mailer.example.com (mailer.example.com [203.0.113.1]) by inbound-smtp.eu-west-1.amazonaws.com with SMTP id o3vrnil0e2ic28trm7dfhrc2v0cnbeccl4nbp0g1 for johndoe@example.com; Wed, 07 Oct 2015 12:34:56 +0000 (UTC)"
         )
-        XCTAssertEqual(record.ses.mail.headersTruncated, true)
-        XCTAssertEqual(record.ses.mail.messageId, "5h5auqp1oa1bg49b2q8f8tmli1oju8pcma2haao1")
-        XCTAssertEqual(record.ses.mail.source, "janedoe@example.com")
-        XCTAssertEqual(record.ses.mail.timestamp.description, "1970-01-01 00:00:00 +0000")
+        #expect(record.ses.mail.headersTruncated == true)
+        #expect(record.ses.mail.messageId == "5h5auqp1oa1bg49b2q8f8tmli1oju8pcma2haao1")
+        #expect(record.ses.mail.source == "janedoe@example.com")
+        #expect(record.ses.mail.timestamp.description == "1970-01-01 00:00:00 +0000")
 
-        XCTAssertEqual(record.ses.receipt.action.functionArn, "arn:aws:lambda:eu-west-1:123456789012:function:Example")
-        XCTAssertEqual(record.ses.receipt.action.invocationType, "Event")
-        XCTAssertEqual(record.ses.receipt.action.type, "Lambda")
-        XCTAssertEqual(record.ses.receipt.dkimVerdict.status, .pass)
-        XCTAssertEqual(record.ses.receipt.processingTimeMillis, 574)
-        XCTAssertEqual(record.ses.receipt.recipients[0], "test@swift-server.com")
-        XCTAssertEqual(record.ses.receipt.recipients[1], "test2@swift-server.com")
-        XCTAssertEqual(record.ses.receipt.spamVerdict.status, .pass)
-        XCTAssertEqual(record.ses.receipt.spfVerdict.status, .processingFailed)
-        XCTAssertEqual(record.ses.receipt.timestamp.description, "1970-01-01 00:00:00 +0000")
-        XCTAssertEqual(record.ses.receipt.virusVerdict.status, .fail)
+        #expect(record.ses.receipt.action.functionArn == "arn:aws:lambda:eu-west-1:123456789012:function:Example")
+        #expect(record.ses.receipt.action.invocationType == "Event")
+        #expect(record.ses.receipt.action.type == "Lambda")
+        #expect(record.ses.receipt.dkimVerdict.status == .pass)
+        #expect(record.ses.receipt.processingTimeMillis == 574)
+        #expect(record.ses.receipt.recipients[0] == "test@swift-server.com")
+        #expect(record.ses.receipt.recipients[1] == "test2@swift-server.com")
+        #expect(record.ses.receipt.spamVerdict.status == .pass)
+        #expect(record.ses.receipt.spfVerdict.status == .processingFailed)
+        #expect(record.ses.receipt.timestamp.description == "1970-01-01 00:00:00 +0000")
+        #expect(record.ses.receipt.virusVerdict.status == .fail)
     }
 }

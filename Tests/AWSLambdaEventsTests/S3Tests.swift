@@ -12,11 +12,13 @@
 //
 //===----------------------------------------------------------------------===//
 
-import XCTest
+import Foundation
+import Testing
 
 @testable import AWSLambdaEvents
 
-class S3Tests: XCTestCase {
+@Suite
+struct S3Tests {
     static let eventBodyObjectCreated = """
         {
           "Records": [
@@ -99,61 +101,51 @@ class S3Tests: XCTestCase {
         }
         """
 
-    func testSimpleEventFromJSON() {
+    @Test func simpleEventFromJSON() throws {
         let data = S3Tests.eventBodyObjectCreated.data(using: .utf8)!
-        var event: S3Event?
-        XCTAssertNoThrow(event = try JSONDecoder().decode(S3Event.self, from: data))
+        let event = try JSONDecoder().decode(S3Event.self, from: data)
+        let record = try #require(event.records.first)
 
-        guard let record = event?.records.first else {
-            XCTFail("Expected to have one record")
-            return
-        }
-
-        XCTAssertEqual(record.eventVersion, "2.1")
-        XCTAssertEqual(record.eventSource, "aws:s3")
-        XCTAssertEqual(record.awsRegion, .eu_central_1)
-        XCTAssertEqual(record.eventName, "ObjectCreated:Put")
-        XCTAssertEqual(record.eventTime, Date(timeIntervalSince1970: 1_578_907_540.621))
-        XCTAssertEqual(record.userIdentity, S3Event.UserIdentity(principalId: "AWS:AAAAAAAJ2MQ4YFQZ7AULJ"))
-        XCTAssertEqual(record.requestParameters, S3Event.RequestParameters(sourceIPAddress: "123.123.123.123"))
-        XCTAssertEqual(record.responseElements.count, 2)
-        XCTAssertEqual(record.s3.schemaVersion, "1.0")
-        XCTAssertEqual(record.s3.configurationId, "98b55bc4-3c0c-4007-b727-c6b77a259dde")
-        XCTAssertEqual(record.s3.bucket.name, "eventsources")
-        XCTAssertEqual(record.s3.bucket.ownerIdentity, S3Event.UserIdentity(principalId: "AAAAAAAAAAAAAA"))
-        XCTAssertEqual(record.s3.bucket.arn, "arn:aws:s3:::eventsources")
-        XCTAssertEqual(record.s3.object.key, "Hi.md")
-        XCTAssertEqual(record.s3.object.size, 2880)
-        XCTAssertEqual(record.s3.object.eTag, "91a7f2c3ae81bcc6afef83979b463f0e")
-        XCTAssertEqual(record.s3.object.sequencer, "005E1C37948E783A6E")
+        #expect(record.eventVersion == "2.1")
+        #expect(record.eventSource == "aws:s3")
+        #expect(record.awsRegion == .eu_central_1)
+        #expect(record.eventName == "ObjectCreated:Put")
+        #expect(record.eventTime == Date(timeIntervalSince1970: 1_578_907_540.621))
+        #expect(record.userIdentity == S3Event.UserIdentity(principalId: "AWS:AAAAAAAJ2MQ4YFQZ7AULJ"))
+        #expect(record.requestParameters == S3Event.RequestParameters(sourceIPAddress: "123.123.123.123"))
+        #expect(record.responseElements.count == 2)
+        #expect(record.s3.schemaVersion == "1.0")
+        #expect(record.s3.configurationId == "98b55bc4-3c0c-4007-b727-c6b77a259dde")
+        #expect(record.s3.bucket.name == "eventsources")
+        #expect(record.s3.bucket.ownerIdentity == S3Event.UserIdentity(principalId: "AAAAAAAAAAAAAA"))
+        #expect(record.s3.bucket.arn == "arn:aws:s3:::eventsources")
+        #expect(record.s3.object.key == "Hi.md")
+        #expect(record.s3.object.size == 2880)
+        #expect(record.s3.object.eTag == "91a7f2c3ae81bcc6afef83979b463f0e")
+        #expect(record.s3.object.sequencer == "005E1C37948E783A6E")
     }
 
-    func testObjectRemovedEvent() {
+    @Test func objectRemovedEvent() throws {
         let data = S3Tests.eventBodyObjectRemoved.data(using: .utf8)!
-        var event: S3Event?
-        XCTAssertNoThrow(event = try JSONDecoder().decode(S3Event.self, from: data))
+        let event = try JSONDecoder().decode(S3Event.self, from: data)
+        let record = try #require(event.records.first)
 
-        guard let record = event?.records.first else {
-            XCTFail("Expected to have one record")
-            return
-        }
-
-        XCTAssertEqual(record.eventVersion, "2.1")
-        XCTAssertEqual(record.eventSource, "aws:s3")
-        XCTAssertEqual(record.awsRegion, .eu_central_1)
-        XCTAssertEqual(record.eventName, "ObjectRemoved:DeleteMarkerCreated")
-        XCTAssertEqual(record.eventTime, Date(timeIntervalSince1970: 1_578_907_540.621))
-        XCTAssertEqual(record.userIdentity, S3Event.UserIdentity(principalId: "AWS:AAAAAAAJ2MQ4YFQZ7AULJ"))
-        XCTAssertEqual(record.requestParameters, S3Event.RequestParameters(sourceIPAddress: "123.123.123.123"))
-        XCTAssertEqual(record.responseElements.count, 2)
-        XCTAssertEqual(record.s3.schemaVersion, "1.0")
-        XCTAssertEqual(record.s3.configurationId, "98b55bc4-3c0c-4007-b727-c6b77a259dde")
-        XCTAssertEqual(record.s3.bucket.name, "eventsources")
-        XCTAssertEqual(record.s3.bucket.ownerIdentity, S3Event.UserIdentity(principalId: "AAAAAAAAAAAAAA"))
-        XCTAssertEqual(record.s3.bucket.arn, "arn:aws:s3:::eventsources")
-        XCTAssertEqual(record.s3.object.key, "Hi.md")
-        XCTAssertNil(record.s3.object.size)
-        XCTAssertEqual(record.s3.object.eTag, "91a7f2c3ae81bcc6afef83979b463f0e")
-        XCTAssertEqual(record.s3.object.sequencer, "005E1C37948E783A6E")
+        #expect(record.eventVersion == "2.1")
+        #expect(record.eventSource == "aws:s3")
+        #expect(record.awsRegion == .eu_central_1)
+        #expect(record.eventName == "ObjectRemoved:DeleteMarkerCreated")
+        #expect(record.eventTime == Date(timeIntervalSince1970: 1_578_907_540.621))
+        #expect(record.userIdentity == S3Event.UserIdentity(principalId: "AWS:AAAAAAAJ2MQ4YFQZ7AULJ"))
+        #expect(record.requestParameters == S3Event.RequestParameters(sourceIPAddress: "123.123.123.123"))
+        #expect(record.responseElements.count == 2)
+        #expect(record.s3.schemaVersion == "1.0")
+        #expect(record.s3.configurationId == "98b55bc4-3c0c-4007-b727-c6b77a259dde")
+        #expect(record.s3.bucket.name == "eventsources")
+        #expect(record.s3.bucket.ownerIdentity == S3Event.UserIdentity(principalId: "AAAAAAAAAAAAAA"))
+        #expect(record.s3.bucket.arn == "arn:aws:s3:::eventsources")
+        #expect(record.s3.object.key == "Hi.md")
+        #expect(record.s3.object.size == nil)
+        #expect(record.s3.object.eTag == "91a7f2c3ae81bcc6afef83979b463f0e")
+        #expect(record.s3.object.sequencer == "005E1C37948E783A6E")
     }
 }

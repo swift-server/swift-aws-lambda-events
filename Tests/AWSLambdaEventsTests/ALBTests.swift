@@ -12,11 +12,13 @@
 //
 //===----------------------------------------------------------------------===//
 
-import XCTest
+import Foundation
+import Testing
 
 @testable import AWSLambdaEvents
 
-class ALBTests: XCTestCase {
+@Suite
+struct ALBTests {
     static let exampleSingleValueHeadersEventBody = """
         {
           "requestContext":{
@@ -45,21 +47,21 @@ class ALBTests: XCTestCase {
         }
         """
 
-    func testRequestWithSingleValueHeadersEvent() {
+    @Test func requestWithSingleValueHeadersEvent() {
         let data = ALBTests.exampleSingleValueHeadersEventBody.data(using: .utf8)!
         do {
             let decoder = JSONDecoder()
 
             let event = try decoder.decode(ALBTargetGroupRequest.self, from: data)
 
-            XCTAssertEqual(event.httpMethod, .get)
-            XCTAssertEqual(event.body, "")
-            XCTAssertEqual(event.isBase64Encoded, false)
-            XCTAssertEqual(event.headers?.count, 11)
-            XCTAssertEqual(event.path, "/")
-            XCTAssertEqual(event.queryStringParameters, [:])
+            #expect(event.httpMethod == .get)
+            #expect(event.body == "")
+            #expect(event.isBase64Encoded == false)
+            #expect(event.headers?.count == 11)
+            #expect(event.path == "/")
+            #expect(event.queryStringParameters == [:])
         } catch {
-            XCTFail("Unexpected error: \(error)")
+            Issue.record("Unexpected error: \(error)")
         }
     }
 }

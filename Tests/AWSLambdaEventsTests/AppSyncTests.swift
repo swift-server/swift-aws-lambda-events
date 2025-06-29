@@ -12,11 +12,13 @@
 //
 //===----------------------------------------------------------------------===//
 
-import XCTest
+import Foundation
+import Testing
 
 @testable import AWSLambdaEvents
 
-class AppSyncTests: XCTestCase {
+@Suite
+struct AppSyncTests {
     static let exampleEventBody = """
         {
           "arguments": {
@@ -96,31 +98,29 @@ class AppSyncTests: XCTestCase {
 
     // MARK: Decoding
 
-    func testRequestDecodingExampleEvent() {
+    @Test func requestDecodingExampleEvent() throws {
         let data = AppSyncTests.exampleEventBody.data(using: .utf8)!
-        var event: AppSyncEvent?
-        XCTAssertNoThrow(event = try JSONDecoder().decode(AppSyncEvent.self, from: data))
+        let event = try JSONDecoder().decode(AppSyncEvent.self, from: data)
 
-        XCTAssertNotNil(event?.arguments)
-        XCTAssertEqual(event?.arguments["id"], .string("my identifier"))
-        XCTAssertEqual(event?.info.fieldName, "createSomething")
-        XCTAssertEqual(event?.info.parentTypeName, "Mutation")
-        XCTAssertEqual(event?.info.selectionSetList, ["id", "field1", "field2"])
-        XCTAssertEqual(event?.request.headers["accept-language"], "en-US,en;q=0.9")
+        #expect(event.arguments["id"] == .string("my identifier"))
+        #expect(event.info.fieldName == "createSomething")
+        #expect(event.info.parentTypeName == "Mutation")
+        #expect(event.info.selectionSetList == ["id", "field1", "field2"])
+        #expect(event.request.headers["accept-language"] == "en-US,en;q=0.9")
 
-        switch event?.identity {
+        switch event.identity {
         case .cognitoUserPools(let cognitoIdentity):
-            XCTAssertEqual(cognitoIdentity.defaultAuthStrategy, "ALLOW")
-            XCTAssertEqual(cognitoIdentity.issuer, "https://cognito-idp.us-west-2.amazonaws.com/us-west-xxxxxxxxxxx")
-            XCTAssertEqual(cognitoIdentity.sourceIp, ["1.1.1.1"])
-            XCTAssertEqual(cognitoIdentity.username, "jdoe")
-            XCTAssertEqual(cognitoIdentity.sub, "192879fc-a240-4bf1-ab5a-d6a00f3063f9")
+            #expect(cognitoIdentity.defaultAuthStrategy == "ALLOW")
+            #expect(cognitoIdentity.issuer == "https://cognito-idp.us-west-2.amazonaws.com/us-west-xxxxxxxxxxx")
+            #expect(cognitoIdentity.sourceIp == ["1.1.1.1"])
+            #expect(cognitoIdentity.username == "jdoe")
+            #expect(cognitoIdentity.sub == "192879fc-a240-4bf1-ab5a-d6a00f3063f9")
         default:
-            XCTAssertTrue(false, "a cognito identity was expected, but didn't find one.")
+            #expect(false, "a cognito identity was expected, but didn't find one.")
         }
     }
 
-    func testRequestDecodingEventWithSource() {
+    @Test func requestDecodingEventWithSource() throws {
         let eventBody = """
             {
                 "arguments": {},
@@ -172,14 +172,13 @@ class AppSyncTests: XCTestCase {
             """
 
         let data = eventBody.data(using: .utf8)!
-        var event: AppSyncEvent?
-        XCTAssertNoThrow(event = try JSONDecoder().decode(AppSyncEvent.self, from: data))
-        XCTAssertEqual(event?.source?["name"], "Hello")
-        XCTAssertTrue(event?.stash?.isEmpty ?? false, "stash dictionary must be empty")
-        XCTAssertNil(event?.identity)
+        let event = try JSONDecoder().decode(AppSyncEvent.self, from: data)
+        #expect(event.source?["name"] == "Hello")
+        #expect(event.stash?.isEmpty ?? false, "stash dictionary must be empty")
+        #expect(event.identity == nil)
     }
 
-    func testRequestDecodingIamIdentity() {
+    @Test func requestDecodingIamIdentity() throws {
         let eventBody = """
             {
                 "arguments": {},
@@ -240,20 +239,19 @@ class AppSyncTests: XCTestCase {
             """
 
         let data = eventBody.data(using: .utf8)!
-        var event: AppSyncEvent?
-        XCTAssertNoThrow(event = try JSONDecoder().decode(AppSyncEvent.self, from: data))
-        switch event?.identity {
+        let event = try JSONDecoder().decode(AppSyncEvent.self, from: data)
+        switch event.identity {
         case .iam(let iamIdentity):
-            XCTAssertEqual(iamIdentity.accountId, "accountId1")
-            XCTAssertEqual(iamIdentity.cognitoIdentityPoolId, "cognitoIdentityPool2")
-            XCTAssertEqual(iamIdentity.cognitoIdentityId, "cognitoIdentity3")
-            XCTAssertEqual(iamIdentity.sourceIp, ["1.1.1.1"])
-            XCTAssertNil(iamIdentity.username)
-            XCTAssertEqual(iamIdentity.userArn, "arn123")
-            XCTAssertEqual(iamIdentity.cognitoIdentityAuthType, "authenticated")
-            XCTAssertEqual(iamIdentity.cognitoIdentityAuthProvider, "authprovider")
+            #expect(iamIdentity.accountId == "accountId1")
+            #expect(iamIdentity.cognitoIdentityPoolId == "cognitoIdentityPool2")
+            #expect(iamIdentity.cognitoIdentityId == "cognitoIdentity3")
+            #expect(iamIdentity.sourceIp == ["1.1.1.1"])
+            #expect(iamIdentity.username == nil)
+            #expect(iamIdentity.userArn == "arn123")
+            #expect(iamIdentity.cognitoIdentityAuthType == "authenticated")
+            #expect(iamIdentity.cognitoIdentityAuthProvider == "authprovider")
         default:
-            XCTAssertTrue(false, "an iam identity was expected, but didn't find one.")
+            #expect(false, "an iam identity was expected, but didn't find one.")
         }
     }
 }

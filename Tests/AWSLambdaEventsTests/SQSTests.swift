@@ -12,11 +12,13 @@
 //
 //===----------------------------------------------------------------------===//
 
-import XCTest
+import Foundation
+import Testing
 
 @testable import AWSLambdaEvents
 
-class SQSTests: XCTestCase {
+@Suite
+struct SQSTests {
     static let eventBody = """
         {
           "Records": [
@@ -60,32 +62,30 @@ class SQSTests: XCTestCase {
         }
         """
 
-    func testSimpleEventFromJSON() {
+    @Test func simpleEventFromJSON() throws {
         let data = SQSTests.eventBody.data(using: .utf8)!
-        var event: SQSEvent?
-        XCTAssertNoThrow(event = try JSONDecoder().decode(SQSEvent.self, from: data))
+        let event = try JSONDecoder().decode(SQSEvent.self, from: data)
 
-        guard let message = event?.records.first else {
-            XCTFail("Expected to have one message in the event")
+        guard let message = event.records.first else {
+            Issue.record("Expected to have one message in the event")
             return
         }
 
-        XCTAssertEqual(message.messageId, "19dd0b57-b21e-4ac1-bd88-01bbb068cb78")
-        XCTAssertEqual(message.receiptHandle, "MessageReceiptHandle")
-        XCTAssertEqual(message.body, "Hello from SQS!")
-        XCTAssertEqual(message.attributes.count, 4)
+        #expect(message.messageId == "19dd0b57-b21e-4ac1-bd88-01bbb068cb78")
+        #expect(message.receiptHandle == "MessageReceiptHandle")
+        #expect(message.body == "Hello from SQS!")
+        #expect(message.attributes.count == 4)
 
-        XCTAssertEqual(
-            message.messageAttributes,
-            [
+        #expect(
+            message.messageAttributes == [
                 "number": .number("123"),
                 "string": .string("abc123"),
                 "binary": .binary([UInt8]("base64".utf8)),
             ]
         )
-        XCTAssertEqual(message.md5OfBody, "7b270e59b47ff90a553787216d55d91d")
-        XCTAssertEqual(message.eventSource, "aws:sqs")
-        XCTAssertEqual(message.eventSourceArn, "arn:aws:sqs:us-east-1:123456789012:MyQueue")
-        XCTAssertEqual(message.awsRegion, .us_east_1)
+        #expect(message.md5OfBody == "7b270e59b47ff90a553787216d55d91d")
+        #expect(message.eventSource == "aws:sqs")
+        #expect(message.eventSourceArn == "arn:aws:sqs:us-east-1:123456789012:MyQueue")
+        #expect(message.awsRegion == .us_east_1)
     }
 }
