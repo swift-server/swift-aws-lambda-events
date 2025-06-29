@@ -116,7 +116,7 @@ struct AppSyncTests {
             #expect(cognitoIdentity.username == "jdoe")
             #expect(cognitoIdentity.sub == "192879fc-a240-4bf1-ab5a-d6a00f3063f9")
         default:
-            #expect(false, "a cognito identity was expected, but didn't find one.")
+            #expect(Bool(false), "a cognito identity was expected, but didn't find one.")
         }
     }
 
@@ -251,7 +251,7 @@ struct AppSyncTests {
             #expect(iamIdentity.cognitoIdentityAuthType == "authenticated")
             #expect(iamIdentity.cognitoIdentityAuthProvider == "authprovider")
         default:
-            #expect(false, "an iam identity was expected, but didn't find one.")
+            #expect(Bool(false), "an iam identity was expected, but didn't find one.")
         }
     }
 }

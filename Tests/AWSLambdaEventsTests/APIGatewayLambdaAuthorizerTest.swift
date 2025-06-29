@@ -222,7 +222,7 @@ struct APIGatewayLambdaAuthorizerTests {
         )
 
         let data = try #require(try? JSONEncoder().encode(resp))
-        let stringData = try #require(try? String(data: data, encoding: .utf8))
+        let stringData = try #require(String(data: data, encoding: .utf8))
         let newData = try #require(stringData.data(using: .utf8))
 
         resp = try JSONDecoder().decode(APIGatewayLambdaAuthorizerPolicyResponse.self, from: newData)
