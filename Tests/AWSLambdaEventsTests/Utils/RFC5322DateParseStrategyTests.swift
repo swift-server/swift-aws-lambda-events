@@ -12,15 +12,15 @@
 //
 //===----------------------------------------------------------------------===//
 
+import Testing
+
+@testable import AWSLambdaEvents
+
 #if canImport(FoundationEssentials)
 import FoundationEssentials
 #else
 import Foundation
 #endif
-
-import Testing
-
-@testable import AWSLambdaEvents
 
 @Suite
 struct RFC5322DateParseStrategyTests {

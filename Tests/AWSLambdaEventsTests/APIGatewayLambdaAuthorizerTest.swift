@@ -171,7 +171,7 @@ struct APIGatewayLambdaAuthorizerTests {
         let data = try #require(try? JSONEncoder().encode(resp))
         let stringData = try #require(String(data: data, encoding: .utf8))
         let newData = try #require(stringData.data(using: .utf8))
-        
+
         resp = try JSONDecoder().decode(APIGatewayLambdaAuthorizerSimpleResponse.self, from: newData)
 
         #expect(resp.isAuthorized == true)
@@ -195,7 +195,7 @@ struct APIGatewayLambdaAuthorizerTests {
         let data = try #require(try? JSONEncoder().encode(resp))
         let stringData = try #require(String(data: data, encoding: .utf8))
         let newData = try #require(stringData.data(using: .utf8))
-        
+
         resp = try JSONDecoder().decode(APIGatewayLambdaAuthorizerPolicyResponse.self, from: newData)
 
         #expect(resp.principalId == "John Appleseed")
@@ -224,15 +224,14 @@ struct APIGatewayLambdaAuthorizerTests {
         let data = try #require(try? JSONEncoder().encode(resp))
         let stringData = try #require(try? String(data: data, encoding: .utf8))
         let newData = try #require(stringData.data(using: .utf8))
-        
-        resp = try JSONDecoder().decode(APIGatewayLambdaAuthorizerPolicyResponse.self, from: newData) 
+
+        resp = try JSONDecoder().decode(APIGatewayLambdaAuthorizerPolicyResponse.self, from: newData)
 
         #expect(resp.principalId == "John Appleseed")
         #expect(resp.policyDocument.statement.count == 1)
         #expect(resp.policyDocument.statement[0].action == ["execute-api:Invoke"])
         #expect(
-            resp.policyDocument.statement[0].resource ==
-            [
+            resp.policyDocument.statement[0].resource == [
                 "arn:aws:execute-api:*:*:*/*/GET/v1/user/0123",
                 "arn:aws:execute-api:*:*:*/*/POST/v1/user",
             ]

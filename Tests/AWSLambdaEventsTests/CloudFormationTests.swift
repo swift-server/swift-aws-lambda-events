@@ -12,14 +12,15 @@
 //
 //===----------------------------------------------------------------------===//
 
+import Testing
+
+@testable import AWSLambdaEvents
+
 #if canImport(FoundationEssentials)
 import FoundationEssentials
 #else
 import Foundation
 #endif
-import Testing
-
-@testable import AWSLambdaEvents
 
 @Suite
 struct CloudFormationTests {
@@ -92,10 +93,11 @@ struct CloudFormationTests {
         "{\"Data\":{\"property1\":\"value1\",\"property2\":\"\",\"property3\":[\"1\",\"2\",\"3\"]},\"LogicalResourceId\":\"TestLogicalResource\",\"NoEcho\":false,\"PhysicalResourceId\":\"TestPhysicalResource\",\"Reason\":\"See the details in CloudWatch Log Stream\",\"RequestId\":\"cdc73f9d-aea9-11e3-9d5a-835b769c0d9c\",\"StackId\":\"arn:aws:cloudformation:us-east-1:123456789:stack\\/TestStack\",\"Status\":\"SUCCESS\"}"
     }
 
-    @Test func decodeRequestRequiredFieldsFromJSON() throws{
+    @Test func decodeRequestRequiredFieldsFromJSON() throws {
         let eventBody = CloudFormationTests.eventBodyRequestRequiredFields()
         let data = eventBody.data(using: .utf8)!
-        let event: CloudFormation.Request<EmptyTestResourceProperties, EmptyTestResourceProperties>? = try JSONDecoder().decode(CloudFormation.Request.self, from: data)
+        let event: CloudFormation.Request<EmptyTestResourceProperties, EmptyTestResourceProperties>? = try JSONDecoder()
+            .decode(CloudFormation.Request.self, from: data)
 
         guard let event else {
             Issue.record("Expected to have an event")
@@ -115,9 +117,10 @@ struct CloudFormationTests {
     @Test func decodeRequestCreateFromJSON() throws {
         let eventBody = CloudFormationTests.eventBodyRequestCreate()
         let data = eventBody.data(using: .utf8)!
-        let event: CloudFormation.Request<TestResourceProperties, EmptyTestResourceProperties>? = try? JSONDecoder().decode(CloudFormation.Request.self, from: data)
+        let event: CloudFormation.Request<TestResourceProperties, EmptyTestResourceProperties>? = try? JSONDecoder()
+            .decode(CloudFormation.Request.self, from: data)
 
-        guard let event  else {
+        guard let event else {
             Issue.record("Expected to have an event")
             return
         }
@@ -138,9 +141,12 @@ struct CloudFormationTests {
     @Test func decodeRequestUpdateFromJSON() throws {
         let eventBody = CloudFormationTests.eventBodyRequestUpdate()
         let data = eventBody.data(using: .utf8)!
-        let event: CloudFormation.Request<TestResourceProperties, TestResourceProperties>? = try? JSONDecoder().decode(CloudFormation.Request.self, from: data)
+        let event: CloudFormation.Request<TestResourceProperties, TestResourceProperties>? = try? JSONDecoder().decode(
+            CloudFormation.Request.self,
+            from: data
+        )
 
-        guard let event  else {
+        guard let event else {
             Issue.record("Expected to have an event")
             return
         }

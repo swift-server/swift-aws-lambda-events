@@ -68,7 +68,8 @@ struct APIGatewayTests {
         #expect(req.path == "/test")
         #expect(req.httpMethod == .get)
         #expect(
-            req.requestContext.authorizer?.claims?["scope"] == "aws.cognito.signin.user.admin phone openid profile email"
+            req.requestContext.authorizer?.claims?["scope"]
+                == "aws.cognito.signin.user.admin phone openid profile email"
         )
         #expect(req.requestContext.authorizer?.claims?["username"] == "richwolf")
     }

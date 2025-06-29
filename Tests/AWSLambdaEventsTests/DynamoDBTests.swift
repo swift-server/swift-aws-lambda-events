@@ -212,10 +212,11 @@ struct DynamoDBTests {
             value = try JSONDecoder().decode(DynamoDBEvent.AttributeValue.self, from: json.data(using: .utf8)!)
         }
         #expect(
-            value == .map([
-                "numbers": .numberSet(["1.2345", "-19"]),
-                "string": .string("huhu"),
-            ])
+            value
+                == .map([
+                    "numbers": .numberSet(["1.2345", "-19"]),
+                    "string": .string("huhu"),
+                ])
         )
     }
 

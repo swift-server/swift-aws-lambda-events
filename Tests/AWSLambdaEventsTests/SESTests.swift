@@ -106,8 +106,8 @@ struct SESTests {
         #expect(record.ses.mail.headers[0].value == "<janedoe@example.com>")
         #expect(record.ses.mail.headers[1].name == "Received")
         #expect(
-            record.ses.mail.headers[1].value ==
-            "from mailer.example.com (mailer.example.com [203.0.113.1]) by inbound-smtp.eu-west-1.amazonaws.com with SMTP id o3vrnil0e2ic28trm7dfhrc2v0cnbeccl4nbp0g1 for johndoe@example.com; Wed, 07 Oct 2015 12:34:56 +0000 (UTC)"
+            record.ses.mail.headers[1].value
+                == "from mailer.example.com (mailer.example.com [203.0.113.1]) by inbound-smtp.eu-west-1.amazonaws.com with SMTP id o3vrnil0e2ic28trm7dfhrc2v0cnbeccl4nbp0g1 for johndoe@example.com; Wed, 07 Oct 2015 12:34:56 +0000 (UTC)"
         )
         #expect(record.ses.mail.headersTruncated == true)
         #expect(record.ses.mail.messageId == "5h5auqp1oa1bg49b2q8f8tmli1oju8pcma2haao1")

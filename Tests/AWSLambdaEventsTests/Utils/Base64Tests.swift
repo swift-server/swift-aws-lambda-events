@@ -14,20 +14,20 @@
 
 import Testing
 
+@testable import AWSLambdaEvents
+
 #if canImport(FoundationEssentials)
 import FoundationEssentials
 #else
 import Foundation
 #endif
 
-@testable import AWSLambdaEvents
-
 @Suite
 struct Base64Tests {
     // MARK: - Decoding -
 
     @Test func decodeEmptyString() throws {
-        let decoded = try  "".base64decoded()
+        let decoded = try "".base64decoded()
         #expect(decoded.count == 0)
     }
 
@@ -58,14 +58,14 @@ struct Base64Tests {
     }
 
     @Test func base64DecodingWithPoop() {
-        #expect(throws: (any Error).self) { 
-            try "💩".base64decoded() 
+        #expect(throws: (any Error).self) {
+            try "💩".base64decoded()
         }
     }
 
     @Test func base64DecodingWithInvalidLength() {
-        #expect(throws: (any Error).self) { 
-            try "AAAAA".base64decoded() 
+        #expect(throws: (any Error).self) {
+            try "AAAAA".base64decoded()
         }
     }
 

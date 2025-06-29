@@ -39,7 +39,7 @@ struct DateWrapperTests {
 
         let date = "2020-03-26T16:53:05"  // missing Z at end
         let json = #"{"date":"\#(date)"}"#
-        #expect(throws: (any Error).self) { 
+        #expect(throws: (any Error).self) {
             try JSONDecoder().decode(TestEvent.self, from: json.data(using: .utf8)!)
         }
     }
@@ -64,7 +64,7 @@ struct DateWrapperTests {
 
         let date = "2020-03-26T16:53:05Z"  // missing fractional seconds
         let json = #"{"date":"\#(date)"}"#
-        #expect(throws: (any Error).self) { 
+        #expect(throws: (any Error).self) {
             try JSONDecoder().decode(TestEvent.self, from: json.data(using: .utf8)!)
         }
     }
@@ -125,7 +125,7 @@ struct DateWrapperTests {
 
         let date = "Thu, 5 Apr 2012 23:47 +0200"  // missing seconds
         let json = #"{"date":"\#(date)"}"#
-        #expect(throws: (any Error).self) { 
+        #expect(throws: (any Error).self) {
             try JSONDecoder().decode(TestEvent.self, from: json.data(using: .utf8)!)
         }
     }
