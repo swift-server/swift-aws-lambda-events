@@ -12,7 +12,11 @@
 //
 //===----------------------------------------------------------------------===//
 
-import struct Foundation.Date
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
+import Foundation
+#endif
 
 // https://docs.aws.amazon.com/lambda/latest/dg/with-s3.html
 
@@ -73,7 +77,7 @@ public struct S3Event: Decodable, Sendable {
         public let size: UInt64?
         public let urlDecodedKey: String?
         public let versionId: String?
-        public let eTag: String
+        public let eTag: String?
         public let sequencer: String
     }
 }

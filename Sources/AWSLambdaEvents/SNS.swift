@@ -12,7 +12,11 @@
 //
 //===----------------------------------------------------------------------===//
 
-import struct Foundation.Date
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
+import Foundation
+#endif
 
 // https://docs.aws.amazon.com/lambda/latest/dg/with-sns.html
 
@@ -97,10 +101,14 @@ extension SNSEvent.Message.Attribute: Decodable {
             let bytes = try base64encoded.base64decoded()
             self = .binary(bytes)
         default:
-            throw DecodingError.dataCorruptedError(forKey: .dataType, in: container, debugDescription: """
-            Unexpected value \"\(dataType)\" for key \(CodingKeys.dataType).
-            Expected `String` or `Binary`.
-            """)
+            throw DecodingError.dataCorruptedError(
+                forKey: .dataType,
+                in: container,
+                debugDescription: """
+                    Unexpected value \"\(dataType)\" for key \(CodingKeys.dataType).
+                    Expected `String` or `Binary`.
+                    """
+            )
         }
     }
 }

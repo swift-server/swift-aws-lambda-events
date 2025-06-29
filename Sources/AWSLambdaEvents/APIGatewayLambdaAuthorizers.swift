@@ -52,7 +52,7 @@ public struct APIGatewayLambdaAuthorizerRequest: Codable, Sendable {
         public let timeEpoch: UInt64
     }
 
-    let requestContext: Context?
+    public let requestContext: Context?
 }
 
 /// `APIGatewayLambdaAuthorizerSimpleResponse` contains a simple response (yes/no) returned by a Lambda authorizer function
@@ -60,8 +60,10 @@ public struct APIGatewayLambdaAuthorizerSimpleResponse: Codable, Sendable {
     public let isAuthorized: Bool
     public let context: LambdaAuthorizerContext?
 
-    public init(isAuthorized: Bool,
-                context: LambdaAuthorizerContext?) {
+    public init(
+        isAuthorized: Bool,
+        context: LambdaAuthorizerContext?
+    ) {
         self.isAuthorized = isAuthorized
         self.context = context
     }

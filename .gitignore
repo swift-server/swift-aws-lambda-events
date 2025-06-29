@@ -1,5 +1,6 @@
 .DS_Store
 *.build
+*.index-build
 /.xcodeproj
 *.pem
 .podspecs
@@ -8,3 +9,4 @@
 xcuserdata
 Package.resolved
 .serverless
+.devcontainer
