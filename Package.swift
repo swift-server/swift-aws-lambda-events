@@ -6,7 +6,6 @@ let swiftSettings: [SwiftSetting] = [.enableExperimentalFeature("StrictConcurren
 
 let package = Package(
     name: "swift-aws-lambda-events",
-    platforms: [.macOS(.v15)],
     products: [
         .library(name: "AWSLambdaEvents", targets: ["AWSLambdaEvents"])
     ],
