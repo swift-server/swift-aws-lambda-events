@@ -13,19 +13,20 @@
 //===----------------------------------------------------------------------===//
 
 import AWSLambdaEvents
-import XCTest
+import Testing
 
-class HTTPHeadersTests: XCTestCase {
-    func testFirst() throws {
+@Suite
+struct HTTPHeadersTests {
+    @Test func first() throws {
         let headers: HTTPHeaders = [
             ":method": "GET",
             "foo": "bar",
             "custom-key": "value-1,value-2",
         ]
 
-        XCTAssertEqual(headers.first(name: ":method"), "GET")
-        XCTAssertEqual(headers.first(name: "Foo"), "bar")
-        XCTAssertEqual(headers.first(name: "custom-key"), "value-1,value-2")
-        XCTAssertNil(headers.first(name: "not-present"))
+        #expect(headers.first(name: ":method") == "GET")
+        #expect(headers.first(name: "Foo") == "bar")
+        #expect(headers.first(name: "custom-key") == "value-1,value-2")
+        #expect(headers.first(name: "not-present") == nil)
     }
 }

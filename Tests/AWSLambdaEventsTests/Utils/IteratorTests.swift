@@ -12,77 +12,86 @@
 //
 //===----------------------------------------------------------------------===//
 
-import XCTest
+import Testing
 
 @testable import AWSLambdaEvents
 
-final class IteratorProtocolTests: XCTestCase {
-    func testExpect() {
+@Suite
+struct IteratorProtocolTests {
+    @Test func expect() {
         // Test matching character
         var iterator = "abc".utf8.makeIterator()
-        XCTAssertTrue(iterator.expect(UInt8(ascii: "a")))
-        XCTAssertEqual(iterator.next(), UInt8(ascii: "b"))
+        let result1 = iterator.expect(UInt8(ascii: "a"))
+        #expect(result1)
+        #expect(iterator.next() == UInt8(ascii: "b"))
 
         // Test non-matching character
         iterator = "abc".utf8.makeIterator()
-        XCTAssertFalse(iterator.expect(UInt8(ascii: "x")))
+        let result2 = iterator.expect(UInt8(ascii: "x"))
+        #expect(!result2)
     }
 
-    func testNextSkippingWhitespace() {
+    @Test func nextSkippingWhitespace() {
         // Test with leading spaces
         var iterator = "   abc".utf8.makeIterator()
-        XCTAssertEqual(iterator.nextSkippingWhitespace(), UInt8(ascii: "a"))
+        #expect(iterator.nextSkippingWhitespace() == UInt8(ascii: "a"))
 
         // Test with no spaces
         iterator = "abc".utf8.makeIterator()
-        XCTAssertEqual(iterator.nextSkippingWhitespace(), UInt8(ascii: "a"))
+        #expect(iterator.nextSkippingWhitespace() == UInt8(ascii: "a"))
 
         // Test with only spaces
         iterator = "   ".utf8.makeIterator()
-        XCTAssertNil(iterator.nextSkippingWhitespace())
+        let result = iterator.nextSkippingWhitespace()
+        #expect(result == nil)
     }
 
-    func testNextAsciiDigit() {
+    @Test func nextAsciiDigit() {
         // Test basic digit
         var iterator = "123".utf8.makeIterator()
-        XCTAssertEqual(iterator.nextAsciiDigit(), UInt8(ascii: "1"))
+        #expect(iterator.nextAsciiDigit() == UInt8(ascii: "1"))
 
         // Test with leading spaces and skipping whitespace
         iterator = "  123".utf8.makeIterator()
-        XCTAssertEqual(iterator.nextAsciiDigit(skippingWhitespace: true), UInt8(ascii: "1"))
+        #expect(iterator.nextAsciiDigit(skippingWhitespace: true) == UInt8(ascii: "1"))
 
         // Test with leading spaces and not skipping whitespace
         iterator = "  123".utf8.makeIterator()
-        XCTAssertNil(iterator.nextAsciiDigit())
+        let result1 = iterator.nextAsciiDigit()
+        #expect(result1 == nil)
 
         // Test with non-digit
         iterator = "abc".utf8.makeIterator()
-        XCTAssertNil(iterator.nextAsciiDigit())
+        let result2 = iterator.nextAsciiDigit()
+        #expect(result2 == nil)
     }
 
-    func testNextAsciiLetter() {
+    @Test func nextAsciiLetter() {
         // Test basic letter
         var iterator = "abc".utf8.makeIterator()
-        XCTAssertEqual(iterator.nextAsciiLetter(), UInt8(ascii: "a"))
+        #expect(iterator.nextAsciiLetter() == UInt8(ascii: "a"))
 
         // Test with leading spaces and skipping whitespace
         iterator = "  abc".utf8.makeIterator()
-        XCTAssertEqual(iterator.nextAsciiLetter(skippingWhitespace: true), UInt8(ascii: "a"))
+        #expect(iterator.nextAsciiLetter(skippingWhitespace: true) == UInt8(ascii: "a"))
 
         // Test with leading spaces and not skipping whitespace
         iterator = "  abc".utf8.makeIterator()
-        XCTAssertNil(iterator.nextAsciiLetter())
+        let result1 = iterator.nextAsciiLetter()
+        #expect(result1 == nil)
 
         // Test with non-letter
         iterator = "123".utf8.makeIterator()
-        XCTAssertNil(iterator.nextAsciiLetter())
+        let result2 = iterator.nextAsciiLetter()
+        #expect(result2 == nil)
 
         // Test with uppercase
         iterator = "ABC".utf8.makeIterator()
-        XCTAssertEqual(iterator.nextAsciiLetter(), UInt8(ascii: "A"))
+        #expect(iterator.nextAsciiLetter() == UInt8(ascii: "A"))
 
         // Test with empty string
         iterator = "".utf8.makeIterator()
-        XCTAssertNil(iterator.nextAsciiLetter())
+        let result3 = iterator.nextAsciiLetter()
+        #expect(result3 == nil)
     }
 }

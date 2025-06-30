@@ -12,11 +12,13 @@
 //
 //===----------------------------------------------------------------------===//
 
-import XCTest
+import Foundation
+import Testing
 
 @testable import AWSLambdaEvents
 
-class APIGatewayTests: XCTestCase {
+@Suite
+struct APIGatewayTests {
     static let exampleGetEventBody = """
           {"httpMethod": "GET", "body": null, "resource": "/test", "requestContext": {"resourceId": "123456", "apiId": "1234567890", "domainName": "1234567890.execute-api.us-east-1.amazonaws.com", "resourcePath": "/test", "httpMethod": "GET", "requestId": "c6af9ac6-7b61-11e6-9a41-93e8deadbeef", "accountId": "123456789012", "stage": "Prod", "identity": {"apiKey": null, "userArn": null, "cognitoAuthenticationType": null, "caller": null, "userAgent": "Custom User Agent String", "user": null, "cognitoIdentityPoolId": null, "cognitoAuthenticationProvider": null, "sourceIp": "127.0.0.1", "accountId": null}, "extendedRequestId": null, "path": "/test"}, "queryStringParameters": null, "multiValueQueryStringParameters": null, "headers": {"Host": "127.0.0.1:3000", "Connection": "keep-alive", "Cache-Control": "max-age=0", "Dnt": "1", "Upgrade-Insecure-Requests": "1", "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.87 Safari/537.36 Edg/78.0.276.24", "Sec-Fetch-User": "?1", "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3", "Sec-Fetch-Site": "none", "Sec-Fetch-Mode": "navigate", "Accept-Encoding": "gzip, deflate, br", "Accept-Language": "en-US,en;q=0.9", "X-Forwarded-Proto": "http", "X-Forwarded-Port": "3000"}, "multiValueHeaders": {"Host": ["127.0.0.1:3000"], "Connection": ["keep-alive"], "Cache-Control": ["max-age=0"], "Dnt": ["1"], "Upgrade-Insecure-Requests": ["1"], "User-Agent": ["Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.87 Safari/537.36 Edg/78.0.276.24"], "Sec-Fetch-User": ["?1"], "Accept": ["text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3"], "Sec-Fetch-Site": ["none"], "Sec-Fetch-Mode": ["navigate"], "Accept-Encoding": ["gzip, deflate, br"], "Accept-Language": ["en-US,en;q=0.9"], "X-Forwarded-Proto": ["http"], "X-Forwarded-Port": ["3000"]}, "pathParameters": null, "stageVariables": null, "path": "/test", "isBase64Encoded": false}
         """
@@ -42,46 +44,42 @@ class APIGatewayTests: XCTestCase {
 
     // MARK: Decoding
 
-    func testRequestDecodingExampleGetRequest() {
+    @Test func requestDecodingExampleGetRequest() throws {
         let data = APIGatewayTests.exampleGetEventBody.data(using: .utf8)!
-        var req: APIGatewayRequest?
-        XCTAssertNoThrow(req = try JSONDecoder().decode(APIGatewayRequest.self, from: data))
+        let req = try JSONDecoder().decode(APIGatewayRequest.self, from: data)
 
-        XCTAssertEqual(req?.path, "/test")
-        XCTAssertEqual(req?.httpMethod, .get)
+        #expect(req.path == "/test")
+        #expect(req.httpMethod == .get)
     }
 
-    func testRequestDecodingExampleGetRequestWithoutDomainName() {
+    @Test func requestDecodingExampleGetRequestWithoutDomainName() throws {
         let data = APIGatewayTests.exampleGetEventBodyWithoutDomainName.data(using: .utf8)!
-        var req: APIGatewayRequest?
-        XCTAssertNoThrow(req = try JSONDecoder().decode(APIGatewayRequest.self, from: data))
+        let req = try JSONDecoder().decode(APIGatewayRequest.self, from: data)
 
-        XCTAssertEqual(req?.path, "/test")
-        XCTAssertEqual(req?.httpMethod, .get)
-        XCTAssertNil(req?.requestContext.domainName)
+        #expect(req.path == "/test")
+        #expect(req.httpMethod == .get)
+        #expect(req.requestContext.domainName == nil)
     }
 
-    func testRequestDecodingExampleGetRequestWithAuthorizer() {
+    @Test func requestDecodingExampleGetRequestWithAuthorizer() throws {
         let data = APIGatewayTests.exampleGetEventBodyWithAuthorizer.data(using: .utf8)!
-        var req: APIGatewayRequest?
-        XCTAssertNoThrow(req = try JSONDecoder().decode(APIGatewayRequest.self, from: data))
+        let req = try JSONDecoder().decode(APIGatewayRequest.self, from: data)
 
-        XCTAssertEqual(req?.path, "/test")
-        XCTAssertEqual(req?.httpMethod, .get)
-        XCTAssertEqual(
-            req?.requestContext.authorizer?.claims?["scope"],
-            "aws.cognito.signin.user.admin phone openid profile email"
+        #expect(req.path == "/test")
+        #expect(req.httpMethod == .get)
+        #expect(
+            req.requestContext.authorizer?.claims?["scope"]
+                == "aws.cognito.signin.user.admin phone openid profile email"
         )
-        XCTAssertEqual(req?.requestContext.authorizer?.claims?["username"], "richwolf")
+        #expect(req.requestContext.authorizer?.claims?["username"] == "richwolf")
     }
 
-    func testRequestDecodingTodoPostRequest() {
+    @Test func requestDecodingTodoPostRequest() throws {
         let data = APIGatewayTests.todoPostEventBody.data(using: .utf8)!
-        var req: APIGatewayRequest?
-        XCTAssertNoThrow(req = try JSONDecoder().decode(APIGatewayRequest.self, from: data))
+        let req = try JSONDecoder().decode(APIGatewayRequest.self, from: data)
 
-        XCTAssertEqual(req?.path, "/todos")
-        XCTAssertEqual(req?.httpMethod, .post)
+        #expect(req.path == "/todos")
+        #expect(req.httpMethod == .post)
     }
 
     // MARK: - Response -
@@ -95,26 +93,24 @@ class APIGatewayTests: XCTestCase {
         let isBase64Encoded: Bool?
     }
 
-    func testResponseEncoding() {
+    @Test func responseEncoding() throws {
         let resp = APIGatewayResponse(
             statusCode: .ok,
             headers: ["Server": "Test"],
             body: "abc123"
         )
 
-        var data: Data?
-        XCTAssertNoThrow(data = try JSONEncoder().encode(resp))
-        var json: JSONResponse?
-        XCTAssertNoThrow(json = try JSONDecoder().decode(JSONResponse.self, from: XCTUnwrap(data)))
+        let data = try #require(try? JSONEncoder().encode(resp))
+        let json = try JSONDecoder().decode(JSONResponse.self, from: data)
 
-        XCTAssertEqual(json?.statusCode, resp.statusCode.code)
-        XCTAssertEqual(json?.body, resp.body)
-        XCTAssertEqual(json?.isBase64Encoded, resp.isBase64Encoded)
-        XCTAssertEqual(json?.headers?["Server"], "Test")
+        #expect(json.statusCode == resp.statusCode.code)
+        #expect(json.body == resp.body)
+        #expect(json.isBase64Encoded == resp.isBase64Encoded)
+        #expect(json.headers?["Server"] == "Test")
     }
 
-    func testDecodingNilCollections() {
+    @Test func decodingNilCollections() {
         let data = APIGatewayTests.postEventBodyNilHeaders.data(using: .utf8)!
-        XCTAssertNoThrow(_ = try JSONDecoder().decode(APIGatewayRequest.self, from: data))
+        #expect(throws: Never.self) { try JSONDecoder().decode(APIGatewayRequest.self, from: data) }
     }
 }

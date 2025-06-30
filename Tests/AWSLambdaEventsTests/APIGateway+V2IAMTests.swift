@@ -12,11 +12,13 @@
 //
 //===----------------------------------------------------------------------===//
 
-import XCTest
+import Foundation
+import Testing
 
 @testable import AWSLambdaEvents
 
-class APIGatewayV2IAMTests: XCTestCase {
+@Suite
+struct APIGatewayV2IAMTests {
     static let getEventWithIAM = """
         {
             "version": "2.0",
@@ -133,30 +135,28 @@ class APIGatewayV2IAMTests: XCTestCase {
 
     // MARK: Decoding
 
-    func testRequestDecodingGetRequestWithIAM() {
+    @Test func requestDecodingGetRequestWithIAM() throws {
         let data = APIGatewayV2IAMTests.getEventWithIAM.data(using: .utf8)!
-        var req: APIGatewayV2Request?
-        XCTAssertNoThrow(req = try JSONDecoder().decode(APIGatewayV2Request.self, from: data))
+        let req = try JSONDecoder().decode(APIGatewayV2Request.self, from: data)
 
-        XCTAssertEqual(req?.rawPath, "/hello")
-        XCTAssertEqual(req?.context.authorizer?.iam?.accessKey, "ASIA-redacted")
-        XCTAssertEqual(req?.context.authorizer?.iam?.accountId, "012345678912")
-        XCTAssertNil(req?.body)
+        #expect(req.rawPath == "/hello")
+        #expect(req.context.authorizer?.iam?.accessKey == "ASIA-redacted")
+        #expect(req.context.authorizer?.iam?.accountId == "012345678912")
+        #expect(req.body == nil)
     }
 
-    func testRequestDecodingGetRequestWithIAMWithCognito() {
+    @Test func requestDecodingGetRequestWithIAMWithCognito() throws {
         let data = APIGatewayV2IAMTests.getEventWithIAMAndCognito.data(using: .utf8)!
-        var req: APIGatewayV2Request?
-        XCTAssertNoThrow(req = try JSONDecoder().decode(APIGatewayV2Request.self, from: data))
+        let req = try JSONDecoder().decode(APIGatewayV2Request.self, from: data)
 
-        XCTAssertEqual(req?.rawPath, "/hello")
-        XCTAssertEqual(req?.context.authorizer?.iam?.accessKey, "ASIA-redacted")
-        XCTAssertEqual(req?.context.authorizer?.iam?.accountId, "012345678912")
+        #expect(req.rawPath == "/hello")
+        #expect(req.context.authorizer?.iam?.accessKey == "ASIA-redacted")
+        #expect(req.context.authorizer?.iam?.accountId == "012345678912")
 
         // test the cognito identity part
-        XCTAssertEqual(req?.context.authorizer?.iam?.cognitoIdentity?.identityId, "us-east-1:68bc0ecd-9d5e--redacted")
-        XCTAssertEqual(req?.context.authorizer?.iam?.cognitoIdentity?.amr?.count, 3)
+        #expect(req.context.authorizer?.iam?.cognitoIdentity?.identityId == "us-east-1:68bc0ecd-9d5e--redacted")
+        #expect(req.context.authorizer?.iam?.cognitoIdentity?.amr?.count == 3)
 
-        XCTAssertNil(req?.body)
+        #expect(req.body == nil)
     }
 }

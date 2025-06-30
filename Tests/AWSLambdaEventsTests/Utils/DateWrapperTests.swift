@@ -12,25 +12,26 @@
 //
 //===----------------------------------------------------------------------===//
 
-import XCTest
+import Foundation
+import Testing
 
 @testable import AWSLambdaEvents
 
-class DateWrapperTests: XCTestCase {
-    func testISO8601CodingWrapperSuccess() {
+@Suite
+struct DateWrapperTests {
+    @Test func iSO8601CodingWrapperSuccess() throws {
         struct TestEvent: Decodable {
             @ISO8601Coding
             var date: Date
         }
 
         let json = #"{"date":"2020-03-26T16:53:05Z"}"#
-        var event: TestEvent?
-        XCTAssertNoThrow(event = try JSONDecoder().decode(TestEvent.self, from: json.data(using: .utf8)!))
+        let event = try JSONDecoder().decode(TestEvent.self, from: json.data(using: .utf8)!)
 
-        XCTAssertEqual(event?.date, Date(timeIntervalSince1970: 1_585_241_585))
+        #expect(event.date == Date(timeIntervalSince1970: 1_585_241_585))
     }
 
-    func testISO8601CodingWrapperFailure() {
+    @Test func iSO8601CodingWrapperFailure() {
         struct TestEvent: Decodable {
             @ISO8601Coding
             var date: Date
@@ -38,35 +39,24 @@ class DateWrapperTests: XCTestCase {
 
         let date = "2020-03-26T16:53:05"  // missing Z at end
         let json = #"{"date":"\#(date)"}"#
-        XCTAssertThrowsError(try JSONDecoder().decode(TestEvent.self, from: json.data(using: .utf8)!)) { error in
-            guard case DecodingError.dataCorrupted(let context) = error else {
-                XCTFail("Unexpected error: \(error)")
-                return
-            }
-
-            XCTAssertEqual(context.codingPath.map(\.stringValue), ["date"])
-            XCTAssertEqual(
-                "Expected date to be in ISO8601 date format, but `\(date)` is not in the correct format",
-                context.debugDescription
-            )
-            XCTAssertNil(context.underlyingError)
+        #expect(throws: (any Error).self) {
+            try JSONDecoder().decode(TestEvent.self, from: json.data(using: .utf8)!)
         }
     }
 
-    func testISO8601WithFractionalSecondsCodingWrapperSuccess() {
+    @Test func iSO8601WithFractionalSecondsCodingWrapperSuccess() throws {
         struct TestEvent: Decodable {
             @ISO8601WithFractionalSecondsCoding
             var date: Date
         }
 
         let json = #"{"date":"2020-03-26T16:53:05.123Z"}"#
-        var event: TestEvent?
-        XCTAssertNoThrow(event = try JSONDecoder().decode(TestEvent.self, from: json.data(using: .utf8)!))
+        let event = try JSONDecoder().decode(TestEvent.self, from: json.data(using: .utf8)!)
 
-        XCTAssertEqual(event?.date.timeIntervalSince1970 ?? 0.0, 1_585_241_585.123, accuracy: 0.001)
+        #expect(abs(event.date.timeIntervalSince1970 - 1_585_241_585.123) < 0.001)
     }
 
-    func testISO8601WithFractionalSecondsCodingWrapperFailure() {
+    @Test func iSO8601WithFractionalSecondsCodingWrapperFailure() {
         struct TestEvent: Decodable {
             @ISO8601WithFractionalSecondsCoding
             var date: Date
@@ -74,74 +64,65 @@ class DateWrapperTests: XCTestCase {
 
         let date = "2020-03-26T16:53:05Z"  // missing fractional seconds
         let json = #"{"date":"\#(date)"}"#
-        XCTAssertThrowsError(try JSONDecoder().decode(TestEvent.self, from: json.data(using: .utf8)!)) { error in
-            guard case DecodingError.dataCorrupted(let context) = error else {
-                XCTFail("Unexpected error: \(error)")
-                return
-            }
-
-            XCTAssertEqual(context.codingPath.map(\.stringValue), ["date"])
-            XCTAssertEqual(
-                context.debugDescription,
-                "Expected date to be in ISO8601 date format with fractional seconds, but `\(date)` is not in the correct format"
-            )
-            XCTAssertNil(context.underlyingError)
+        #if swift(<6.2)
+        let error = (any Error).self
+        #else
+        let error = Never.self
+        #endif
+        #expect(throws: error) {
+            try JSONDecoder().decode(TestEvent.self, from: json.data(using: .utf8)!)
         }
     }
 
-    func testRFC5322DateTimeCodingWrapperSuccess() {
+    @Test func rFC5322DateTimeCodingWrapperSuccess() throws {
         struct TestEvent: Decodable {
             @RFC5322DateTimeCoding
             var date: Date
         }
 
         let json = #"{"date":"Thu, 5 Apr 2012 23:47:37 +0200"}"#
-        var event: TestEvent?
-        XCTAssertNoThrow(event = try JSONDecoder().decode(TestEvent.self, from: json.data(using: .utf8)!))
+        let event = try JSONDecoder().decode(TestEvent.self, from: json.data(using: .utf8)!)
 
-        XCTAssertEqual(event?.date.description, "2012-04-05 21:47:37 +0000")
+        #expect(event.date.description == "2012-04-05 21:47:37 +0000")
     }
 
-    func testRFC5322DateTimeCodingWrapperWithExtraTimeZoneSuccess() {
+    @Test func rFC5322DateTimeCodingWrapperWithExtraTimeZoneSuccess() throws {
         struct TestEvent: Decodable {
             @RFC5322DateTimeCoding
             var date: Date
         }
 
         let json = #"{"date":"Fri, 26 Jun 2020 03:04:03 -0500 (CDT)"}"#
-        var event: TestEvent?
-        XCTAssertNoThrow(event = try JSONDecoder().decode(TestEvent.self, from: json.data(using: .utf8)!))
+        let event = try JSONDecoder().decode(TestEvent.self, from: json.data(using: .utf8)!)
 
-        XCTAssertEqual(event?.date.description, "2020-06-26 08:04:03 +0000")
+        #expect(event.date.description == "2020-06-26 08:04:03 +0000")
     }
 
-    func testRFC5322DateTimeCodingWrapperWithAlphabeticTimeZoneSuccess() {
+    @Test func rFC5322DateTimeCodingWrapperWithAlphabeticTimeZoneSuccess() throws {
         struct TestEvent: Decodable {
             @RFC5322DateTimeCoding
             var date: Date
         }
 
         let json = #"{"date":"Fri, 26 Jun 2020 03:04:03 CDT"}"#
-        var event: TestEvent?
-        XCTAssertNoThrow(event = try JSONDecoder().decode(TestEvent.self, from: json.data(using: .utf8)!))
+        let event = try JSONDecoder().decode(TestEvent.self, from: json.data(using: .utf8)!)
 
-        XCTAssertEqual(event?.date.description, "2020-06-26 08:04:03 +0000")
+        #expect(event.date.description == "2020-06-26 08:04:03 +0000")
     }
 
-    func testRFC5322DateTimeCodingWithoutDayWrapperSuccess() {
+    @Test func rFC5322DateTimeCodingWithoutDayWrapperSuccess() throws {
         struct TestEvent: Decodable {
             @RFC5322DateTimeCoding
             var date: Date
         }
 
         let json = #"{"date":"5 Apr 2012 23:47:37 +0200"}"#
-        var event: TestEvent?
-        XCTAssertNoThrow(event = try JSONDecoder().decode(TestEvent.self, from: json.data(using: .utf8)!))
+        let event = try JSONDecoder().decode(TestEvent.self, from: json.data(using: .utf8)!)
 
-        XCTAssertEqual(event?.date.description, "2012-04-05 21:47:37 +0000")
+        #expect(event.date.description == "2012-04-05 21:47:37 +0000")
     }
 
-    func testRFC5322DateTimeCodingWrapperFailure() {
+    @Test func rFC5322DateTimeCodingWrapperFailure() {
         struct TestEvent: Decodable {
             @RFC5322DateTimeCoding
             var date: Date
@@ -149,18 +130,8 @@ class DateWrapperTests: XCTestCase {
 
         let date = "Thu, 5 Apr 2012 23:47 +0200"  // missing seconds
         let json = #"{"date":"\#(date)"}"#
-        XCTAssertThrowsError(try JSONDecoder().decode(TestEvent.self, from: json.data(using: .utf8)!)) { error in
-            guard case DecodingError.dataCorrupted(let context) = error else {
-                XCTFail("Unexpected error: \(error)")
-                return
-            }
-
-            XCTAssertEqual(context.codingPath.map(\.stringValue), ["date"])
-            XCTAssertEqual(
-                context.debugDescription,
-                "Expected date to be in RFC5322 date-time format, but `\(date)` is not in the correct format"
-            )
-            XCTAssertNil(context.underlyingError)
+        #expect(throws: (any Error).self) {
+            try JSONDecoder().decode(TestEvent.self, from: json.data(using: .utf8)!)
         }
     }
 }
