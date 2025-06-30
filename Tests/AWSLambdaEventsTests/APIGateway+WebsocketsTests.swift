@@ -12,11 +12,13 @@
 //
 //===----------------------------------------------------------------------===//
 
-import XCTest
+import Foundation
+import Testing
 
 @testable import AWSLambdaEvents
 
-class APIGatewayWebSocketsTests: XCTestCase {
+@Suite
+class APIGatewayWebSocketsTests {
     static let exampleConnectEventBody = """
         {
           "headers": {
@@ -65,14 +67,12 @@ class APIGatewayWebSocketsTests: XCTestCase {
     // MARK: - Request -
 
     // MARK: Decoding
-
-    func testRequestDecodingExampleConnectRequest() {
+    @Test func testRequestDecodingExampleConnectRequest() async throws {
         let data = APIGatewayWebSocketsTests.exampleConnectEventBody.data(using: .utf8)!
-        var req: APIGatewayWebSocketRequest?
-        XCTAssertNoThrow(req = try JSONDecoder().decode(APIGatewayWebSocketRequest.self, from: data))
+        let req = try JSONDecoder().decode(APIGatewayWebSocketRequest.self, from: data)
 
-        XCTAssertEqual(req?.context.routeKey, "$connect")
-        XCTAssertEqual(req?.context.connectionId, "IU3kkeN4IAMCJwA=")
-        XCTAssertNil(req?.body)
+        #expect(req.context.routeKey == "$connect")
+        #expect(req.context.connectionId == "IU3kkeN4IAMCJwA=")
+        #expect(req.body == nil)
     }
 }
