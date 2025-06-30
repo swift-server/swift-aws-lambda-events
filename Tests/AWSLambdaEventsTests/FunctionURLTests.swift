@@ -12,11 +12,13 @@
 //
 //===----------------------------------------------------------------------===//
 
-import XCTest
+import Foundation
+import Testing
 
 @testable import AWSLambdaEvents
 
-class FunctionURLTests: XCTestCase {
+@Suite
+struct FunctionURLTests {
     /// Example event body pulled from [AWS documentation](https://docs.aws.amazon.com/lambda/latest/dg/urls-invocation.html#urls-request-payload).
     static let documentationExample = """
         {
@@ -124,30 +126,28 @@ class FunctionURLTests: XCTestCase {
 
     // MARK: Decoding
 
-    func testRequestDecodingDocumentationExampleRequest() {
+    @Test func requestDecodingDocumentationExampleRequest() throws {
         let data = Self.documentationExample.data(using: .utf8)!
-        var req: FunctionURLRequest?
-        XCTAssertNoThrow(req = try JSONDecoder().decode(FunctionURLRequest.self, from: data))
+        let req = try JSONDecoder().decode(FunctionURLRequest.self, from: data)
 
-        XCTAssertEqual(req?.rawPath, "/my/path")
-        XCTAssertEqual(req?.requestContext.http.method, .post)
-        XCTAssertEqual(req?.queryStringParameters?.count, 2)
-        XCTAssertEqual(req?.rawQueryString, "parameter1=value1&parameter1=value2&parameter2=value")
-        XCTAssertEqual(req?.headers.count, 2)
-        XCTAssertEqual(req?.body, "Hello from client!")
+        #expect(req.rawPath == "/my/path")
+        #expect(req.requestContext.http.method == .post)
+        #expect(req.queryStringParameters?.count == 2)
+        #expect(req.rawQueryString == "parameter1=value1&parameter1=value2&parameter2=value")
+        #expect(req.headers.count == 2)
+        #expect(req.body == "Hello from client!")
     }
 
-    func testRequestDecodingRealWorldExampleRequest() {
+    @Test func requestDecodingRealWorldExampleRequest() throws {
         let data = Self.realWorldExample.data(using: .utf8)!
-        var req: FunctionURLRequest?
-        XCTAssertNoThrow(req = try JSONDecoder().decode(FunctionURLRequest.self, from: data))
+        let req = try JSONDecoder().decode(FunctionURLRequest.self, from: data)
 
-        XCTAssertEqual(req?.rawPath, "/")
-        XCTAssertEqual(req?.requestContext.http.method, .get)
-        XCTAssertEqual(req?.queryStringParameters?.count, 1)
-        XCTAssertEqual(req?.rawQueryString, "test=2")
-        XCTAssertEqual(req?.headers.count, 10)
-        XCTAssertEqual(req?.cookies, ["test"])
-        XCTAssertNil(req?.body)
+        #expect(req.rawPath == "/")
+        #expect(req.requestContext.http.method == .get)
+        #expect(req.queryStringParameters?.count == 1)
+        #expect(req.rawQueryString == "test=2")
+        #expect(req.headers.count == 10)
+        #expect(req.cookies == ["test"])
+        #expect(req.body == nil)
     }
 }

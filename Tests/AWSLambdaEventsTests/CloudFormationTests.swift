@@ -12,11 +12,18 @@
 //
 //===----------------------------------------------------------------------===//
 
-import XCTest
+import Testing
 
 @testable import AWSLambdaEvents
 
-class CloudFormationTests: XCTestCase {
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
+import Foundation
+#endif
+
+@Suite
+struct CloudFormationTests {
     struct TestResourceProperties: Codable {
         let property1: String
         let property2: String
@@ -86,76 +93,81 @@ class CloudFormationTests: XCTestCase {
         "{\"Data\":{\"property1\":\"value1\",\"property2\":\"\",\"property3\":[\"1\",\"2\",\"3\"]},\"LogicalResourceId\":\"TestLogicalResource\",\"NoEcho\":false,\"PhysicalResourceId\":\"TestPhysicalResource\",\"Reason\":\"See the details in CloudWatch Log Stream\",\"RequestId\":\"cdc73f9d-aea9-11e3-9d5a-835b769c0d9c\",\"StackId\":\"arn:aws:cloudformation:us-east-1:123456789:stack\\/TestStack\",\"Status\":\"SUCCESS\"}"
     }
 
-    func testDecodeRequestRequiredFieldsFromJSON() {
+    @Test func decodeRequestRequiredFieldsFromJSON() throws {
         let eventBody = CloudFormationTests.eventBodyRequestRequiredFields()
         let data = eventBody.data(using: .utf8)!
-        var event: CloudFormation.Request<EmptyTestResourceProperties, EmptyTestResourceProperties>?
-        XCTAssertNoThrow(event = try JSONDecoder().decode(CloudFormation.Request.self, from: data))
+        let event: CloudFormation.Request<EmptyTestResourceProperties, EmptyTestResourceProperties>? = try JSONDecoder()
+            .decode(CloudFormation.Request.self, from: data)
 
-        guard let event = event else {
-            return XCTFail("Expected to have an event")
+        guard let event else {
+            Issue.record("Expected to have an event")
+            return
         }
 
-        XCTAssertEqual(event.requestId, "cdc73f9d-aea9-11e3-9d5a-835b769c0d9c")
-        XCTAssertEqual(event.requestType, CloudFormation.Request.RequestType.create)
-        XCTAssertEqual(event.stackId, "arn:aws:cloudformation:us-east-1:123456789:stack/TestStack")
-        XCTAssertEqual(event.responseURL, "http://localhost:7000/response/test")
-        XCTAssertEqual(event.logicalResourceId, "TestLogicalResource")
-        XCTAssertNil(event.physicalResourceId)
-        XCTAssertNil(event.resourceProperties)
-        XCTAssertNil(event.oldResourceProperties)
+        #expect(event.requestId == "cdc73f9d-aea9-11e3-9d5a-835b769c0d9c")
+        #expect(event.requestType == CloudFormation.Request.RequestType.create)
+        #expect(event.stackId == "arn:aws:cloudformation:us-east-1:123456789:stack/TestStack")
+        #expect(event.responseURL == "http://localhost:7000/response/test")
+        #expect(event.logicalResourceId == "TestLogicalResource")
+        #expect(event.physicalResourceId == nil)
+        #expect(event.resourceProperties == nil)
+        #expect(event.oldResourceProperties == nil)
     }
 
-    func testDecodeRequestCreateFromJSON() {
+    @Test func decodeRequestCreateFromJSON() throws {
         let eventBody = CloudFormationTests.eventBodyRequestCreate()
         let data = eventBody.data(using: .utf8)!
-        var event: CloudFormation.Request<TestResourceProperties, EmptyTestResourceProperties>?
-        XCTAssertNoThrow(event = try JSONDecoder().decode(CloudFormation.Request.self, from: data))
+        let event: CloudFormation.Request<TestResourceProperties, EmptyTestResourceProperties>? = try? JSONDecoder()
+            .decode(CloudFormation.Request.self, from: data)
 
-        guard let event = event else {
-            return XCTFail("Expected to have an event")
+        guard let event else {
+            Issue.record("Expected to have an event")
+            return
         }
 
-        XCTAssertEqual(event.requestId, "cdc73f9d-aea9-11e3-9d5a-835b769c0d9c")
-        XCTAssertEqual(event.requestType, CloudFormation.Request.RequestType.create)
-        XCTAssertEqual(event.stackId, "arn:aws:cloudformation:us-east-1:123456789:stack/TestStack")
-        XCTAssertEqual(event.responseURL, "http://localhost:7000/response/test")
-        XCTAssertEqual(event.logicalResourceId, "TestLogicalResource")
-        XCTAssertEqual(event.physicalResourceId, "TestPhysicalResource")
-        XCTAssertEqual(event.resourceProperties?.property1, "value1")
-        XCTAssertEqual(event.resourceProperties?.property2, "")
-        XCTAssertEqual(event.resourceProperties?.property3, ["1", "2", "3"])
-        XCTAssertEqual(event.resourceProperties?.property4, nil)
-        XCTAssertNil(event.oldResourceProperties)
+        #expect(event.requestId == "cdc73f9d-aea9-11e3-9d5a-835b769c0d9c")
+        #expect(event.requestType == CloudFormation.Request.RequestType.create)
+        #expect(event.stackId == "arn:aws:cloudformation:us-east-1:123456789:stack/TestStack")
+        #expect(event.responseURL == "http://localhost:7000/response/test")
+        #expect(event.logicalResourceId == "TestLogicalResource")
+        #expect(event.physicalResourceId == "TestPhysicalResource")
+        #expect(event.resourceProperties?.property1 == "value1")
+        #expect(event.resourceProperties?.property2 == "")
+        #expect(event.resourceProperties?.property3 == ["1", "2", "3"])
+        #expect(event.resourceProperties?.property4 == nil)
+        #expect(event.oldResourceProperties == nil)
     }
 
-    func testDecodeRequestUpdateFromJSON() {
+    @Test func decodeRequestUpdateFromJSON() throws {
         let eventBody = CloudFormationTests.eventBodyRequestUpdate()
         let data = eventBody.data(using: .utf8)!
-        var event: CloudFormation.Request<TestResourceProperties, TestResourceProperties>?
-        XCTAssertNoThrow(event = try JSONDecoder().decode(CloudFormation.Request.self, from: data))
+        let event: CloudFormation.Request<TestResourceProperties, TestResourceProperties>? = try? JSONDecoder().decode(
+            CloudFormation.Request.self,
+            from: data
+        )
 
-        guard let event = event else {
-            return XCTFail("Expected to have an event")
+        guard let event else {
+            Issue.record("Expected to have an event")
+            return
         }
 
-        XCTAssertEqual(event.requestId, "cdc73f9d-aea9-11e3-9d5a-835b769c0d9c")
-        XCTAssertEqual(event.requestType, CloudFormation.Request.RequestType.update)
-        XCTAssertEqual(event.stackId, "arn:aws:cloudformation:us-east-1:123456789:stack/TestStack")
-        XCTAssertEqual(event.responseURL, "http://localhost:7000/response/test")
-        XCTAssertEqual(event.logicalResourceId, "TestLogicalResource")
-        XCTAssertEqual(event.physicalResourceId, "TestPhysicalResource")
-        XCTAssertEqual(event.resourceProperties?.property1, "value1")
-        XCTAssertEqual(event.resourceProperties?.property2, "value2")
-        XCTAssertEqual(event.resourceProperties?.property3, ["1", "2", "3"])
-        XCTAssertEqual(event.resourceProperties?.property4, "value4")
-        XCTAssertEqual(event.oldResourceProperties?.property1, "value1")
-        XCTAssertEqual(event.oldResourceProperties?.property2, "")
-        XCTAssertEqual(event.oldResourceProperties?.property3, ["1", "2", "3"])
-        XCTAssertEqual(event.oldResourceProperties?.property4, nil)
+        #expect(event.requestId == "cdc73f9d-aea9-11e3-9d5a-835b769c0d9c")
+        #expect(event.requestType == CloudFormation.Request.RequestType.update)
+        #expect(event.stackId == "arn:aws:cloudformation:us-east-1:123456789:stack/TestStack")
+        #expect(event.responseURL == "http://localhost:7000/response/test")
+        #expect(event.logicalResourceId == "TestLogicalResource")
+        #expect(event.physicalResourceId == "TestPhysicalResource")
+        #expect(event.resourceProperties?.property1 == "value1")
+        #expect(event.resourceProperties?.property2 == "value2")
+        #expect(event.resourceProperties?.property3 == ["1", "2", "3"])
+        #expect(event.resourceProperties?.property4 == "value4")
+        #expect(event.oldResourceProperties?.property1 == "value1")
+        #expect(event.oldResourceProperties?.property2 == "")
+        #expect(event.oldResourceProperties?.property3 == ["1", "2", "3"])
+        #expect(event.oldResourceProperties?.property4 == nil)
     }
 
-    func testEncodeResponseToJSON() {
+    @Test func encodeResponseToJSON() throws {
         let resp = CloudFormation.Response<TestResourceProperties>(
             status: CloudFormation.Response.StatusType.success,
             requestId: "cdc73f9d-aea9-11e3-9d5a-835b769c0d9c",
@@ -175,14 +187,13 @@ class CloudFormationTests: XCTestCase {
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.sortedKeys]
 
-        var data: Data?
-        XCTAssertNoThrow(data = try encoder.encode(resp))
+        let data = try #require(try? encoder.encode(resp))
 
         var stringData: String?
-        XCTAssertNoThrow(stringData = String(data: try XCTUnwrap(data), encoding: .utf8))
+        #expect(throws: Never.self) {
+            stringData = String(data: data, encoding: .utf8)
+        }
 
-        print(stringData ?? "")
-
-        XCTAssertEqual(CloudFormationTests.eventBodyResponse(), stringData)
+        #expect(CloudFormationTests.eventBodyResponse() == stringData)
     }
 }

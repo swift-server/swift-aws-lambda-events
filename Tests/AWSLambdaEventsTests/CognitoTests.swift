@@ -12,12 +12,14 @@
 //
 //===----------------------------------------------------------------------===//
 
-import XCTest
+import Foundation
+import Testing
 
 @testable import AWSLambdaEvents
 
-final class CognitoTests: XCTestCase {
-    func testPreSignUpRequest() throws {
+@Suite
+struct CognitoTests {
+    @Test func preSignUpRequest() throws {
         let json = """
             {
              "version": "1",
@@ -47,21 +49,21 @@ final class CognitoTests: XCTestCase {
         let event = try JSONDecoder().decode(CognitoEvent.self, from: json.data(using: .utf8)!)
 
         guard case .preSignUp(let params, let request) = event else {
-            XCTFail()
+            Issue.record("Failed to decode CognitoEvent as PreSignUp")
             return
         }
 
-        XCTAssertEqual(params.triggerSource, .preSignUp_SignUp)
+        #expect(params.triggerSource == .preSignUp_SignUp)
 
         let signUp = CognitoEvent.PreSignUp(
             userAttributes: ["string": "string"],
             validationData: ["string": "string"],
             clientMetadata: ["string": "string"]
         )
-        XCTAssertEqual(request, signUp)
+        #expect(request == signUp)
     }
 
-    func testPreSignUpResponse() throws {
+    @Test func preSignUpResponse() throws {
         let params = CognitoEvent.Parameters(
             version: "1",
             triggerSource: .preSignUp_SignUp,
@@ -89,16 +91,16 @@ final class CognitoTests: XCTestCase {
         let decodedResponse = try JSONDecoder().decode(CognitoEventResponse.self, from: data)
 
         guard case .preSignUp(let decodedParams, let decodedRequest, let decodedResponse) = decodedResponse else {
-            XCTFail()
+            Issue.record("Failed to decode CognitoEventResponse as PreSignUp")
             return
         }
 
-        XCTAssertEqual(decodedParams, params)
-        XCTAssertEqual(decodedRequest, request)
-        XCTAssertEqual(decodedResponse, signUpResponse)
+        #expect(decodedParams == params)
+        #expect(decodedRequest == request)
+        #expect(decodedResponse == signUpResponse)
     }
 
-    func testPostConfirmationRequest() throws {
+    @Test func postConfirmationRequest() throws {
         let json = """
             {
              "version": "1",
@@ -124,20 +126,20 @@ final class CognitoTests: XCTestCase {
         let event = try JSONDecoder().decode(CognitoEvent.self, from: json.data(using: .utf8)!)
 
         guard case .postConfirmation(let params, let request) = event else {
-            XCTFail()
+            Issue.record("Failed to decode CognitoEvent as PostConfirmation")
             return
         }
 
-        XCTAssertEqual(params.triggerSource, .postConfirmation_ConfirmSignUp)
+        #expect(params.triggerSource == .postConfirmation_ConfirmSignUp)
 
         let postConfirmation = CognitoEvent.PostConfirmation(
             userAttributes: ["string": "string"],
             clientMetadata: ["string": "string"]
         )
-        XCTAssertEqual(request, postConfirmation)
+        #expect(request == postConfirmation)
     }
 
-    func testPostConfirmationResponse() throws {
+    @Test func postConfirmationResponse() throws {
         let params = CognitoEvent.Parameters(
             version: "1",
             triggerSource: .postConfirmation_ConfirmSignUp,
@@ -161,16 +163,16 @@ final class CognitoTests: XCTestCase {
 
         guard case .postConfirmation(let decodedParams, let decodedRequest, let decodedResponse) = decodedResponse
         else {
-            XCTFail()
+            Issue.record("Failed to decode CognitoEventResponse as PostConfirmation")
             return
         }
 
-        XCTAssertEqual(decodedParams, params)
-        XCTAssertEqual(decodedRequest, request)
-        XCTAssertEqual(decodedResponse, postConfirmationResponse)
+        #expect(decodedParams == params)
+        #expect(decodedRequest == request)
+        #expect(decodedResponse == postConfirmationResponse)
     }
 
-    func testPostAuthenticationRequest() throws {
+    @Test func postAuthenticationRequest() throws {
         let json = """
             {
              "version": "1",
@@ -197,21 +199,21 @@ final class CognitoTests: XCTestCase {
         let event = try JSONDecoder().decode(CognitoEvent.self, from: json.data(using: .utf8)!)
 
         guard case .postAuthentication(let params, let request) = event else {
-            XCTFail()
+            Issue.record("Failed to decode CognitoEvent as PostAuthentication")
             return
         }
 
-        XCTAssertEqual(params.triggerSource, .postAuthentication_Authentication)
+        #expect(params.triggerSource == .postAuthentication_Authentication)
 
         let postAuthentication = CognitoEvent.PostAuthentication(
             newDeviceUsed: false,
             userAttributes: ["string": "string"],
             clientMetadata: ["string": "string"]
         )
-        XCTAssertEqual(request, postAuthentication)
+        #expect(request == postAuthentication)
     }
 
-    func testPostAuthenticationResponse() throws {
+    @Test func postAuthenticationResponse() throws {
         let params = CognitoEvent.Parameters(
             version: "1",
             triggerSource: .postAuthentication_Authentication,
@@ -236,16 +238,16 @@ final class CognitoTests: XCTestCase {
 
         guard case .postAuthentication(let decodedParams, let decodedRequest, let decodedResponse) = decodedResponse
         else {
-            XCTFail()
+            Issue.record("Failed to decode CognitoEventResponse as PostAuthentication")
             return
         }
 
-        XCTAssertEqual(decodedParams, params)
-        XCTAssertEqual(decodedRequest, request)
-        XCTAssertEqual(decodedResponse, postAuthenticationResponse)
+        #expect(decodedParams == params)
+        #expect(decodedRequest == request)
+        #expect(decodedResponse == postAuthenticationResponse)
     }
 
-    func testCustomMessageRequest() throws {
+    @Test func customMessageRequest() throws {
         let json = """
             {
              "version": "1",
@@ -273,11 +275,11 @@ final class CognitoTests: XCTestCase {
         let event = try JSONDecoder().decode(CognitoEvent.self, from: json.data(using: .utf8)!)
 
         guard case .customMessage(let params, let request) = event else {
-            XCTFail()
+            Issue.record("Failed to decode CognitoEvent as CustomMessage")
             return
         }
 
-        XCTAssertEqual(params.triggerSource, .customMessage_AdminCreateUser)
+        #expect(params.triggerSource == .customMessage_AdminCreateUser)
 
         let postAuthentication = CognitoEvent.CustomMessage(
             codeParameter: "######",
@@ -285,10 +287,10 @@ final class CognitoTests: XCTestCase {
             userAttributes: ["string": "string"],
             clientMetadata: ["string": "string"]
         )
-        XCTAssertEqual(request, postAuthentication)
+        #expect(request == postAuthentication)
     }
 
-    func testCustomMessageResponse() throws {
+    @Test func customMessageResponse() throws {
         let params = CognitoEvent.Parameters(
             version: "1",
             triggerSource: .customMessage_AdminCreateUser,
@@ -317,12 +319,12 @@ final class CognitoTests: XCTestCase {
         let decodedResponse = try JSONDecoder().decode(CognitoEventResponse.self, from: data)
 
         guard case .customMessage(let decodedParams, let decodedRequest, let decodedResponse) = decodedResponse else {
-            XCTFail()
+            Issue.record("Failed to decode CognitoEventResponse as CustomMessage")
             return
         }
 
-        XCTAssertEqual(decodedParams, params)
-        XCTAssertEqual(decodedRequest, request)
-        XCTAssertEqual(decodedResponse, customMessageResponse)
+        #expect(decodedParams == params)
+        #expect(decodedRequest == request)
+        #expect(decodedResponse == customMessageResponse)
     }
 }

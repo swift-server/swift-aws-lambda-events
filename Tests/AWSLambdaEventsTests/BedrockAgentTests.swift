@@ -12,12 +12,14 @@
 //
 //===----------------------------------------------------------------------===//
 
+import Foundation
 import HTTPTypes
-import XCTest
+import Testing
 
 @testable import AWSLambdaEvents
 
-class BedrockAgentTests: XCTestCase {
+@Suite
+struct BedrockAgentTests {
     static let eventBody =
         """
         {
@@ -58,34 +60,33 @@ class BedrockAgentTests: XCTestCase {
         }
         """
 
-    func testSimpleEventFromJSON() throws {
+    @Test func simpleEventFromJSON() throws {
         let data = BedrockAgentTests.eventBody.data(using: .utf8)!
-        var event: BedrockAgentRequest?
-        XCTAssertNoThrow(event = try JSONDecoder().decode(BedrockAgentRequest.self, from: data))
+        let event = try JSONDecoder().decode(BedrockAgentRequest.self, from: data)
 
-        XCTAssertEqual(event?.messageVersion, "1.0")
+        #expect(event.messageVersion == "1.0")
 
-        XCTAssertEqual(event?.agent?.alias, "AGENT_ID")
-        XCTAssertEqual(event?.agent?.name, "StockQuoteAgent")
-        XCTAssertEqual(event?.agent?.version, "DRAFT")
-        XCTAssertEqual(event?.agent?.id, "PR3AHNYEAA")
+        #expect(event.agent?.alias == "AGENT_ID")
+        #expect(event.agent?.name == "StockQuoteAgent")
+        #expect(event.agent?.version == "DRAFT")
+        #expect(event.agent?.id == "PR3AHNYEAA")
 
-        XCTAssertEqual(event?.sessionId, "486652066693565")
-        XCTAssertEqual(event?.inputText, "what the price of amazon stock ?")
-        XCTAssertEqual(event?.apiPath, "/stocks/{symbol}")
-        XCTAssertEqual(event?.actionGroup, "StockQuoteService")
-        XCTAssertEqual(event?.httpMethod, .get)
+        #expect(event.sessionId == "486652066693565")
+        #expect(event.inputText == "what the price of amazon stock ?")
+        #expect(event.apiPath == "/stocks/{symbol}")
+        #expect(event.actionGroup == "StockQuoteService")
+        #expect(event.httpMethod == .get)
 
-        XCTAssertTrue(event?.parameters?.count == 1)
-        XCTAssertEqual(event?.parameters?[0].name, "symbol")
-        XCTAssertEqual(event?.parameters?[0].type, "string")
-        XCTAssertEqual(event?.parameters?[0].value, "AMZN")
+        #expect(event.parameters?.count == 1)
+        #expect(event.parameters?[0].name == "symbol")
+        #expect(event.parameters?[0].type == "string")
+        #expect(event.parameters?[0].value == "AMZN")
 
-        let body = try XCTUnwrap(event?.requestBody?.content)
-        let content = try XCTUnwrap(body["application/text"])
-        XCTAssertTrue(content.properties.count == 1)
-        XCTAssertEqual(content.properties[0].name, "symbol")
-        XCTAssertEqual(content.properties[0].type, "string")
-        XCTAssertEqual(content.properties[0].value, "AMZN")
+        let body = try #require(event.requestBody?.content)
+        let content = try #require(body["application/text"])
+        #expect(content.properties.count == 1)
+        #expect(content.properties[0].name == "symbol")
+        #expect(content.properties[0].type == "string")
+        #expect(content.properties[0].value == "AMZN")
     }
 }

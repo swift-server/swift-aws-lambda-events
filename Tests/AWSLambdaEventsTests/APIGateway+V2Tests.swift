@@ -12,11 +12,13 @@
 //
 //===----------------------------------------------------------------------===//
 
-import XCTest
+import Foundation
+import Testing
 
 @testable import AWSLambdaEvents
 
-class APIGatewayV2Tests: XCTestCase {
+@Suite
+struct APIGatewayV2Tests {
     static let exampleGetEventBody = """
         {
             "routeKey":"GET /hello",
@@ -189,36 +191,37 @@ class APIGatewayV2Tests: XCTestCase {
 
     // MARK: Decoding
 
-    func testRequestDecodingExampleGetRequest() {
+    @Test func requestDecodingExampleGetRequest() throws {
         let data = APIGatewayV2Tests.exampleGetEventBody.data(using: .utf8)!
-        var req: APIGatewayV2Request?
-        XCTAssertNoThrow(req = try JSONDecoder().decode(APIGatewayV2Request.self, from: data))
+        let req = try JSONDecoder().decode(APIGatewayV2Request.self, from: data)
 
-        XCTAssertEqual(req?.rawPath, "/hello")
-        XCTAssertEqual(req?.context.http.method, .get)
-        XCTAssertEqual(req?.queryStringParameters.count, 1)
-        XCTAssertEqual(req?.rawQueryString, "foo=bar")
-        XCTAssertEqual(req?.headers.count, 8)
-        XCTAssertEqual(req?.context.authorizer?.jwt?.claims?["aud"], "customers")
+        #expect(req.rawPath == "/hello")
+        #expect(req.context.http.method == .get)
+        #expect(req.queryStringParameters.count == 1)
+        #expect(req.rawQueryString == "foo=bar")
+        #expect(req.headers.count == 8)
+        #expect(req.context.authorizer?.jwt?.claims?["aud"] == "customers")
 
-        XCTAssertNil(req?.body)
+        #expect(req.body == nil)
     }
 
-    func testDecodingRequestClientCert() throws {
+    @Test func decodingRequestClientCert() throws {
         let data = APIGatewayV2Tests.fullExamplePayload.data(using: .utf8)!
         let request = try JSONDecoder().decode(APIGatewayV2Request.self, from: data)
         let clientCert = request.context.authentication?.clientCert
 
-        XCTAssertEqual(clientCert?.clientCertPem, "CERT_CONTENT")
-        XCTAssertEqual(clientCert?.subjectDN, "www.example.com")
-        XCTAssertEqual(clientCert?.issuerDN, "Example issuer")
-        XCTAssertEqual(clientCert?.serialNumber, "a1:a1:a1:a1:a1:a1:a1:a1:a1:a1:a1:a1:a1:a1:a1:a1")
-        XCTAssertEqual(clientCert?.validity.notBefore, "May 28 12:30:02 2019 GMT")
-        XCTAssertEqual(clientCert?.validity.notAfter, "Aug  5 09:36:04 2021 GMT")
+        #expect(clientCert?.clientCertPem == "CERT_CONTENT")
+        #expect(clientCert?.subjectDN == "www.example.com")
+        #expect(clientCert?.issuerDN == "Example issuer")
+        #expect(clientCert?.serialNumber == "a1:a1:a1:a1:a1:a1:a1:a1:a1:a1:a1:a1:a1:a1:a1:a1")
+        #expect(clientCert?.validity.notBefore == "May 28 12:30:02 2019 GMT")
+        #expect(clientCert?.validity.notAfter == "Aug  5 09:36:04 2021 GMT")
     }
 
-    func testDecodingNilCollections() {
+    @Test func decodingNilCollections() throws {
         let data = APIGatewayV2Tests.exampleGetEventBodyNilHeaders.data(using: .utf8)!
-        XCTAssertNoThrow(_ = try JSONDecoder().decode(APIGatewayV2Request.self, from: data))
+        #expect(throws: Never.self) {
+            _ = try JSONDecoder().decode(APIGatewayV2Request.self, from: data)
+        }
     }
 }

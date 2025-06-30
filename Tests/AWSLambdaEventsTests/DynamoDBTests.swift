@@ -12,11 +12,13 @@
 //
 //===----------------------------------------------------------------------===//
 
-import XCTest
+import Foundation
+import Testing
 
 @testable import AWSLambdaEvents
 
-class DynamoDBTests: XCTestCase {
+@Suite
+struct DynamoDBTests {
     static let streamEventBody = """
         {
           "Records": [
@@ -113,133 +115,127 @@ class DynamoDBTests: XCTestCase {
         }
         """
 
-    func testEventFromJSON() {
+    @Test func eventFromJSON() throws {
         let data = DynamoDBTests.streamEventBody.data(using: .utf8)!
-        var event: DynamoDBEvent?
-        XCTAssertNoThrow(event = try JSONDecoder().decode(DynamoDBEvent.self, from: data))
+        let event = try JSONDecoder().decode(DynamoDBEvent.self, from: data)
 
-        XCTAssertEqual(event?.records.count, 3)
+        #expect(event.records.count == 3)
     }
 
     // MARK: - Parse Attribute Value Tests -
 
-    func testAttributeValueBoolDecoding() {
+    @Test func attributeValueBoolDecoding() {
         let json = "{\"BOOL\": true}"
         var value: DynamoDBEvent.AttributeValue?
-        XCTAssertNoThrow(
+        #expect(throws: Never.self) {
             value = try JSONDecoder().decode(DynamoDBEvent.AttributeValue.self, from: json.data(using: .utf8)!)
-        )
-        XCTAssertEqual(value, .boolean(true))
+        }
+        #expect(value == .boolean(true))
     }
 
-    func testAttributeValueBinaryDecoding() {
+    @Test func attributeValueBinaryDecoding() {
         let json = "{\"B\": \"YmFzZTY0\"}"
         var value: DynamoDBEvent.AttributeValue?
-        XCTAssertNoThrow(
+        #expect(throws: Never.self) {
             value = try JSONDecoder().decode(DynamoDBEvent.AttributeValue.self, from: json.data(using: .utf8)!)
-        )
-        XCTAssertEqual(value, .binary([UInt8]("base64".utf8)))
+        }
+        #expect(value == .binary([UInt8]("base64".utf8)))
     }
 
-    func testAttributeValueBinarySetDecoding() {
+    @Test func attributeValueBinarySetDecoding() {
         let json = "{\"BS\": [\"YmFzZTY0\", \"YWJjMTIz\"]}"
         var value: DynamoDBEvent.AttributeValue?
-        XCTAssertNoThrow(
+        #expect(throws: Never.self) {
             value = try JSONDecoder().decode(DynamoDBEvent.AttributeValue.self, from: json.data(using: .utf8)!)
-        )
-        XCTAssertEqual(value, .binarySet([[UInt8]("base64".utf8), [UInt8]("abc123".utf8)]))
+        }
+        #expect(value == .binarySet([[UInt8]("base64".utf8), [UInt8]("abc123".utf8)]))
     }
 
-    func testAttributeValueStringDecoding() {
+    @Test func attributeValueStringDecoding() {
         let json = "{\"S\": \"huhu\"}"
         var value: DynamoDBEvent.AttributeValue?
-        XCTAssertNoThrow(
+        #expect(throws: Never.self) {
             value = try JSONDecoder().decode(DynamoDBEvent.AttributeValue.self, from: json.data(using: .utf8)!)
-        )
-        XCTAssertEqual(value, .string("huhu"))
+        }
+        #expect(value == .string("huhu"))
     }
 
-    func testAttributeValueStringSetDecoding() {
+    @Test func attributeValueStringSetDecoding() {
         let json = "{\"SS\": [\"huhu\", \"haha\"]}"
         var value: DynamoDBEvent.AttributeValue?
-        XCTAssertNoThrow(
+        #expect(throws: Never.self) {
             value = try JSONDecoder().decode(DynamoDBEvent.AttributeValue.self, from: json.data(using: .utf8)!)
-        )
-        XCTAssertEqual(value, .stringSet(["huhu", "haha"]))
+        }
+        #expect(value == .stringSet(["huhu", "haha"]))
     }
 
-    func testAttributeValueNullDecoding() {
+    @Test func attributeValueNullDecoding() {
         let json = "{\"NULL\": true}"
         var value: DynamoDBEvent.AttributeValue?
-        XCTAssertNoThrow(
+        #expect(throws: Never.self) {
             value = try JSONDecoder().decode(DynamoDBEvent.AttributeValue.self, from: json.data(using: .utf8)!)
-        )
-        XCTAssertEqual(value, .null)
+        }
+        #expect(value == .null)
     }
 
-    func testAttributeValueNumberDecoding() {
+    @Test func attributeValueNumberDecoding() {
         let json = "{\"N\": \"1.2345\"}"
         var value: DynamoDBEvent.AttributeValue?
-        XCTAssertNoThrow(
+        #expect(throws: Never.self) {
             value = try JSONDecoder().decode(DynamoDBEvent.AttributeValue.self, from: json.data(using: .utf8)!)
-        )
-        XCTAssertEqual(value, .number("1.2345"))
+        }
+        #expect(value == .number("1.2345"))
     }
 
-    func testAttributeValueNumberSetDecoding() {
+    @Test func attributeValueNumberSetDecoding() {
         let json = "{\"NS\": [\"1.2345\", \"-19\"]}"
         var value: DynamoDBEvent.AttributeValue?
-        XCTAssertNoThrow(
+        #expect(throws: Never.self) {
             value = try JSONDecoder().decode(DynamoDBEvent.AttributeValue.self, from: json.data(using: .utf8)!)
-        )
-        XCTAssertEqual(value, .numberSet(["1.2345", "-19"]))
+        }
+        #expect(value == .numberSet(["1.2345", "-19"]))
     }
 
-    func testAttributeValueListDecoding() {
+    @Test func attributeValueListDecoding() {
         let json = "{\"L\": [{\"NS\": [\"1.2345\", \"-19\"]}, {\"S\": \"huhu\"}]}"
         var value: DynamoDBEvent.AttributeValue?
-        XCTAssertNoThrow(
+        #expect(throws: Never.self) {
             value = try JSONDecoder().decode(DynamoDBEvent.AttributeValue.self, from: json.data(using: .utf8)!)
-        )
-        XCTAssertEqual(value, .list([.numberSet(["1.2345", "-19"]), .string("huhu")]))
+        }
+        #expect(value == .list([.numberSet(["1.2345", "-19"]), .string("huhu")]))
     }
 
-    func testAttributeValueMapDecoding() {
+    @Test func attributeValueMapDecoding() {
         let json = "{\"M\": {\"numbers\": {\"NS\": [\"1.2345\", \"-19\"]}, \"string\": {\"S\": \"huhu\"}}}"
         var value: DynamoDBEvent.AttributeValue?
-        XCTAssertNoThrow(
+        #expect(throws: Never.self) {
             value = try JSONDecoder().decode(DynamoDBEvent.AttributeValue.self, from: json.data(using: .utf8)!)
-        )
-        XCTAssertEqual(
-            value,
-            .map([
-                "numbers": .numberSet(["1.2345", "-19"]),
-                "string": .string("huhu"),
-            ])
+        }
+        #expect(
+            value
+                == .map([
+                    "numbers": .numberSet(["1.2345", "-19"]),
+                    "string": .string("huhu"),
+                ])
         )
     }
 
-    func testAttributeValueEmptyDecoding() {
+    @Test func attributeValueEmptyDecoding() {
         let json = "{\"haha\": 1}"
-        XCTAssertThrowsError(
+        #expect(throws: (any Error).self) {
             try JSONDecoder().decode(DynamoDBEvent.AttributeValue.self, from: json.data(using: .utf8)!)
-        ) { error in
-            guard case DecodingError.dataCorrupted = error else {
-                XCTFail("Unexpected error: \(String(describing: error))")
-                return
-            }
         }
     }
 
-    func testAttributeValueEquatable() {
-        XCTAssertEqual(DynamoDBEvent.AttributeValue.boolean(true), .boolean(true))
-        XCTAssertNotEqual(DynamoDBEvent.AttributeValue.boolean(true), .boolean(false))
-        XCTAssertNotEqual(DynamoDBEvent.AttributeValue.boolean(true), .string("haha"))
+    @Test func attributeValueEquatable() {
+        #expect(DynamoDBEvent.AttributeValue.boolean(true) == .boolean(true))
+        #expect(DynamoDBEvent.AttributeValue.boolean(true) != .boolean(false))
+        #expect(DynamoDBEvent.AttributeValue.boolean(true) != .string("haha"))
     }
 
     // MARK: - DynamoDB Decoder Tests -
 
-    func testDecoderSimple() {
+    @Test func decoderSimple() {
         let value: [String: DynamoDBEvent.AttributeValue] = [
             "foo": .string("bar"),
             "xyz": .number("123"),
@@ -250,9 +246,8 @@ class DynamoDBTests: XCTestCase {
             let xyz: UInt8
         }
 
-        var test: Test?
-        XCTAssertNoThrow(test = try DynamoDBEvent.Decoder().decode(Test.self, from: value))
-        XCTAssertEqual(test?.foo, "bar")
-        XCTAssertEqual(test?.xyz, 123)
+        let test = try? DynamoDBEvent.Decoder().decode(Test.self, from: value)
+        #expect(test?.foo == "bar")
+        #expect(test?.xyz == 123)
     }
 }

@@ -1,4 +1,4 @@
-// swift-tools-version:6.0
+// swift-tools-version:5.8
 
 import PackageDescription
 
@@ -6,6 +6,7 @@ let swiftSettings: [SwiftSetting] = [.enableExperimentalFeature("StrictConcurren
 
 let package = Package(
     name: "swift-aws-lambda-events",
+    platforms: [.macOS(.v14)],
     products: [
         .library(name: "AWSLambdaEvents", targets: ["AWSLambdaEvents"])
     ],
@@ -20,13 +21,6 @@ let package = Package(
                 .product(name: "HTTPTypes", package: "swift-http-types")
             ],
             swiftSettings: swiftSettings
-        ),
-        .testTarget(
-            name: "AWSLambdaEventsTests",
-            dependencies: [
-                "AWSLambdaEvents"
-            ],
-            swiftSettings: swiftSettings
-        ),
+        )
     ]
 )

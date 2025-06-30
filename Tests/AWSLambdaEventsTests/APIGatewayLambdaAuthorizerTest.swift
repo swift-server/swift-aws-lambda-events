@@ -12,11 +12,13 @@
 //
 //===----------------------------------------------------------------------===//
 
-import XCTest
+import Foundation
+import Testing
 
 @testable import AWSLambdaEvents
 
-class APIGatewayLambdaAuthorizerTests: XCTestCase {
+@Suite
+struct APIGatewayLambdaAuthorizerTests {
     static let getEventWithLambdaAuthorizer = """
         {
             "version": "2.0",
@@ -139,52 +141,45 @@ class APIGatewayLambdaAuthorizerTests: XCTestCase {
 
     // MARK: Decoding
 
-    func testRequestDecodingGetRequestWithLambdaAuthorizer() {
+    @Test func requestDecodingGetRequestWithLambdaAuthorizer() throws {
         let data = APIGatewayLambdaAuthorizerTests.getEventWithLambdaAuthorizer.data(using: .utf8)!
-        var req: APIGatewayV2Request?
-        XCTAssertNoThrow(req = try JSONDecoder().decode(APIGatewayV2Request.self, from: data))
+        let req = try JSONDecoder().decode(APIGatewayV2Request.self, from: data)
 
-        XCTAssertEqual(req?.rawPath, "/hello")
-        XCTAssertEqual(req?.context.authorizer?.lambda?.count, 2)
-        XCTAssertEqual(req?.context.authorizer?.lambda?["abc1"], "xyz1")
-        XCTAssertEqual(req?.context.authorizer?.lambda?["abc2"], "xyz2")
-        XCTAssertNil(req?.body)
+        #expect(req.rawPath == "/hello")
+        #expect(req.context.authorizer?.lambda?.count == 2)
+        #expect(req.context.authorizer?.lambda?["abc1"] == "xyz1")
+        #expect(req.context.authorizer?.lambda?["abc2"] == "xyz2")
+        #expect(req.body == nil)
     }
 
-    func testLambdaAuthorizerRequestRequestDecoding() {
+    @Test func lambdaAuthorizerRequestRequestDecoding() throws {
         let data = APIGatewayLambdaAuthorizerTests.lambdaAuthorizerRequest.data(using: .utf8)!
-        var req: APIGatewayLambdaAuthorizerRequest?
-        XCTAssertNoThrow(req = try JSONDecoder().decode(APIGatewayLambdaAuthorizerRequest.self, from: data))
+        let req = try JSONDecoder().decode(APIGatewayLambdaAuthorizerRequest.self, from: data)
 
-        XCTAssertEqual(req?.rawPath, "/dev/applications")
-        XCTAssertEqual(req?.version, "2.0")
+        #expect(req.rawPath == "/dev/applications")
+        #expect(req.version == "2.0")
     }
 
     // MARK: Encoding
 
-    func testDecodingLambdaAuthorizerSimpleResponse() {
+    @Test func decodingLambdaAuthorizerSimpleResponse() throws {
         var resp = APIGatewayLambdaAuthorizerSimpleResponse(
             isAuthorized: true,
             context: ["abc1": "xyz1", "abc2": "xyz2"]
         )
 
-        var data: Data?
-        XCTAssertNoThrow(data = try JSONEncoder().encode(resp))
+        let data = try #require(try? JSONEncoder().encode(resp))
+        let stringData = try #require(String(data: data, encoding: .utf8))
+        let newData = try #require(stringData.data(using: .utf8))
 
-        var stringData: String?
-        XCTAssertNoThrow(stringData = try String(data: XCTUnwrap(data), encoding: .utf8))
+        resp = try JSONDecoder().decode(APIGatewayLambdaAuthorizerSimpleResponse.self, from: newData)
 
-        data = stringData?.data(using: .utf8)
-        XCTAssertNoThrow(
-            resp = try JSONDecoder().decode(APIGatewayLambdaAuthorizerSimpleResponse.self, from: XCTUnwrap(data))
-        )
-
-        XCTAssertEqual(resp.isAuthorized, true)
-        XCTAssertEqual(resp.context?.count, 2)
-        XCTAssertEqual(resp.context?["abc1"], "xyz1")
+        #expect(resp.isAuthorized == true)
+        #expect(resp.context?.count == 2)
+        #expect(resp.context?["abc1"] == "xyz1")
     }
 
-    func testDecodingLambdaAuthorizerPolicyResponse() {
+    @Test func decodingLambdaAuthorizerPolicyResponse() throws {
         let statement = APIGatewayLambdaAuthorizerPolicyResponse.PolicyDocument.Statement(
             action: "s3:getObject",
             effect: .allow,
@@ -197,25 +192,20 @@ class APIGatewayLambdaAuthorizerTests: XCTestCase {
             context: ["abc1": "xyz1", "abc2": "xyz2"]
         )
 
-        var data: Data?
-        XCTAssertNoThrow(data = try JSONEncoder().encode(resp))
+        let data = try #require(try? JSONEncoder().encode(resp))
+        let stringData = try #require(String(data: data, encoding: .utf8))
+        let newData = try #require(stringData.data(using: .utf8))
 
-        var stringData: String?
-        XCTAssertNoThrow(stringData = try String(data: XCTUnwrap(data), encoding: .utf8))
+        resp = try JSONDecoder().decode(APIGatewayLambdaAuthorizerPolicyResponse.self, from: newData)
 
-        data = stringData?.data(using: .utf8)
-        XCTAssertNoThrow(
-            resp = try JSONDecoder().decode(APIGatewayLambdaAuthorizerPolicyResponse.self, from: XCTUnwrap(data))
-        )
-
-        XCTAssertEqual(resp.principalId, "John Appleseed")
-        XCTAssertEqual(resp.policyDocument.statement.count, 1)
-        XCTAssertEqual(resp.policyDocument.statement[0].action, ["s3:getObject"])
-        XCTAssertEqual(resp.context?.count, 2)
-        XCTAssertEqual(resp.context?["abc1"], "xyz1")
+        #expect(resp.principalId == "John Appleseed")
+        #expect(resp.policyDocument.statement.count == 1)
+        #expect(resp.policyDocument.statement[0].action == ["s3:getObject"])
+        #expect(resp.context?.count == 2)
+        #expect(resp.context?["abc1"] == "xyz1")
     }
 
-    func testDecodingLambdaAuthorizerPolicyResponseWithMultipleResources() {
+    @Test func decodingLambdaAuthorizerPolicyResponseWithMultipleResources() throws {
         let statement = APIGatewayLambdaAuthorizerPolicyResponse.PolicyDocument.Statement(
             action: ["execute-api:Invoke"],
             effect: .allow,
@@ -231,28 +221,22 @@ class APIGatewayLambdaAuthorizerTests: XCTestCase {
             context: ["abc1": "xyz1", "abc2": "xyz2"]
         )
 
-        var data: Data?
-        XCTAssertNoThrow(data = try JSONEncoder().encode(resp))
+        let data = try #require(try? JSONEncoder().encode(resp))
+        let stringData = try #require(String(data: data, encoding: .utf8))
+        let newData = try #require(stringData.data(using: .utf8))
 
-        var stringData: String?
-        XCTAssertNoThrow(stringData = try String(data: XCTUnwrap(data), encoding: .utf8))
+        resp = try JSONDecoder().decode(APIGatewayLambdaAuthorizerPolicyResponse.self, from: newData)
 
-        data = stringData?.data(using: .utf8)
-        XCTAssertNoThrow(
-            resp = try JSONDecoder().decode(APIGatewayLambdaAuthorizerPolicyResponse.self, from: XCTUnwrap(data))
-        )
-
-        XCTAssertEqual(resp.principalId, "John Appleseed")
-        XCTAssertEqual(resp.policyDocument.statement.count, 1)
-        XCTAssertEqual(resp.policyDocument.statement[0].action, ["execute-api:Invoke"])
-        XCTAssertEqual(
-            resp.policyDocument.statement[0].resource,
-            [
+        #expect(resp.principalId == "John Appleseed")
+        #expect(resp.policyDocument.statement.count == 1)
+        #expect(resp.policyDocument.statement[0].action == ["execute-api:Invoke"])
+        #expect(
+            resp.policyDocument.statement[0].resource == [
                 "arn:aws:execute-api:*:*:*/*/GET/v1/user/0123",
                 "arn:aws:execute-api:*:*:*/*/POST/v1/user",
             ]
         )
-        XCTAssertEqual(resp.context?.count, 2)
-        XCTAssertEqual(resp.context?["abc1"], "xyz1")
+        #expect(resp.context?.count == 2)
+        #expect(resp.context?["abc1"] == "xyz1")
     }
 }

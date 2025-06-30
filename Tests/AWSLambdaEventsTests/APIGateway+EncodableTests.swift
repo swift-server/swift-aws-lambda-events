@@ -35,14 +35,12 @@ struct APIGatewayEncodableResponseTests {
         #expect(throws: Never.self) {
             try response = APIGatewayV2Response(statusCode: .ok, encodableBody: businessResponse)
         }
-        try #require(response?.body != nil)
 
         // when
-        let body = response?.body?.data(using: .utf8)
-        try #require(body != nil)
+        let body = try #require(response?.body?.data(using: .utf8))
 
         #expect(throws: Never.self) {
-            let encodedBody = try JSONDecoder().decode(BusinessResponse.self, from: body!)
+            let encodedBody = try JSONDecoder().decode(BusinessResponse.self, from: body)
 
             // then
             #expect(encodedBody == businessResponse)
@@ -63,7 +61,6 @@ struct APIGatewayEncodableResponseTests {
 
         // when
         let body = response?.body?.data(using: .utf8)
-        try #require(body != nil)
 
         #expect(throws: Never.self) {
             let encodedBody = try JSONDecoder().decode(BusinessResponse.self, from: body!)
