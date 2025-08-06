@@ -73,6 +73,3 @@ extension DecodableRequest {
         return try decoder.decode(T.self, from: requestData)
     }
 }
-
-extension APIGatewayV2Request: DecodableRequest {}
-extension FunctionURLRequest: DecodableRequest {}

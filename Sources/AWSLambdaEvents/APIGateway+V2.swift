@@ -126,6 +126,8 @@ public struct APIGatewayV2Request: Encodable, Sendable {
     }
 }
 
+extension APIGatewayV2Request: DecodableRequest {}
+
 public struct APIGatewayV2Response: Codable, Sendable {
     public var statusCode: HTTPResponse.Status
     public var headers: HTTPHeaders?
@@ -147,6 +149,8 @@ public struct APIGatewayV2Response: Codable, Sendable {
         self.cookies = cookies
     }
 }
+
+extension APIGatewayV2Response: EncodableResponse {}
 
 extension APIGatewayV2Request: Decodable {
     public init(from decoder: Decoder) throws {

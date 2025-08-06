@@ -34,8 +34,8 @@ public protocol EncodableResponse {
         statusCode: HTTPResponse.Status,
         headers: HTTPHeaders?,
         body: String?,
-        cookies: [String]?,
-        isBase64Encoded: Bool?
+        isBase64Encoded: Bool?,
+        cookies: [String]?
     )
 }
 
@@ -66,8 +66,8 @@ extension EncodableResponse {
                 statusCode: status,
                 headers: headers,
                 body: String(data: encodedResponse, encoding: .utf8),
-                cookies: cookies,
-                isBase64Encoded: nil
+                isBase64Encoded: nil,
+                cookies: cookies
             )
         } catch {
             return onError(error)
@@ -80,28 +80,9 @@ extension EncodableResponse {
                 statusCode: .internalServerError,
                 headers: nil,
                 body: "Internal Server Error: \(String(describing: error))",
-                cookies: nil,
-                isBase64Encoded: nil
+                isBase64Encoded: nil,
+                cookies: nil
             )
         }
     }
 }
-
-extension APIGatewayV2Response: EncodableResponse {
-    public init(
-        statusCode: HTTPResponse.Status,
-        headers: HTTPHeaders?,
-        body: String?,
-        cookies: [String]?,
-        isBase64Encoded: Bool?
-    ) {
-        self.init(
-            statusCode: statusCode,
-            headers: headers,
-            body: body,
-            isBase64Encoded: isBase64Encoded,
-            cookies: cookies
-        )
-    }
-}
-extension FunctionURLResponse: EncodableResponse {}

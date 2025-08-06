@@ -83,6 +83,8 @@ public struct FunctionURLRequest: Codable, Sendable {
     public let stageVariables: [String: String]?
 }
 
+extension FunctionURLRequest: DecodableRequest {}
+
 // MARK: - Response -
 
 public struct FunctionURLResponse: Codable, Sendable {
@@ -121,3 +123,5 @@ public struct FunctionURLResponse: Codable, Sendable {
         self.isBase64Encoded = isBase64Encoded
     }
 }
+
+extension FunctionURLResponse: EncodableResponse {}
