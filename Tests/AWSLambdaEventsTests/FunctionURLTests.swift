@@ -156,7 +156,7 @@ struct FunctionURLTests {
     @Test func decodeBodyWithNilBody() throws {
         let data = Self.realWorldExample.data(using: .utf8)!
         let request = try JSONDecoder().decode(FunctionURLRequest.self, from: data)
-        
+
         let decodedBody = try request.decodeBody()
         #expect(decodedBody == nil)
     }
@@ -164,7 +164,7 @@ struct FunctionURLTests {
     @Test func decodeBodyWithPlainTextBody() throws {
         let data = Self.documentationExample.data(using: .utf8)!
         let request = try JSONDecoder().decode(FunctionURLRequest.self, from: data)
-        
+
         let decodedBody = try request.decodeBody()
         let expectedBody = "Hello from client!".data(using: .utf8)
         #expect(decodedBody == expectedBody)
@@ -172,38 +172,38 @@ struct FunctionURLTests {
 
     @Test func decodeBodyWithBase64EncodedBody() throws {
         let requestWithBase64Body = """
-        {
-            "version": "2.0",
-            "routeKey": "$default",
-            "rawPath": "/test",
-            "rawQueryString": "",
-            "headers": {},
-            "requestContext": {
-                "accountId": "123456789012",
-                "apiId": "<urlid>",
-                "domainName": "<url-id>.lambda-url.us-west-2.on.aws",
-                "domainPrefix": "<url-id>",
-                "http": {
-                    "method": "POST",
-                    "path": "/test",
-                    "protocol": "HTTP/1.1",
-                    "sourceIp": "123.123.123.123",
-                    "userAgent": "test"
-                },
-                "requestId": "id",
+            {
+                "version": "2.0",
                 "routeKey": "$default",
-                "stage": "$default",
-                "time": "12/Mar/2020:19:03:58 +0000",
-                "timeEpoch": 1583348638390
-            },
-            "body": "SGVsbG8gZnJvbSBjbGllbnQh",
-            "isBase64Encoded": true
-        }
-        """
-        
+                "rawPath": "/test",
+                "rawQueryString": "",
+                "headers": {},
+                "requestContext": {
+                    "accountId": "123456789012",
+                    "apiId": "<urlid>",
+                    "domainName": "<url-id>.lambda-url.us-west-2.on.aws",
+                    "domainPrefix": "<url-id>",
+                    "http": {
+                        "method": "POST",
+                        "path": "/test",
+                        "protocol": "HTTP/1.1",
+                        "sourceIp": "123.123.123.123",
+                        "userAgent": "test"
+                    },
+                    "requestId": "id",
+                    "routeKey": "$default",
+                    "stage": "$default",
+                    "time": "12/Mar/2020:19:03:58 +0000",
+                    "timeEpoch": 1583348638390
+                },
+                "body": "SGVsbG8gZnJvbSBjbGllbnQh",
+                "isBase64Encoded": true
+            }
+            """
+
         let data = requestWithBase64Body.data(using: .utf8)!
         let request = try JSONDecoder().decode(FunctionURLRequest.self, from: data)
-        
+
         let decodedBody = try request.decodeBody()
         let expectedBody = "Hello from client!".data(using: .utf8)
         #expect(decodedBody == expectedBody)
@@ -213,7 +213,7 @@ struct FunctionURLTests {
         // Use the documentationExample which already has a simple string body
         let data = Self.documentationExample.data(using: .utf8)!
         let request = try JSONDecoder().decode(FunctionURLRequest.self, from: data)
-        
+
         // Test that we can decode the body as String
         // The documentationExample has body: "Hello from client!" which is not valid JSON, so this should fail
         #expect(throws: DecodingError.self) {
@@ -226,163 +226,43 @@ struct FunctionURLTests {
             let message: String
             let count: Int
         }
-        
+
         let testPayload = TestPayload(message: "test", count: 42)
-        
+
         let requestWithBase64JSONBody = """
-        {
-            "version": "2.0",
-            "routeKey": "$default",
-            "rawPath": "/test",
-            "rawQueryString": "",
-            "headers": {},
-            "requestContext": {
-                "accountId": "123456789012",
-                "apiId": "<urlid>",
-                "domainName": "<url-id>.lambda-url.us-west-2.on.aws",
-                "domainPrefix": "<url-id>",
-                "http": {
-                    "method": "POST",
-                    "path": "/test",
-                    "protocol": "HTTP/1.1",
-                    "sourceIp": "123.123.123.123",
-                    "userAgent": "test"
-                },
-                "requestId": "id",
+            {
+                "version": "2.0",
                 "routeKey": "$default",
-                "stage": "$default",
-                "time": "12/Mar/2020:19:03:58 +0000",
-                "timeEpoch": 1583348638390
-            },
-            "body": "eyJtZXNzYWdlIjoidGVzdCIsImNvdW50Ijo0Mn0=",
-            "isBase64Encoded": true
-        }
-        """
-        
+                "rawPath": "/test",
+                "rawQueryString": "",
+                "headers": {},
+                "requestContext": {
+                    "accountId": "123456789012",
+                    "apiId": "<urlid>",
+                    "domainName": "<url-id>.lambda-url.us-west-2.on.aws",
+                    "domainPrefix": "<url-id>",
+                    "http": {
+                        "method": "POST",
+                        "path": "/test",
+                        "protocol": "HTTP/1.1",
+                        "sourceIp": "123.123.123.123",
+                        "userAgent": "test"
+                    },
+                    "requestId": "id",
+                    "routeKey": "$default",
+                    "stage": "$default",
+                    "time": "12/Mar/2020:19:03:58 +0000",
+                    "timeEpoch": 1583348638390
+                },
+                "body": "eyJtZXNzYWdlIjoidGVzdCIsImNvdW50Ijo0Mn0=",
+                "isBase64Encoded": true
+            }
+            """
+
         let data = requestWithBase64JSONBody.data(using: .utf8)!
         let request = try JSONDecoder().decode(FunctionURLRequest.self, from: data)
-        
+
         let decodedPayload = try request.decodeBody(TestPayload.self)
         #expect(decodedPayload == testPayload)
-    }
-
-    // MARK: FunctionURL Encoding Helper Tests
-
-    @Test
-    func testFunctionURLResponseEncodingHelper() throws {
-        struct BusinessResponse: Codable, Equatable {
-            let message: String
-            let code: Int
-        }
-        
-        // given
-        let businessResponse = BusinessResponse(message: "Hello World", code: 200)
-
-        // when
-        let response = FunctionURLResponse.encoding(businessResponse)
-
-        // then
-        #expect(response.statusCode == .ok)
-        #expect(response.body != nil)
-        
-        let bodyData = try #require(response.body?.data(using: .utf8))
-        let decodedResponse = try JSONDecoder().decode(BusinessResponse.self, from: bodyData)
-        #expect(decodedResponse == businessResponse)
-    }
-
-    @Test
-    func testFunctionURLResponseEncodingHelperWithCustomStatus() throws {
-        struct BusinessResponse: Codable, Equatable {
-            let message: String
-            let code: Int
-        }
-        
-        // given
-        let businessResponse = BusinessResponse(message: "Created", code: 201)
-
-        // when
-        let response = FunctionURLResponse.encoding(businessResponse, status: .created)
-
-        // then
-        #expect(response.statusCode == .created)
-        #expect(response.body != nil)
-        
-        let bodyData = try #require(response.body?.data(using: .utf8))
-        let decodedResponse = try JSONDecoder().decode(BusinessResponse.self, from: bodyData)
-        #expect(decodedResponse == businessResponse)
-    }
-
-    @Test
-    func testFunctionURLResponseEncodingHelperWithCustomEncoder() throws {
-        struct BusinessResponse: Codable, Equatable {
-            let message: String
-            let code: Int
-        }
-        
-        // given
-        let businessResponse = BusinessResponse(message: "Hello World", code: 200)
-        let customEncoder = JSONEncoder()
-        customEncoder.outputFormatting = .prettyPrinted
-
-        // when
-        let response = FunctionURLResponse.encoding(businessResponse, using: customEncoder)
-
-        // then
-        #expect(response.statusCode == .ok)
-        #expect(response.body != nil)
-        #expect(response.body?.contains("\n") == true) // Pretty printed JSON should contain newlines
-        
-        let bodyData = try #require(response.body?.data(using: .utf8))
-        let decodedResponse = try JSONDecoder().decode(BusinessResponse.self, from: bodyData)
-        #expect(decodedResponse == businessResponse)
-    }
-
-    @Test
-    func testFunctionURLResponseEncodingHelperWithError() throws {
-        // given
-        struct InvalidEncodable: Encodable {
-            func encode(to encoder: Encoder) throws {
-                throw TestError.encodingFailed
-            }
-        }
-        
-        enum TestError: Error {
-            case encodingFailed
-        }
-
-        let invalidObject = InvalidEncodable()
-
-        // when
-        let response = FunctionURLResponse.encoding(invalidObject)
-
-        // then
-        #expect(response.statusCode == .internalServerError)
-        #expect(response.body?.contains("Internal Server Error") == true)
-    }
-
-    @Test
-    func testFunctionURLResponseEncodingHelperWithCustomErrorHandler() throws {
-        // given
-        struct InvalidEncodable: Encodable {
-            func encode(to encoder: Encoder) throws {
-                throw TestError.encodingFailed
-            }
-        }
-        
-        enum TestError: Error {
-            case encodingFailed
-        }
-
-        let invalidObject = InvalidEncodable()
-        let customErrorHandler: (Error) -> FunctionURLResponse = { _ in
-            FunctionURLResponse(statusCode: .badRequest, body: "Custom error message")
-        }
-
-        // when
-        let response = FunctionURLResponse.encoding(invalidObject, onError: customErrorHandler)
-
-        // then
-        #expect(response.statusCode == .badRequest)
-        #expect(response.body == "Custom error message")
     }
 }

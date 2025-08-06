@@ -1,10 +1,24 @@
+//===----------------------------------------------------------------------===//
+//
+// This source file is part of the SwiftAWSLambdaRuntime open source project
+//
+// Copyright (c) 2017-2022 Apple Inc. and the SwiftAWSLambdaRuntime project authors
+// Licensed under Apache License v2.0
+//
+// See LICENSE.txt for license information
+// See CONTRIBUTORS.txt for the list of SwiftAWSLambdaRuntime project authors
+//
+// SPDX-License-Identifier: Apache-2.0
+//
+//===----------------------------------------------------------------------===//
+
 #if canImport(FoundationEssentials)
 import FoundationEssentials
 #else
 import Foundation
 #endif
 
-public extension SQSEvent {
+extension SQSEvent {
     /// Decodes the records included in the event into an array of decodable objects.
     ///
     /// - Parameters:
@@ -13,7 +27,7 @@ public extension SQSEvent {
     ///
     /// - Returns: The decoded records as `[T]`.
     /// - Throws: An error if any of the records cannot be decoded.
-    func decodeBody<T>(
+    public func decodeBody<T>(
         _ type: T.Type,
         using decoder: JSONDecoder = JSONDecoder()
     ) throws -> [T] where T: Decodable {
@@ -23,7 +37,7 @@ public extension SQSEvent {
     }
 }
 
-public extension SQSEvent.Message {
+extension SQSEvent.Message {
     /// Decodes the body of the message into a decodable object.
     ///
     /// - Parameters:
@@ -32,7 +46,7 @@ public extension SQSEvent.Message {
     ///
     /// - Returns: The decoded body as `T`.
     /// - Throws: An error if the body cannot be decoded.
-    func decodeBody<T>(
+    public func decodeBody<T>(
         _ type: T.Type,
         using decoder: JSONDecoder = JSONDecoder()
     ) throws -> T where T: Decodable {
