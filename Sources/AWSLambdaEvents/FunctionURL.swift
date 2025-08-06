@@ -92,12 +92,27 @@ public struct FunctionURLResponse: Codable, Sendable {
     public let cookies: [String]?
     public var isBase64Encoded: Bool?
 
+    @available(*, deprecated, message: "Use init(statusCode:headers:body:isBase64Encoded:cookies:) instead")
     public init(
         statusCode: HTTPResponse.Status,
         headers: HTTPHeaders? = nil,
         body: String? = nil,
         cookies: [String]? = nil,
         isBase64Encoded: Bool? = nil
+    ) {
+        self.statusCode = statusCode
+        self.headers = headers
+        self.body = body
+        self.cookies = cookies
+        self.isBase64Encoded = isBase64Encoded
+    }
+
+    public init(
+        statusCode: HTTPResponse.Status,
+        headers: HTTPHeaders? = nil,
+        body: String? = nil,
+        isBase64Encoded: Bool? = nil,
+        cookies: [String]? = nil
     ) {
         self.statusCode = statusCode
         self.headers = headers
