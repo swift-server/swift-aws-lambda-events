@@ -95,6 +95,7 @@ public struct FunctionURLResponse: Codable, Sendable {
     public var isBase64Encoded: Bool?
 
     @available(*, deprecated, message: "Use init(statusCode:headers:body:isBase64Encoded:cookies:) instead")
+    @_disfavoredOverload
     public init(
         statusCode: HTTPResponse.Status,
         headers: HTTPHeaders? = nil,
